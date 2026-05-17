@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -9,6 +10,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+    }
+    plugins {
+        kotlin("jvm") version "2.3.21"
     }
 }
 plugins {
