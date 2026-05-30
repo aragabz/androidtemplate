@@ -1,0 +1,60 @@
+default_platform(:android)
+
+platform :android do
+  
+  # Build lanes
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(task: "clean assembleDebug")
+  end
+
+  desc "Build release APK"
+  lane :build_release do
+    gradle(task: "clean assembleRelease")
+  end
+
+  desc "Build release bundle (AAB)"
+  lane :build_bundle do
+    gradle(task: "clean bundleRelease")
+  end
+
+  # Testing lanes
+  desc "Run unit tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  # Code quality lanes
+  desc "Run ktlint"
+  lane :lint_kotlin do
+    gradle(task: "ktlintCheck")
+  end
+
+  desc "Run ktlint and auto-format"
+  lane :format_kotlin do
+    gradle(task: "ktlintFormat")
+  end
+
+  desc "Run detekt"
+  lane :analyze do
+    gradle(task: "detekt")
+  end
+
+  desc "Run all code quality checks"
+  lane :quality do
+    gradle(task: "ktlintCheck")
+    gradle(task: "detekt")
+    gradle(task: "lintDebug")
+  end
+
+  # CI/CD lane
+  desc "Run CI checks"
+  lane :ci do
+    gradle(task: "clean")
+    gradle(task: "ktlintCheck")
+    gradle(task: "detekt")
+    gradle(task: "test")
+    gradle(task: "lintDebug")
+  end
+
+end

@@ -32,3 +32,21 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/.env
+*.mobileprovision
+
+# Ruby/Bundler
+vendor/bundle
+.bundle
+Gemfile.lock
+
+# Detekt
+detekt-report.html
+detekt-report.xml
+detekt-report.sarif

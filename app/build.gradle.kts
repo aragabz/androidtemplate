@@ -21,7 +21,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -38,25 +38,24 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:ui")) // Exposes designsystem transitively
     implementation(project(":core:navigation"))
-    
+
     // Material Icons
     implementation(libs.androidx.compose.material.icons.extended)
-    
+
     // Navigation
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.hilt.navigation.compose)
-    
+
     // Logging
     implementation(libs.timber)
-    
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    
+
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
-
