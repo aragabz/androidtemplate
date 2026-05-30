@@ -17,11 +17,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 36
                 testOptions.animationsDisabled = true
-                // configureGradleManagedDevices(this)
             }
             extensions.configure<ApplicationAndroidComponentsExtension> {
-                // configurePrintApksTask(this)
-                // configureBadgingTasks(this)
+                // Additional configuration can go here
             }
         }
     }

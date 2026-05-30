@@ -11,13 +11,17 @@ internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        val extension = this as? com.android.build.api.dsl.CommonExtension
-        extension?.buildFeatures?.compose = true
+        buildFeatures.compose = true
+    }
 
-        dependencies {
-            val bom = libs.findLibrary("androidx-compose-bom").get()
-            add("implementation", platform(bom))
-            add("androidTestImplementation", platform(bom))
-        }
+    dependencies {
+        val bom = libs.findLibrary("androidx-compose-bom").get()
+        add("implementation", platform(bom))
+        add("androidTestImplementation", platform(bom))
+
+        add("implementation", libs.findLibrary("androidx-compose-ui").get())
+        add("implementation", libs.findLibrary("androidx-compose-ui-graphics").get())
+        add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
+        add("implementation", libs.findLibrary("androidx-compose-material3").get())
     }
 }

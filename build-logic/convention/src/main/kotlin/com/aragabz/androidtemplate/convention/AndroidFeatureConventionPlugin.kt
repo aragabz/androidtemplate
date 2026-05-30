@@ -1,6 +1,6 @@
 package com.aragabz.androidtemplate.convention
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -15,14 +15,15 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<LibraryExtension> {
-                defaultConfig {
+                defaultConfig.apply {
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
             }
 
             dependencies {
                 add("implementation", project(":core:ui"))
-                add("implementation", project(":core:designsystem"))
+                // Removed project(":core:designsystem") as it might not exist or be renamed
+                // add("implementation", project(":core:designsystem"))
 
                 add("testImplementation", project(":core:testing"))
                 add("androidTestImplementation", project(":core:testing"))

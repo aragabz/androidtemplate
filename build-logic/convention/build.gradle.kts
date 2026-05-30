@@ -21,6 +21,8 @@ dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.compose.gradlePlugin)
+    implementation(libs.ksp.gradlePlugin)
+    implementation(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -44,6 +46,14 @@ gradlePlugin {
         register("androidFeature") {
             id = "androidtemplate.android.feature"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidFeatureConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "androidtemplate.android.hilt"
+            implementationClass = "com.aragabz.androidtemplate.convention.AndroidHiltConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "androidtemplate.android.room"
+            implementationClass = "com.aragabz.androidtemplate.convention.AndroidRoomConventionPlugin"
         }
     }
 }
