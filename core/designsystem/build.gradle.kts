@@ -4,18 +4,16 @@ plugins {
 }
 
 android {
-    namespace = "com.aragabz.androidtemplate.core.ui"
+    namespace = "com.aragabz.androidtemplate.core.designsystem"
 }
 
 dependencies {
-    // Core modules - expose designsystem to consumers
-    api(project(":core:designsystem"))
-    implementation(project(":core:common"))
-    
-    // Compose
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.coil)
     
     debugImplementation(libs.androidx.compose.ui.tooling)

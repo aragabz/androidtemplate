@@ -36,7 +36,11 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
-    implementation(project(":core:ui"))
+    implementation(project(":core:ui")) // Exposes designsystem transitively
+    implementation(project(":core:navigation"))
+    
+    // Material Icons
+    implementation(libs.androidx.compose.material.icons.extended)
     
     // Navigation
     implementation(libs.androidx.navigation3.runtime)
