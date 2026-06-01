@@ -26,7 +26,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Android(Template"
+rootProject.name = "AndroidTemplate"
 include(":app")
 include(":core:common")
 include(":core:network")
@@ -35,5 +35,7 @@ include(":core:datastore")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:navigation")
+include(":feature:auth")
+include(":feature:user")
+include(":feature:todos")
 
- 

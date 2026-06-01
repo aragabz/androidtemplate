@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class SampleEntity(
     @PrimaryKey
     val id: String,
-    val data: String
+    val data: String,
 )

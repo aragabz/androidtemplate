@@ -16,13 +16,14 @@ import java.io.IOException
  */
 suspend fun <T> safeApiCall(
     dispatcher: CoroutineDispatcher,
-    block: suspend () -> T
-): AppResult<T> = withContext(dispatcher) {
-    try {
-        AppResult.Success(block())
-    } catch (e: IOException) {
-        AppResult.Error(AppError.NetworkError(e))
-    } catch (e: Exception) {
-        AppResult.Error(AppError.UnknownError(e))
+    block: suspend () -> T,
+): AppResult<T> =
+    withContext(dispatcher) {
+        try {
+            AppResult.Success(block())
+        } catch (e: IOException) {
+            AppResult.Error(AppError.NetworkError(e))
+        } catch (e: Exception) {
+            AppResult.Error(AppError.UnknownError(e))
+        }
     }
-}

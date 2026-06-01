@@ -24,9 +24,12 @@ import com.aragabz.androidtemplate.core.navigation.popBackStackSafely
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailsScreen(id: String, navController: NavHostController) {
+fun DetailsScreen(
+    id: String,
+    navController: NavHostController,
+) {
     val spacing = LocalSpacing.current
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -35,38 +38,39 @@ fun DetailsScreen(id: String, navController: NavHostController) {
                     IconButton(onClick = { navController.popBackStackSafely() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(spacing.medium),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(spacing.medium),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = "Details Screen",
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            
+
             Text(
                 text = "Item ID: $id",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = spacing.small)
+                modifier = Modifier.padding(top = spacing.small),
             )
-            
+
             AppButton(
                 text = "Go Back",
                 onClick = { navController.popBackStackSafely() },
                 variant = AppButtonVariant.SECONDARY,
-                modifier = Modifier.padding(top = spacing.large)
+                modifier = Modifier.padding(top = spacing.large),
             )
         }
     }

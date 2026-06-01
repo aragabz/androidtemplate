@@ -13,9 +13,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DataStoreModule {
-
     @Binds
-    abstract fun bindUserPreferencesRepository(
-        impl: UserPreferencesRepositoryImpl
-    ): UserPreferencesRepository
+    abstract fun bindUserPreferencesRepository(impl: UserPreferencesRepositoryImpl): UserPreferencesRepository
 }

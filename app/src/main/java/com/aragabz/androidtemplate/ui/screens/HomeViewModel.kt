@@ -12,23 +12,23 @@ import kotlinx.coroutines.launch
  * Demonstrates lifecycle-viewmodel-navigation3 integration.
  */
 class HomeViewModel : ViewModel() {
-    
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-    
+
     init {
         loadData()
     }
-    
+
     private fun loadData() {
         viewModelScope.launch {
-            _uiState.value = HomeUiState(
-                title = "Home Screen",
-                items = listOf("Item 1", "Item 2", "Item 3")
-            )
+            _uiState.value =
+                HomeUiState(
+                    title = "Home Screen",
+                    items = listOf("Item 1", "Item 2", "Item 3"),
+                )
         }
     }
-    
+
     fun onItemClick(item: String) {
         _uiState.value = _uiState.value.copy(selectedItem = item)
     }
@@ -37,5 +37,5 @@ class HomeViewModel : ViewModel() {
 data class HomeUiState(
     val title: String = "Home Screen",
     val items: List<String> = emptyList(),
-    val selectedItem: String? = null
+    val selectedItem: String? = null,
 )

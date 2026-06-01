@@ -18,31 +18,32 @@ import com.aragabz.androidtemplate.core.navigation.navigateToDetails
 @Composable
 fun HomeScreen(navController: NavHostController) {
     val spacing = LocalSpacing.current
-    
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(spacing.medium),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = "Home Screen",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        
+
         Text(
             text = "Welcome to Android Template",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = spacing.small)
+            modifier = Modifier.padding(top = spacing.small),
         )
-        
+
         AppButton(
             text = "Go to Details",
             onClick = { navController.navigateToDetails("1") },
             variant = AppButtonVariant.PRIMARY,
-            modifier = Modifier.padding(top = spacing.large)
+            modifier = Modifier.padding(top = spacing.large),
         )
     }
 }

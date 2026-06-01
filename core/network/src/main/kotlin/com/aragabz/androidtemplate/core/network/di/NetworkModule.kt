@@ -2,6 +2,7 @@ package com.aragabz.androidtemplate.core.network.di
 
 import com.aragabz.androidtemplate.core.network.BuildConfig
 import com.aragabz.androidtemplate.core.network.adapter.ApiResultCallAdapterFactory
+import com.aragabz.androidtemplate.core.network.mock.MockInterceptor
 import com.aragabz.androidtemplate.core.network.session.SessionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -38,6 +39,8 @@ object NetworkModule {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            // Add MockInterceptor FIRST (before logging)
+            .addInterceptor(MockInterceptor())
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
                     level = if (BuildConfig.DEBUG) {

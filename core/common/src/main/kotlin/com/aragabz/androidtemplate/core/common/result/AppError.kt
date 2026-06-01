@@ -9,14 +9,14 @@ sealed class AppError : Throwable() {
      */
     data class HttpError(
         val code: Int,
-        override val message: String
+        override val message: String,
     ) : AppError()
 
     /**
      * Network connectivity error.
      */
     data class NetworkError(
-        override val cause: Throwable
+        override val cause: Throwable,
     ) : AppError() {
         override val message: String = cause.message ?: "Network error occurred"
     }
@@ -25,7 +25,7 @@ sealed class AppError : Throwable() {
      * Unknown error.
      */
     data class UnknownError(
-        override val cause: Throwable
+        override val cause: Throwable,
     ) : AppError() {
         override val message: String = cause.message ?: "Unknown error occurred"
     }

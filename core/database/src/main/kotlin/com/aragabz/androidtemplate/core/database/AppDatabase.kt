@@ -12,17 +12,16 @@ import com.aragabz.androidtemplate.core.database.util.Converters
  */
 @Database(
     entities = [
-        SampleEntity::class
+        SampleEntity::class,
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    
     // Add your DAO getters here
     // Example: abstract fun userDao(): UserDao
-    
+
     companion object {
         const val DATABASE_NAME = "androidtemplate_database"
     }

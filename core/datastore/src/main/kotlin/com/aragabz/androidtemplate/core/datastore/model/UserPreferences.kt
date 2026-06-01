@@ -7,7 +7,7 @@ data class UserPreferences(
     val userId: String? = null,
     val authToken: String? = null,
     val theme: AppTheme = AppTheme.SYSTEM,
-    val language: String = "en"
+    val language: String = "en",
 )
 
 /**
@@ -16,5 +16,5 @@ data class UserPreferences(
 enum class AppTheme {
     SYSTEM,
     LIGHT,
-    DARK
+    DARK,
 }

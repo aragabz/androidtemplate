@@ -12,7 +12,7 @@ import androidx.compose.runtime.toMutableStateList
  */
 @Stable
 class NavigationManager(
-    private val backStack: SnapshotStateList<Route>
+    private val backStack: SnapshotStateList<Route>,
 ) {
     /**
      * Current navigation back stack
@@ -74,12 +74,10 @@ class NavigationManager(
  * Remember a NavigationManager instance
  */
 @Composable
-fun rememberNavigationManager(
-    initialRoute: Route = Route.Home
-): NavigationManager {
+fun rememberNavigationManager(initialRoute: Route = Route.Home): NavigationManager {
     return remember {
         NavigationManager(
-            backStack = listOf(initialRoute).toMutableStateList()
+            backStack = listOf(initialRoute).toMutableStateList(),
         )
     }
 }

@@ -11,25 +11,24 @@ import kotlinx.coroutines.flow.Flow
  * @param T the entity type
  */
 interface BaseDao<T> {
-    
     /**
      * Insert or update an entity. If the entity exists, it will be updated.
      */
     @Upsert
     suspend fun upsert(entity: T)
-    
+
     /**
      * Insert or update multiple entities.
      */
     @Upsert
     suspend fun upsertAll(entities: List<T>)
-    
+
     /**
      * Delete an entity from the database.
      */
     @Delete
     suspend fun delete(entity: T)
-    
+
     /**
      * Get all entities as a Flow for reactive updates.
      */

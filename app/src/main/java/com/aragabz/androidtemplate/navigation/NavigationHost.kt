@@ -19,7 +19,7 @@ import com.aragabz.androidtemplate.ui.screens.HomeViewModel
 @Composable
 fun NavigationHost(
     navigationManager: NavigationManager,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Handle system back button
     BackHandler(enabled = navigationManager.canGoBack) {
@@ -29,39 +29,41 @@ fun NavigationHost(
     NavDisplay(
         modifier = modifier,
         backStack = navigationManager.currentBackStack,
-        onBack = { navigationManager.navigateBack() }
+        onBack = { navigationManager.navigateBack() },
     ) { route ->
         when (route) {
-            Route.Home -> NavEntry(
-                key = Route.Home,
-                content = {
-                    // ViewModel is automatically scoped to this navigation entry
-                    val homeViewModel: HomeViewModel = viewModel()
-                    
-                    HomeScreen(
-                        viewModel = homeViewModel,
-                        onNavigateToDetails = { id ->
-                            navigationManager.navigateTo(Route.Details(id))
-                        }
-                    )
-                }
-            )
+            Route.Home ->
+                NavEntry(
+                    key = Route.Home,
+                    content = {
+                        // ViewModel is automatically scoped to this navigation entry
+                        val homeViewModel: HomeViewModel = viewModel()
 
-            is Route.Details -> NavEntry(
-                key = route,
-                content = {
-                    // ViewModel is automatically scoped to this navigation entry
-                    val detailsViewModel: DetailsViewModel = viewModel()
-                    
-                    DetailsScreen(
-                        id = route.id,
-                        viewModel = detailsViewModel,
-                        onBack = {
-                            navigationManager.navigateBack()
-                        }
-                    )
-                }
-            )
+                        HomeScreen(
+                            viewModel = homeViewModel,
+                            onNavigateToDetails = { id ->
+                                navigationManager.navigateTo(Route.Details(id))
+                            },
+                        )
+                    },
+                )
+
+            is Route.Details ->
+                NavEntry(
+                    key = route,
+                    content = {
+                        // ViewModel is automatically scoped to this navigation entry
+                        val detailsViewModel: DetailsViewModel = viewModel()
+
+                        DetailsScreen(
+                            id = route.id,
+                            viewModel = detailsViewModel,
+                            onBack = {
+                                navigationManager.navigateBack()
+                            },
+                        )
+                    },
+                )
         }
     }
 }

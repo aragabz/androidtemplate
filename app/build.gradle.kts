@@ -39,6 +39,11 @@ dependencies {
     implementation(project(":core:ui")) // Exposes designsystem transitively
     implementation(project(":core:navigation"))
 
+    // Feature modules
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:user"))
+    implementation(project(":feature:todos"))
+
     // Material Icons
     implementation(libs.androidx.compose.material.icons.extended)
 

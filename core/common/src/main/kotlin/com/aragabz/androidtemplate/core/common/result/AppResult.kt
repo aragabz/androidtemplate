@@ -15,7 +15,7 @@ sealed class AppResult<out T> {
      */
     data class Error(
         val exception: Throwable,
-        val message: String? = exception.message
+        val message: String? = exception.message,
     ) : AppResult<Nothing>()
 
     /**
@@ -42,27 +42,30 @@ sealed class AppResult<out T> {
 /**
  * Returns the data if Success, null otherwise.
  */
-fun <T> AppResult<T>.getOrNull(): T? = when (this) {
-    is AppResult.Success -> data
-    else -> null
-}
+fun <T> AppResult<T>.getOrNull(): T? =
+    when (this) {
+        is AppResult.Success -> data
+        else -> null
+    }
 
 /**
  * Returns the data if Success, or the provided default value otherwise.
  */
-fun <T> AppResult<T>.getOrDefault(defaultValue: T): T = when (this) {
-    is AppResult.Success -> data
-    else -> defaultValue
-}
+fun <T> AppResult<T>.getOrDefault(defaultValue: T): T =
+    when (this) {
+        is AppResult.Success -> data
+        else -> defaultValue
+    }
 
 /**
  * Maps the data if Success, returns the same Error/Loading otherwise.
  */
-inline fun <T, R> AppResult<T>.map(transform: (T) -> R): AppResult<R> = when (this) {
-    is AppResult.Success -> AppResult.Success(transform(data))
-    is AppResult.Error -> this
-    is AppResult.Loading -> this
-}
+inline fun <T, R> AppResult<T>.map(transform: (T) -> R): AppResult<R> =
+    when (this) {
+        is AppResult.Success -> AppResult.Success(transform(data))
+        is AppResult.Error -> this
+        is AppResult.Loading -> this
+    }
 
 /**
  * Executes the given block if Success.
