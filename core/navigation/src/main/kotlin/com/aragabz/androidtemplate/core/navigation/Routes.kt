@@ -9,6 +9,18 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
     
     /**
+     * Splash screen route - entry point
+     */
+    @Serializable
+    data object Splash : Route
+
+    /**
+     * Main screen route - bottom navigation bar container
+     */
+    @Serializable
+    data object Main : Route
+
+    /**
      * Login screen route - authentication entry point
      */
     @Serializable
@@ -21,10 +33,22 @@ sealed interface Route {
     data object Register : Route
     
     /**
-     * Home screen route - main entry point
+     * Home screen route - empty dashboard home tab
      */
     @Serializable
     data object Home : Route
+
+    /**
+     * Todos screen route - todos list tab
+     */
+    @Serializable
+    data object Todos : Route
+
+    /**
+     * Settings screen route - settings tab
+     */
+    @Serializable
+    data object Settings : Route
     
     /**
      * Details screen route with item ID
@@ -58,3 +82,4 @@ sealed interface Route {
     @Serializable
     data class TodoDetails(val id: String) : Route
 }
+

@@ -2,35 +2,36 @@ package com.aragabz.androidtemplate.feature.auth.data.repository
 
 import com.aragabz.androidtemplate.core.common.di.IoDispatcher
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.database.dao.AccountDao
+import com.aragabz.androidtemplate.core.database.model.AccountEntity
 import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
-import com.aragabz.androidtemplate.feature.auth.data.mapper.AuthMapper.toDomain
-import com.aragabz.androidtemplate.feature.auth.data.remote.AuthApiService
-import com.aragabz.androidtemplate.feature.auth.data.remote.dto.LoginRequest
-import com.aragabz.androidtemplate.feature.auth.data.remote.dto.RegisterRequest
 import com.aragabz.androidtemplate.feature.auth.domain.model.AuthToken
 import com.aragabz.androidtemplate.feature.auth.domain.model.User
 import com.aragabz.androidtemplate.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 import javax.inject.Inject
 
 /**
- * Implementation of [AuthRepository] using Retrofit API service.
+ * Implementation of [AuthRepository] using Room database for offline operation.
  *
- * @property apiService Retrofit service for authentication endpoints
+ * @property accountDao Dao for local database accounts
  * @property preferencesRepository Repository for storing user preferences
  * @property ioDispatcher IO dispatcher for background operations
  */
 public class AuthRepositoryImpl
     @Inject
     constructor(
-        private val apiService: AuthApiService,
+        private val accountDao: AccountDao,
         private val preferencesRepository: UserPreferencesRepository,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : AuthRepository {
+
         override fun login(
             email: String,
             password: String,
@@ -38,25 +39,23 @@ public class AuthRepositoryImpl
             flow {
                 emit(AppResult.Loading)
 
-                val request = LoginRequest(email = email, password = password)
-                val result = apiService.login(request)
-
-                when (result) {
-                    is AppResult.Success -> {
-                        val authToken = result.data.toDomain()
-                        // Save token to DataStore
-                        preferencesRepository.saveAuthToken(authToken.token)
-                        emit(AppResult.Success(authToken))
-                    }
-
-                    is AppResult.Error -> {
-                        emit(result)
-                    }
-
-                    is AppResult.Loading -> {
-                        emit(result)
-                    }
+                val account = accountDao.getAccountByEmail(email)
+                if (account == null) {
+                    emit(AppResult.Error(Exception("Account not found")))
+                    return@flow
                 }
+
+                if (account.passwordHash != password) {
+                    emit(AppResult.Error(Exception("Invalid password")))
+                    return@flow
+                }
+
+                // Save session in DataStore
+                val token = "offline_token_${account.id}"
+                preferencesRepository.saveUserId(account.id)
+                preferencesRepository.saveAuthToken(token)
+
+                emit(AppResult.Success(AuthToken(token = token, user = User(id = account.id, name = account.name, email = account.email))))
             }.flowOn(ioDispatcher)
 
         override fun register(
@@ -67,77 +66,58 @@ public class AuthRepositoryImpl
             flow {
                 emit(AppResult.Loading)
 
-                val request = RegisterRequest(name = name, email = email, password = password)
-                val result = apiService.register(request)
-
-                when (result) {
-                    is AppResult.Success -> {
-                        val authToken = result.data.toDomain()
-                        // Save token to DataStore
-                        preferencesRepository.saveAuthToken(authToken.token)
-                        emit(AppResult.Success(authToken))
-                    }
-
-                    is AppResult.Error -> {
-                        emit(result)
-                    }
-
-                    is AppResult.Loading -> {
-                        emit(result)
-                    }
+                val existing = accountDao.getAccountByEmail(email)
+                if (existing != null) {
+                    emit(AppResult.Error(Exception("Account already exists with this email")))
+                    return@flow
                 }
+
+                val id = UUID.randomUUID().toString()
+                val newAccount = AccountEntity(
+                    id = id,
+                    name = name,
+                    email = email,
+                    passwordHash = password,
+                    bio = "Offline account"
+                )
+
+                accountDao.insertAccount(newAccount)
+
+                // Save session in DataStore
+                val token = "offline_token_$id"
+                preferencesRepository.saveUserId(id)
+                preferencesRepository.saveAuthToken(token)
+
+                emit(AppResult.Success(AuthToken(token = token, user = User(id = id, name = name, email = email))))
             }.flowOn(ioDispatcher)
 
         override fun logout(): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-
-                val result = apiService.logout()
-
-                when (result) {
-                    is AppResult.Success -> {
-                        // Clear session from DataStore
-                        preferencesRepository.clearSession()
-                        emit(AppResult.Success(Unit))
-                    }
-
-                    is AppResult.Error -> {
-                        // Even if API fails, clear local session
-                        preferencesRepository.clearSession()
-                        emit(AppResult.Success(Unit))
-                    }
-
-                    is AppResult.Loading -> {
-                        emit(result)
-                    }
-                }
+                preferencesRepository.clearSession()
+                emit(AppResult.Success(Unit))
             }.flowOn(ioDispatcher)
 
         override fun getCurrentUser(): Flow<AppResult<User>> =
             flow {
                 emit(AppResult.Loading)
-
-                val result = apiService.getCurrentUser()
-
-                when (result) {
-                    is AppResult.Success -> {
-                        val user = result.data.user.toDomain()
-                        emit(AppResult.Success(user))
+                val prefs = preferencesRepository.userPreferences.first()
+                val userId = prefs.userId
+                if (userId != null) {
+                    val account = accountDao.getAccountById(userId)
+                    if (account != null) {
+                        emit(AppResult.Success(User(id = account.id, name = account.name, email = account.email)))
+                    } else {
+                        emit(AppResult.Error(Exception("Account not found")))
                     }
-
-                    is AppResult.Error -> {
-                        emit(result)
-                    }
-
-                    is AppResult.Loading -> {
-                        emit(result)
-                    }
+                } else {
+                    emit(AppResult.Error(Exception("Not authenticated")))
                 }
             }.flowOn(ioDispatcher)
 
         override fun isAuthenticated(): Flow<Boolean> =
             preferencesRepository
                 .userPreferences
-                .map { it.authToken?.isNotBlank() ?: false }
+                .map { !it.authToken.isNullOrBlank() }
                 .flowOn(ioDispatcher)
     }

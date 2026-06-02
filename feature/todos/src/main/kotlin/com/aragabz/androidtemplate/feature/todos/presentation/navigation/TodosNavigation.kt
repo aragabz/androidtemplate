@@ -14,7 +14,7 @@ import com.aragabz.androidtemplate.feature.todos.presentation.todos.TodosScreen
  */
 fun NavGraphBuilder.todosScreen(navController: NavController) {
     // Todos list screen (home)
-    composable<Route.Home> {
+    composable<Route.Todos> {
         TodosScreen(navController = navController)
     }
 
@@ -33,7 +33,7 @@ fun NavGraphBuilder.todosScreen(navController: NavController) {
  * Navigate to todos screen.
  */
 fun NavController.navigateToTodos() {
-    navigate(Route.Home) {
+    navigate(Route.Todos) {
         popUpTo(0) { inclusive = true }
     }
 }

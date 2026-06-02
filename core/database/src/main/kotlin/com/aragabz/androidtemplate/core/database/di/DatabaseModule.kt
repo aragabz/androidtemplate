@@ -3,6 +3,7 @@ package com.aragabz.androidtemplate.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.aragabz.androidtemplate.core.database.AppDatabase
+import com.aragabz.androidtemplate.core.database.dao.AccountDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,13 +27,11 @@ object DatabaseModule {
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME,
         )
-            .fallbackToDestructiveMigrationOnDowngrade()
+            .fallbackToDestructiveMigration()
             .build()
     }
 
-    // Add DAO providers here as you create them
-    // Example:
-    // @Provides
-    // @Singleton
-    // fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
+    @Provides
+    @Singleton
+    fun provideAccountDao(database: AppDatabase): AccountDao = database.accountDao()
 }

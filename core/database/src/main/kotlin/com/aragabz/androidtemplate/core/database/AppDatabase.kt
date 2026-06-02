@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.aragabz.androidtemplate.core.database.model.SampleEntity
+import com.aragabz.androidtemplate.core.database.model.AccountEntity
+import com.aragabz.androidtemplate.core.database.dao.AccountDao
 import com.aragabz.androidtemplate.core.database.util.Converters
 
 /**
@@ -13,14 +15,15 @@ import com.aragabz.androidtemplate.core.database.util.Converters
 @Database(
     entities = [
         SampleEntity::class,
+        AccountEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    // Add your DAO getters here
-    // Example: abstract fun userDao(): UserDao
+    
+    abstract fun accountDao(): AccountDao
 
     companion object {
         const val DATABASE_NAME = "androidtemplate_database"
