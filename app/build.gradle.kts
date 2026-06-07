@@ -40,8 +40,7 @@ dependencies {
     implementation(project(":core:navigation"))
 
     // Feature modules
-    implementation(project(":feature:auth"))
-    implementation(project(":feature:user"))
+    implementation(project(":feature:home"))
     implementation(project(":feature:todos"))
 
     // Material Icons

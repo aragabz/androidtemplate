@@ -35,7 +35,6 @@ include(":core:datastore")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:navigation")
-include(":feature:auth")
-include(":feature:user")
 include(":feature:todos")
+include(":feature:home")
 

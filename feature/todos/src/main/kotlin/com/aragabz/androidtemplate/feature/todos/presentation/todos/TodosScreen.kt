@@ -78,11 +78,6 @@ fun TodosScreen(
         topBar = {
             TopAppBar(
                 title = { Text("My Todos") },
-                actions = {
-                    IconButton(onClick = { navController.navigate(Route.Profile) }) {
-                        Icon(Icons.Default.Person, contentDescription = "Profile")
-                    }
-                },
             )
         },
         floatingActionButton = {

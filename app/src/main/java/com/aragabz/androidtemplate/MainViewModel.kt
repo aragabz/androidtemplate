@@ -1,7 +1,6 @@
 package com.aragabz.androidtemplate
 
 import androidx.lifecycle.ViewModel
-import com.aragabz.androidtemplate.feature.auth.domain.usecase.IsAuthenticatedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -11,6 +10,4 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel
     @Inject
-    constructor(
-        val isAuthenticatedUseCase: IsAuthenticatedUseCase,
-    ) : ViewModel()
+    constructor() : ViewModel()

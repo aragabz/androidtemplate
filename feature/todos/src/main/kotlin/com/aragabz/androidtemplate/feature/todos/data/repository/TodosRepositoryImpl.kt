@@ -33,7 +33,7 @@ class TodosRepositoryImpl
                 mutableListOf(
                     Todo(
                         id = "1",
-                        title = "Welcome to Vaulty!",
+                        title = "Welcome to Android Template!",
                         description = "This is your first todo item in this account.",
                         isCompleted = false,
                         createdAt = "2024-06-01T00:00:00Z",
