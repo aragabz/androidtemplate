@@ -23,32 +23,35 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val NETWORK_TIMEOUT = 30L
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-        isLenient = true
-    }
+    fun provideJson(): Json =
+        Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            isLenient = true
+        }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             // Add MockInterceptor FIRST (before logging)
             .addInterceptor(MockInterceptor())
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
-                    level = if (BuildConfig.DEBUG) {
-                        HttpLoggingInterceptor.Level.BODY
-                    } else {
-                        HttpLoggingInterceptor.Level.NONE
-                    }
-                }
+                    level =
+                        if (BuildConfig.DEBUG) {
+                            HttpLoggingInterceptor.Level.BODY
+                        } else {
+                            HttpLoggingInterceptor.Level.NONE
+                        }
+                },
             )
             // Uncomment and configure CertificatePinner for production
             // .certificatePinner(
@@ -64,7 +67,7 @@ object NetworkModule {
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()

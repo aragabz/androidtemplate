@@ -21,34 +21,35 @@ import androidx.compose.ui.unit.dp
 fun ErrorScreen(
     message: String,
     modifier: Modifier = Modifier,
-    onRetry: (() -> Unit)? = null
+    onRetry: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         if (onRetry != null) {
             Spacer(modifier = Modifier.height(24.dp))
             AppButton(
                 text = "Retry",
                 onClick = onRetry,
-                variant = AppButtonVariant.PRIMARY
+                variant = AppButtonVariant.PRIMARY,
             )
         }
     }

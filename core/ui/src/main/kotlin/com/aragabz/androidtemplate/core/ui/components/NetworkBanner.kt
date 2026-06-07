@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aragabz.androidtemplate.core.common.network.NetworkMonitor
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
@@ -31,14 +30,14 @@ import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 @Composable
 fun NetworkBanner(
     networkMonitor: NetworkMonitor,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isOnline by networkMonitor.isOnline.collectAsStateWithLifecycle(initialValue = true)
-    
+
     AnimatedVisibility(
         visible = !isOnline,
         enter = expandVertically(),
-        exit = shrinkVertically()
+        exit = shrinkVertically(),
     ) {
         OfflineBanner(modifier = modifier)
     }
@@ -48,31 +47,30 @@ fun NetworkBanner(
  * Static offline banner for preview/manual control.
  */
 @Composable
-fun OfflineBanner(
-    modifier: Modifier = Modifier
-) {
+fun OfflineBanner(modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
-    
+
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color(0xFFFFA726)) // Amber
-            .padding(spacing.small),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Color(0xFFFFA726)) // Amber
+                .padding(spacing.small),
+        contentAlignment = Alignment.Center,
     ) {
         androidx.compose.foundation.layout.Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(spacing.small)
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(spacing.small),
         ) {
             Icon(
                 imageVector = Icons.Default.CloudOff,
                 contentDescription = "Offline",
-                tint = Color.White
+                tint = Color.White,
             )
             Text(
                 text = "You're offline",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
+                color = Color.White,
             )
         }
     }

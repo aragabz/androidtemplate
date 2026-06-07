@@ -23,18 +23,18 @@ fun AppNavigationHost(
     startDestination: Route = Route.Home,
     modifier: Modifier = Modifier,
     homeScreen: @Composable (NavHostController) -> Unit,
-    detailsScreen: @Composable (String, NavHostController) -> Unit
+    detailsScreen: @Composable (String, NavHostController) -> Unit,
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
     ) {
         // Home screen
         composable<Route.Home> {
             homeScreen(navController)
         }
-        
+
         // Details screen with type-safe arguments
         composable<Route.Details> { backStackEntry ->
             val details = backStackEntry.toRoute<Route.Details>()

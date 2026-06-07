@@ -106,9 +106,10 @@ fun TodoDetailsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             when {
                 uiState.isLoading -> {
@@ -170,9 +171,10 @@ private fun TodoDetailsContent(
     val spacing = LocalSpacing.current
 
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(spacing.medium),
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(spacing.medium),
     ) {
         // Completion status card
         Card(
@@ -180,9 +182,10 @@ private fun TodoDetailsContent(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(spacing.medium),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(spacing.medium),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Checkbox(
@@ -217,12 +220,16 @@ private fun TodoDetailsContent(
         Text(
             text = todo.title,
             style = MaterialTheme.typography.headlineMedium,
-            textDecoration = if (todo.isCompleted) {
-                TextDecoration.LineThrough
-            } else null,
+            textDecoration =
+                if (todo.isCompleted) {
+                    TextDecoration.LineThrough
+                } else {
+                    null
+                },
         )
 
-        if (!todo.description.isNullOrBlank()) {
+        val description = todo.description
+        if (!description.isNullOrBlank()) {
             Spacer(modifier = Modifier.height(spacing.large))
             Text(
                 text = "Description",
@@ -231,7 +238,7 @@ private fun TodoDetailsContent(
             )
             Spacer(modifier = Modifier.height(spacing.extraSmall))
             Text(
-                text = todo.description,
+                text = description,
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
@@ -241,14 +248,16 @@ private fun TodoDetailsContent(
         // Metadata
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(spacing.medium),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(spacing.medium),
                 verticalArrangement = Arrangement.spacedBy(spacing.small),
             ) {
                 MetadataRow(

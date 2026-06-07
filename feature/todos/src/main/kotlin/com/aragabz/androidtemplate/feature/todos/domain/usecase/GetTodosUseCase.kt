@@ -1,6 +1,12 @@
 package com.aragabz.androidtemplate.feature.todos.domain.usecase
 
+import com.aragabz.androidtemplate.core.common.di.IoDispatcher
+import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.domain.usecase.NoParamFlowUseCase
+import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
 import com.aragabz.androidtemplate.feature.todos.domain.repository.TodosRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -10,6 +16,7 @@ class GetTodosUseCase
     @Inject
     constructor(
         private val repository: TodosRepository,
-    ) {
-        operator fun invoke() = repository.getTodos()
+        @IoDispatcher dispatcher: CoroutineDispatcher,
+    ) : NoParamFlowUseCase<AppResult<List<Todo>>>(dispatcher) {
+        override fun execute(): Flow<AppResult<List<Todo>>> = repository.getTodos()
     }

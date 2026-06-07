@@ -28,7 +28,7 @@ import com.aragabz.androidtemplate.core.navigation.Route
 @Composable
 fun SplashScreen(
     navController: NavController,
-    viewModel: SplashViewModel = hiltViewModel()
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     val scale = remember { Animatable(0.5f) }
@@ -36,9 +36,10 @@ fun SplashScreen(
     LaunchedEffect(key1 = true) {
         scale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(
-                durationMillis = 1000
-            )
+            animationSpec =
+                tween(
+                    durationMillis = 1000,
+                ),
         )
     }
 
@@ -54,24 +55,26 @@ fun SplashScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.surfaceVariant
-                    )
-                )
-            ),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors =
+                            listOf(
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.surfaceVariant,
+                            ),
+                    ),
+                ),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "Android Template",
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.scale(scale.value)
+            modifier = Modifier.scale(scale.value),
         )
     }
 }

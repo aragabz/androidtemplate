@@ -27,7 +27,8 @@ import com.aragabz.androidtemplate.feature.todos.presentation.todos.TodosScreen
  * Tab definitions for bottom navigation bar.
  */
 enum class MainTab {
-    Home, Todos
+    Home,
+    Todos,
 }
 
 /**
@@ -36,7 +37,7 @@ enum class MainTab {
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(MainTab.Home) }
 
@@ -50,10 +51,10 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = if (selectedTab == MainTab.Home) Icons.Filled.Home else Icons.Outlined.Home,
-                            contentDescription = "Home"
+                            contentDescription = "Home",
                         )
                     },
-                    label = { Text("Home") }
+                    label = { Text("Home") },
                 )
                 NavigationBarItem(
                     selected = selectedTab == MainTab.Todos,
@@ -61,18 +62,19 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = if (selectedTab == MainTab.Todos) Icons.Filled.List else Icons.Outlined.List,
-                            contentDescription = "Todos"
+                            contentDescription = "Todos",
                         )
                     },
-                    label = { Text("Todos") }
+                    label = { Text("Todos") },
                 )
             }
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             when (selectedTab) {
                 MainTab.Home -> HomeScreen(navController)

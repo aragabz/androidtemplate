@@ -3,7 +3,6 @@ package com.aragabz.androidtemplate
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.home.presentation.navigation.homeGraph
 import com.aragabz.androidtemplate.feature.todos.presentation.navigation.todosScreen

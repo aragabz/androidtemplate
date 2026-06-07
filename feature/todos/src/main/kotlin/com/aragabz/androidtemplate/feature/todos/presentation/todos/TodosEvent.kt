@@ -5,7 +5,10 @@ package com.aragabz.androidtemplate.feature.todos.presentation.todos
  */
 sealed interface TodosEvent {
     data object OnRefresh : TodosEvent
+
     data class OnToggleTodo(val id: String) : TodosEvent
+
     data class OnDeleteTodo(val id: String) : TodosEvent
+
     data object OnDismissError : TodosEvent
 }

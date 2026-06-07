@@ -36,31 +36,35 @@ fun HomeScreen(navController: NavHostController) {
     val spacing = LocalSpacing.current
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(spacing.medium),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.colorScheme.surface
-                        )
+            modifier =
+                Modifier
+                    .size(100.dp)
+                    .background(
+                        brush =
+                            Brush.radialGradient(
+                                colors =
+                                    listOf(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        MaterialTheme.colorScheme.surface,
+                                    ),
+                            ),
+                        shape = RoundedCornerShape(50.dp),
                     ),
-                    shape = RoundedCornerShape(50.dp)
-                ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.Shield,
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
         }
 
@@ -80,36 +84,40 @@ fun HomeScreen(navController: NavHostController) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = spacing.medium)
+            modifier = Modifier.padding(horizontal = spacing.medium),
         )
 
         Spacer(modifier = Modifier.height(spacing.extraLarge))
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing.medium),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            ),
-            shape = RoundedCornerShape(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = spacing.medium),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                ),
+            shape = RoundedCornerShape(16.dp),
         ) {
             Column(
                 modifier = Modifier.padding(spacing.medium),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Welcome!",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(spacing.extraSmall))
                 Text(
-                    text = "Use the tabs below to manage your local todos, view or switch accounts, and configure settings.",
+                    text =
+                        "Use the tabs below to manage your local todos, " +
+                            "view or switch accounts, and configure settings.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }

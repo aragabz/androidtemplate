@@ -15,6 +15,7 @@ plugins {
 // Apply ktlint to all subprojects
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
     
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         version.set("1.0.1")
@@ -28,10 +29,17 @@ subprojects {
             exclude("**/build/**")
         }
     }
+
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+        buildUponDefaultConfig = true
+        allRules = false
+        autoCorrect = false
+    }
 }
 
-// Apply detekt to root project only - it will check all modules
-apply(plugin = "io.gitlab.arturbosch.detekt")
+// Remove root detekt apply if it's there or just leave it
+// apply(plugin = "io.gitlab.arturbosch.detekt")
 
 tasks.register("detektAll") {
     description = "Run detekt on all modules"

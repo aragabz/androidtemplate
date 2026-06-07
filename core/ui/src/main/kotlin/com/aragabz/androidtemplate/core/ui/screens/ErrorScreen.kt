@@ -31,47 +31,48 @@ import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 fun ErrorScreen(
     message: String,
     modifier: Modifier = Modifier,
-    onRetry: (() -> Unit)? = null
+    onRetry: (() -> Unit)? = null,
 ) {
     val spacing = LocalSpacing.current
-    
+
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(spacing.large),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(64.dp),
         )
-        
+
         Spacer(modifier = Modifier.height(spacing.medium))
-        
+
         Text(
             text = "Something went wrong",
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        
+
         Spacer(modifier = Modifier.height(spacing.small))
-        
+
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        
+
         if (onRetry != null) {
             Spacer(modifier = Modifier.height(spacing.large))
             AppButton(
                 text = "Try Again",
                 onClick = onRetry,
-                variant = AppButtonVariant.PRIMARY
+                variant = AppButtonVariant.PRIMARY,
             )
         }
     }
@@ -83,7 +84,7 @@ private fun ErrorScreenPreview() {
     AppTheme {
         ErrorScreen(
             message = "Unable to load data. Please check your connection and try again.",
-            onRetry = { }
+            onRetry = { },
         )
     }
 }

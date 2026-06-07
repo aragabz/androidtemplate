@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.home.presentation.main.MainScreen
 import com.aragabz.androidtemplate.feature.home.presentation.splash.SplashScreen
+
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     composable<Route.Splash> {
         SplashScreen(navController = navController)

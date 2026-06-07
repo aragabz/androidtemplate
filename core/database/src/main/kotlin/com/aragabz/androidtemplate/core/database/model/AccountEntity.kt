@@ -14,5 +14,5 @@ data class AccountEntity(
     val email: String,
     val passwordHash: String,
     val avatarUrl: String? = null,
-    val bio: String? = null
+    val bio: String? = null,
 )

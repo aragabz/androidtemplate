@@ -1,6 +1,11 @@
 package com.aragabz.androidtemplate.feature.todos.domain.usecase
 
+import com.aragabz.androidtemplate.core.common.di.IoDispatcher
+import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.domain.usecase.FlowUseCase
 import com.aragabz.androidtemplate.feature.todos.domain.repository.TodosRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -10,6 +15,7 @@ class DeleteTodoUseCase
     @Inject
     constructor(
         private val repository: TodosRepository,
-    ) {
-        operator fun invoke(id: String) = repository.deleteTodo(id)
+        @IoDispatcher dispatcher: CoroutineDispatcher,
+    ) : FlowUseCase<String, AppResult<Unit>>(dispatcher) {
+        override fun execute(parameters: String): Flow<AppResult<Unit>> = repository.deleteTodo(parameters)
     }

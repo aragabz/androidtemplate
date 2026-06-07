@@ -20,7 +20,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 enum class AppButtonVariant {
-    PRIMARY, SECONDARY, GHOST, DESTRUCTIVE
+    PRIMARY,
+    SECONDARY,
+    GHOST,
+    DESTRUCTIVE,
 }
 
 @Composable
@@ -31,47 +34,52 @@ fun AppButton(
     variant: AppButtonVariant = AppButtonVariant.PRIMARY,
     isLoading: Boolean = false,
     enabled: Boolean = true,
-    leadingIcon: ImageVector? = null
+    leadingIcon: ImageVector? = null,
 ) {
     val contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
-    
+
     when (variant) {
-        AppButtonVariant.PRIMARY -> Button(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled && !isLoading,
-            contentPadding = contentPadding
-        ) {
-            ButtonContent(text, isLoading, leadingIcon)
-        }
-        AppButtonVariant.SECONDARY -> OutlinedButton(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled && !isLoading,
-            contentPadding = contentPadding
-        ) {
-            ButtonContent(text, isLoading, leadingIcon)
-        }
-        AppButtonVariant.GHOST -> TextButton(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled && !isLoading,
-            contentPadding = contentPadding
-        ) {
-            ButtonContent(text, isLoading, leadingIcon)
-        }
-        AppButtonVariant.DESTRUCTIVE -> Button(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled && !isLoading,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError
-            ),
-            contentPadding = contentPadding
-        ) {
-            ButtonContent(text, isLoading, leadingIcon)
-        }
+        AppButtonVariant.PRIMARY ->
+            Button(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled && !isLoading,
+                contentPadding = contentPadding,
+            ) {
+                ButtonContent(text, isLoading, leadingIcon)
+            }
+        AppButtonVariant.SECONDARY ->
+            OutlinedButton(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled && !isLoading,
+                contentPadding = contentPadding,
+            ) {
+                ButtonContent(text, isLoading, leadingIcon)
+            }
+        AppButtonVariant.GHOST ->
+            TextButton(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled && !isLoading,
+                contentPadding = contentPadding,
+            ) {
+                ButtonContent(text, isLoading, leadingIcon)
+            }
+        AppButtonVariant.DESTRUCTIVE ->
+            Button(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled && !isLoading,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                    ),
+                contentPadding = contentPadding,
+            ) {
+                ButtonContent(text, isLoading, leadingIcon)
+            }
     }
 }
 
@@ -79,29 +87,29 @@ fun AppButton(
 private fun ButtonContent(
     text: String,
     isLoading: Boolean,
-    leadingIcon: ImageVector?
+    leadingIcon: ImageVector?,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(16.dp),
                 strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.width(8.dp))
         } else if (leadingIcon != null) {
             Icon(
                 imageVector = leadingIcon,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
         )
     }
 }

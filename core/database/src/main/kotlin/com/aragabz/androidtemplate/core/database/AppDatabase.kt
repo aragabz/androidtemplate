@@ -3,9 +3,9 @@ package com.aragabz.androidtemplate.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.aragabz.androidtemplate.core.database.model.SampleEntity
-import com.aragabz.androidtemplate.core.database.model.AccountEntity
 import com.aragabz.androidtemplate.core.database.dao.AccountDao
+import com.aragabz.androidtemplate.core.database.model.AccountEntity
+import com.aragabz.androidtemplate.core.database.model.SampleEntity
 import com.aragabz.androidtemplate.core.database.util.Converters
 
 /**
@@ -22,7 +22,6 @@ import com.aragabz.androidtemplate.core.database.util.Converters
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    
     abstract fun accountDao(): AccountDao
 
     companion object {

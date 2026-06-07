@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
  * Each route represents a destination in the app.
  */
 sealed interface Route {
-    
     /**
      * Splash screen route - entry point
      */
@@ -37,14 +36,14 @@ sealed interface Route {
      */
     @Serializable
     data object Settings : Route
-    
+
     /**
      * Details screen route with item ID
      * @param id The ID of the item to display
      */
     @Serializable
     data class Details(val id: String) : Route
-    
+
     /**
      * Add todo screen route - create new todo
      */
@@ -58,4 +57,3 @@ sealed interface Route {
     @Serializable
     data class TodoDetails(val id: String) : Route
 }
-

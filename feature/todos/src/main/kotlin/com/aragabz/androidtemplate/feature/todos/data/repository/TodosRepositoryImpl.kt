@@ -19,9 +19,8 @@ import javax.inject.Singleton
 class TodosRepositoryImpl
     @Inject
     constructor(
-        private val preferencesRepository: UserPreferencesRepository
+        private val preferencesRepository: UserPreferencesRepository,
     ) : TodosRepository {
-        
         private val todosMap = mutableMapOf<String, MutableList<Todo>>()
 
         private suspend fun getActiveUserId(): String {
@@ -44,7 +43,7 @@ class TodosRepositoryImpl
                         description = "Go to settings and create a new account to test switching.",
                         isCompleted = false,
                         createdAt = "2024-06-01T00:00:00Z",
-                    )
+                    ),
                 )
             }
         }
@@ -52,7 +51,7 @@ class TodosRepositoryImpl
         override fun getTodos(): Flow<AppResult<List<Todo>>> =
             flow {
                 emit(AppResult.Loading)
-                delay(150) // Simulate network/db delay
+                delay(DELAY_LONG) // Simulate network/db delay
                 val userId = getActiveUserId()
                 val list = getOrCreateUserTodos(userId)
                 emit(AppResult.Success(list.toList()))
@@ -61,7 +60,7 @@ class TodosRepositoryImpl
         override fun getTodoById(id: String): Flow<AppResult<Todo>> =
             flow {
                 emit(AppResult.Loading)
-                delay(100)
+                delay(DELAY_SHORT)
                 val userId = getActiveUserId()
                 val list = getOrCreateUserTodos(userId)
                 val todo = list.firstOrNull { it.id == id }
@@ -78,7 +77,7 @@ class TodosRepositoryImpl
         ): Flow<AppResult<Todo>> =
             flow {
                 emit(AppResult.Loading)
-                delay(100)
+                delay(DELAY_SHORT)
                 val userId = getActiveUserId()
                 val list = getOrCreateUserTodos(userId)
                 val newTodo =
@@ -96,7 +95,7 @@ class TodosRepositoryImpl
         override fun toggleTodo(id: String): Flow<AppResult<Todo>> =
             flow {
                 emit(AppResult.Loading)
-                delay(100)
+                delay(DELAY_SHORT)
                 val userId = getActiveUserId()
                 val list = getOrCreateUserTodos(userId)
                 val index = list.indexOfFirst { it.id == id }
@@ -116,7 +115,7 @@ class TodosRepositoryImpl
         override fun deleteTodo(id: String): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-                delay(100)
+                delay(DELAY_SHORT)
                 val userId = getActiveUserId()
                 val list = getOrCreateUserTodos(userId)
                 val removed = list.removeIf { it.id == id }
@@ -126,4 +125,9 @@ class TodosRepositoryImpl
                     emit(AppResult.Error(Exception("Todo not found")))
                 }
             }
+
+        companion object {
+            private const val DELAY_LONG = 150L
+            private const val DELAY_SHORT = 100L
+        }
     }

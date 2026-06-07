@@ -3,7 +3,6 @@ package com.aragabz.androidtemplate.feature.todos.presentation.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.todos.presentation.addtodo.AddTodoScreen
 import com.aragabz.androidtemplate.feature.todos.presentation.details.TodoDetailsScreen

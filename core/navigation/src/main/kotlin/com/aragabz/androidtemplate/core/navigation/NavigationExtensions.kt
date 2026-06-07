@@ -6,9 +6,7 @@ import androidx.navigation.NavOptionsBuilder
 /**
  * Navigate to Home screen
  */
-fun NavController.navigateToHome(
-    builder: NavOptionsBuilder.() -> Unit = {}
-) {
+fun NavController.navigateToHome(builder: NavOptionsBuilder.() -> Unit = {}) {
     navigate(Route.Home, builder)
 }
 
@@ -17,7 +15,7 @@ fun NavController.navigateToHome(
  */
 fun NavController.navigateToDetails(
     id: String,
-    builder: NavOptionsBuilder.() -> Unit = {}
+    builder: NavOptionsBuilder.() -> Unit = {},
 ) {
     navigate(Route.Details(id), builder)
 }
@@ -27,7 +25,7 @@ fun NavController.navigateToDetails(
  */
 fun NavController.popBackStackSafely(
     route: Any? = null,
-    inclusive: Boolean = false
+    inclusive: Boolean = false,
 ): Boolean {
     return if (route != null) {
         popBackStack(route, inclusive)

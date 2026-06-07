@@ -15,25 +15,27 @@ import kotlin.time.Duration.Companion.milliseconds
  * ViewModel for managing the splash screen logic and determining the initial navigation target.
  */
 @HiltViewModel
-class SplashViewModel @Inject constructor() : ViewModel() {
-    
-    sealed interface SplashState {
-        object Loading : SplashState
-        object NavigateToMain : SplashState
-    }
+class SplashViewModel
+    @Inject
+    constructor() : ViewModel() {
+        sealed interface SplashState {
+            object Loading : SplashState
 
-    private val _state = MutableStateFlow<SplashState>(SplashState.Loading)
-    val state: StateFlow<SplashState> = _state.asStateFlow()
+            object NavigateToMain : SplashState
+        }
 
-    init {
-        checkNavigationTarget()
-    }
+        private val _state = MutableStateFlow<SplashState>(SplashState.Loading)
+        val state: StateFlow<SplashState> = _state.asStateFlow()
 
-    private fun checkNavigationTarget() {
-        viewModelScope.launch {
-            // Keep the splash screen visible for at least 1.5 seconds for branding (Vaulty)
-            delay(1500.milliseconds)
-            _state.value = SplashState.NavigateToMain
+        init {
+            checkNavigationTarget()
+        }
+
+        private fun checkNavigationTarget() {
+            viewModelScope.launch {
+                // Keep the splash screen visible for at least 1.5 seconds for branding (Vaulty)
+                delay(1500.milliseconds)
+                _state.value = SplashState.NavigateToMain
+            }
         }
     }
-}

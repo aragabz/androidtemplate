@@ -14,12 +14,10 @@ import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
  * Use when loading initial data or the entire screen content.
  */
 @Composable
-fun LoadingScreen(
-    modifier: Modifier = Modifier
-) {
+fun LoadingScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }
