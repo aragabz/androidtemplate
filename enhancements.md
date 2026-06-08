@@ -43,13 +43,13 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Adaptive UI
 
-* [ ] Add Window Size Classes support
-* [ ] Create `rememberWindowSizeClass()` helper
-* [ ] Support:
+* [x] Add Window Size Classes support
+* [x] Create `rememberWindowSizeClass()` helper
+* [x] Support:
 
-    * [ ] Phone layouts
-    * [ ] Tablet layouts
-    * [ ] Foldable layouts
+    * [x] Phone layouts
+    * [x] Tablet layouts
+    * [x] Foldable layouts
 
 ## Theming
 

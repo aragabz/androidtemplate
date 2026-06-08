@@ -9,6 +9,8 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.coil)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
