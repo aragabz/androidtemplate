@@ -53,13 +53,13 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Theming
 
-* [ ] Add Android 12+ Dynamic Color support
-* [ ] Add fallback custom brand theme
+* [x] Add Android 12+ Dynamic Color support
+* [x] Add fallback custom brand theme
 
 ## Navigation & Animations
 
-* [ ] Add Compose Shared Element Transitions
-* [ ] Create reusable shared transition helpers
+* [x] Add Compose Shared Element Transitions
+* [x] Create reusable shared transition helpers
 
 ## UI Testing
 
