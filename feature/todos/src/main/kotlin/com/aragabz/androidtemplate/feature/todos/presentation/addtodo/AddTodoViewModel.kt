@@ -78,7 +78,7 @@ class AddTodoViewModel
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    error = result.message ?: "Failed to add todo",
+                                    error = result.errorUiText,
                                 )
                             }
                         }

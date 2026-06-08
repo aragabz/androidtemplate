@@ -10,7 +10,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("androidtemplate.android.library")
                 apply("androidtemplate.android.library.compose")
             }
 
@@ -22,11 +21,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
             dependencies {
                 add("implementation", project(":core:ui"))
-                // Removed project(":core:designsystem") as it might not exist or be renamed
-                // add("implementation", project(":core:designsystem"))
-
-                add("testImplementation", project(":core:testing"))
-                add("androidTestImplementation", project(":core:testing"))
             }
         }
     }

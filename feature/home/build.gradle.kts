@@ -1,6 +1,5 @@
 plugins {
-    id("androidtemplate.android.library")
-    id("androidtemplate.android.library.compose")
+    id("androidtemplate.android.feature")
     id("androidtemplate.android.hilt")
     alias(libs.plugins.kotlin.serialization)
 }
@@ -16,7 +15,6 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
-    implementation(project(":core:ui"))
     implementation(project(":core:navigation"))
 
     // Feature modules

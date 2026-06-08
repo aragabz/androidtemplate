@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_network">No internet connection. Please check your network settings.</string>
+    <string name="error_http_unauthorized">Unauthorized access. Please login again.</string>
+    <string name="error_http_not_found">Resource not found.</string>
+    <string name="error_http_server">Server error occurred. Please try again later.</string>
+    <string name="error_http_unknown">An unexpected error occurred (Code: %1$d).</string>
+    <string name="error_unknown">An unknown error occurred. Please try again.</string>
+</resources>

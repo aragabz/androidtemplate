@@ -58,9 +58,10 @@ fun TodosScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Show error snackbar
+    val context = androidx.compose.ui.platform.LocalContext.current
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
-            snackbarHostState.showSnackbar(error)
+            snackbarHostState.showSnackbar(error.asString(context))
             viewModel.onEvent(TodosEvent.OnDismissError)
         }
     }

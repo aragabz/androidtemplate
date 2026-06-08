@@ -61,7 +61,7 @@ class TodosViewModel
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    error = result.message ?: "Failed to load todos",
+                                    error = result.errorUiText,
                                 )
                             }
                         }
@@ -76,7 +76,7 @@ class TodosViewModel
                     when (result) {
                         is AppResult.Success -> loadTodos()
                         is AppResult.Error -> {
-                            _uiState.update { it.copy(error = "Failed to update todo") }
+                            _uiState.update { it.copy(error = result.errorUiText) }
                         }
                         is AppResult.Loading -> { /* No UI change during toggle */ }
                     }
@@ -90,7 +90,7 @@ class TodosViewModel
                     when (result) {
                         is AppResult.Success -> loadTodos()
                         is AppResult.Error -> {
-                            _uiState.update { it.copy(error = "Failed to delete todo") }
+                            _uiState.update { it.copy(error = result.errorUiText) }
                         }
                         is AppResult.Loading -> { /* No UI change during delete */ }
                     }

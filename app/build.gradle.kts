@@ -1,5 +1,4 @@
 plugins {
-    id("androidtemplate.android.application")
     id("androidtemplate.android.application.compose")
     id("androidtemplate.android.hilt")
     alias(libs.plugins.kotlin.serialization)
@@ -36,6 +35,9 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
+    implementation(project(":core:sync"))
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
     implementation(project(":core:ui")) // Exposes designsystem transitively
     implementation(project(":core:navigation"))
 

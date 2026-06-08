@@ -72,7 +72,7 @@ class TodoDetailsViewModel
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    error = result.message ?: "Failed to load todo",
+                                    error = result.errorUiText,
                                 )
                             }
                         }
@@ -87,7 +87,7 @@ class TodoDetailsViewModel
                     when (result) {
                         is AppResult.Success -> loadTodo()
                         is AppResult.Error -> {
-                            _uiState.update { it.copy(error = "Failed to update todo") }
+                            _uiState.update { it.copy(error = result.errorUiText) }
                         }
                         is AppResult.Loading -> { /* No UI change */ }
                     }
@@ -103,7 +103,7 @@ class TodoDetailsViewModel
                             _navigationEvents.send(TodoDetailsNavigationEvent.NavigateBack)
                         }
                         is AppResult.Error -> {
-                            _uiState.update { it.copy(error = "Failed to delete todo") }
+                            _uiState.update { it.copy(error = result.errorUiText) }
                         }
                         is AppResult.Loading -> { /* No UI change */ }
                     }
