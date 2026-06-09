@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aragabz.androidtemplate.core.common.network.NetworkMonitor
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.core.designsystem.theme.Warning
 
 /**
  * Banner that appears at the top when device is offline.
@@ -54,7 +55,7 @@ fun OfflineBanner(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(Color(0xFFFFA726)) // Amber
+                .background(Warning)
                 .padding(spacing.small),
         contentAlignment = Alignment.Center,
     ) {

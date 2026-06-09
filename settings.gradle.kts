@@ -31,6 +31,8 @@ include(":core:datastore")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:navigation")
+include(":core:lint")
 include(":feature:todos")
 include(":feature:home")
+include(":baselineprofile")
 

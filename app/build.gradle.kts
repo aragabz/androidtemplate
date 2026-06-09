@@ -2,6 +2,7 @@ plugins {
     id("androidtemplate.android.application.compose")
     id("androidtemplate.android.hilt")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
@@ -17,11 +18,17 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+        }
+        create("benchmark") {
+            initWith(getByName("release"))
+            matchingFallbacks += listOf("release")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     lint {
@@ -30,6 +37,8 @@ android {
 }
 
 dependencies {
+    baselineProfile(project(":baselineprofile"))
+
     // Core modules
     implementation(project(":core:common"))
     implementation(project(":core:network"))

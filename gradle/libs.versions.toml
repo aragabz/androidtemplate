@@ -32,6 +32,13 @@ ktlint = "14.2.0"
 detekt = "1.23.8"
 roborazzi = "1.63.0"
 robolectric = "4.14.1"
+androidxBaselineProfile = "1.5.0-alpha06"
+androidxMacroBenchmark = "1.5.0-alpha06"
+uiAutomator = "2.3.0"
+androidLint = "32.2.1"
+dependency-analysis = "3.14.1"
+module-graph = "0.13.0"
+module-graph-assertion = "2.9.1"
 
 [libraries]
 # AndroidX Core
@@ -113,6 +120,12 @@ roborazzi-gradlePlugin = { group = "io.github.takahirom.roborazzi", name = "robo
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 roborazzi-junit_rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiAutomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
+androidx-baselineprofile-gradlePlugin = { group = "androidx.baselineprofile", name = "baselineprofile-gradle-plugin", version.ref = "androidxBaselineProfile" }
+android-lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidLint" }
+android-lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidLint" }
+android-lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidLint" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -134,4 +147,7 @@ room = { id = "androidx.room", version.ref = "room" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBaselineProfile" }
+dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
+module-graph = { id = "dev.iurysouza.modulegraph", version.ref = "module-graph" }
+module-graph-assertion = { id = "com.jraska.module.graph.assertion", version.ref = "module-graph-assertion" }

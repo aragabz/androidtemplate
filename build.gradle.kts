@@ -10,11 +10,31 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.dependency.analysis)
+    alias(libs.plugins.module.graph)
+    alias(libs.plugins.module.graph.assertion)
 }
 
-// Apply ktlint and detekt to all subprojects
+moduleGraphConfig {
+    readmePath.set("./README.md")
+    heading.set("## Module Graph")
+}
+
+moduleGraphAssert {
+    // Basic architecture rules: features should not depend on other features
+    // and should only depend on core modules.
+    allowed = arrayOf(
+        ":feature:.* -> :core:.*",
+        ":app -> :feature:.*",
+        ":app -> :core:.*",
+        ":core:.* -> :core:.*"
+    )
+    maxHeight = 4
+}
+
+// Apply dependency-analysis to all subprojects
 subprojects {
-    // Intentionally empty to troubleshoot sync issues
+    apply(plugin = "com.autonomousapps.dependency-analysis")
 }
 
 tasks.register("detektAll") {

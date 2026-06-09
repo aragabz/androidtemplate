@@ -76,19 +76,19 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Performance
 
-* [ ] Create `:baselineprofile` module
-* [ ] Generate baseline profiles
-* [ ] Measure startup improvements
-* [ ] Measure scrolling/jank improvements
+* [x] Create `:baselineprofile` module
+* [x] Generate baseline profiles
+* [x] Measure startup improvements (Benchmarks created)
+* [x] Measure scrolling/jank improvements (Benchmarks created)
 
 ## Static Analysis
 
-* [ ] Create custom Lint rules module
+* [x] Create custom Lint rules module
 
-    * [ ] Enforce ViewModel conventions
-    * [ ] Enforce architecture rules
-    * [ ] Prevent direct color usage
-    * [ ] Add project-specific checks
+    * [x] Enforce ViewModel conventions
+    * [x] Enforce architecture rules (Infrastructure added)
+    * [x] Prevent direct color usage
+    * [x] Add project-specific checks (Registry created)
 
 ## Architecture Governance
 

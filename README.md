@@ -1,3 +1,92 @@
+## Module Graph
+
+```mermaid
+%%{
+  init: {
+    'theme': 'neutral'
+  }
+}%%
+
+graph LR
+  subgraph :core
+    :core:navigation["navigation"]
+    :core:lint["lint"]
+    :core:common["common"]
+    :core:database["database"]
+    :core:datastore["datastore"]
+    :core:designsystem["designsystem"]
+    :core:domain["domain"]
+    :core:network["network"]
+    :core:sync["sync"]
+    :core:ui["ui"]
+  end
+  subgraph :feature
+    :feature:home["home"]
+    :feature:todos["todos"]
+  end
+  :core:navigation --> :core:lint
+  : --> :app
+  : --> :baselineprofile
+  : --> :core
+  : --> :feature
+  : --> :core:common
+  : --> :core:database
+  : --> :core:datastore
+  : --> :core:designsystem
+  : --> :core:domain
+  : --> :core:lint
+  : --> :core:navigation
+  : --> :core:network
+  : --> :core:sync
+  : --> :core:ui
+  : --> :feature:home
+  : --> :feature:todos
+  :core:database --> :core:common
+  :core:database --> :core:lint
+  :core:sync --> :core:common
+  :core:sync --> :core:domain
+  :core:sync --> :core:lint
+  :core:common --> :core:lint
+  :app --> :baselineprofile
+  :app --> :core:common
+  :app --> :core:network
+  :app --> :core:database
+  :app --> :core:datastore
+  :app --> :core:sync
+  :app --> :core:ui
+  :app --> :core:navigation
+  :app --> :feature:home
+  :app --> :feature:todos
+  :app --> :core:lint
+  :baselineprofile --> :app
+  :core:designsystem --> :core:lint
+  :core:network --> :core:common
+  :core:network --> :core:lint
+  :feature:home --> :core:common
+  :feature:home --> :core:ui
+  :feature:home --> :core:domain
+  :feature:home --> :core:network
+  :feature:home --> :core:database
+  :feature:home --> :core:datastore
+  :feature:home --> :core:navigation
+  :feature:home --> :feature:todos
+  :feature:home --> :core:lint
+  :core:ui --> :core:designsystem
+  :core:ui --> :core:common
+  :core:ui --> :core:lint
+  :core:domain --> :core:common
+  :core:domain --> :core:lint
+  :feature:todos --> :core:common
+  :feature:todos --> :core:ui
+  :feature:todos --> :core:domain
+  :feature:todos --> :core:network
+  :feature:todos --> :core:database
+  :feature:todos --> :core:datastore
+  :feature:todos --> :core:navigation
+  :feature:todos --> :core:lint
+  :core:datastore --> :core:common
+  :core:datastore --> :core:lint
+```
 # Android Template Project
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-blue.svg)](https://kotlinlang.org)
@@ -118,6 +207,11 @@ app → core:ui → core:designsystem
 ./gradlew ktlintCheck                # Check code style
 ./gradlew ktlintFormat               # Auto-format code
 ./gradlew detektAll                  # Static analysis
+
+# Architecture
+./gradlew createModuleGraph          # Update module graph in README
+./gradlew assertModuleGraph          # Verify dependency rules
+./gradlew buildHealth                # Analyze dependency health
 
 # Module-specific
 ./gradlew :app:test
@@ -311,6 +405,9 @@ class MyViewModelTest {
 
 # 3. Run tests
 ./gradlew test
+
+# 4. run lint
+./gradlew lint
 
 # Or use one command:
 bundle exec fastlane quality

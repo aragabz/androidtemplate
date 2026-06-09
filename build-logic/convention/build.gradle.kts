@@ -60,5 +60,9 @@ gradlePlugin {
             id = "androidtemplate.android.screenshot.test"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidScreenshotTestConventionPlugin"
         }
+        register("androidLint") {
+            id = "androidtemplate.android.lint"
+            implementationClass = "com.aragabz.androidtemplate.convention.AndroidLintConventionPlugin"
+        }
     }
 }
