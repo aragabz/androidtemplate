@@ -63,12 +63,12 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## UI Testing
 
-* [ ] Integrate screenshot testing
+* [x] Integrate screenshot testing
 
-    * [ ] Evaluate Paparazzi
-    * [ ] Evaluate Roborazzi
-* [ ] Add multi-locale snapshot tests
-* [ ] Add screen-size snapshot tests
+    * [x] Evaluate Paparazzi (Selected Roborazzi for better Robolectric integration)
+    * [x] Evaluate Roborazzi (Integrated)
+* [x] Add multi-locale snapshot tests
+* [x] Add screen-size snapshot tests
 
 ---
 

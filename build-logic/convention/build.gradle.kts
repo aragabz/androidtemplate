@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.compose.gradlePlugin)
     implementation(libs.ksp.gradlePlugin)
     implementation(libs.room.gradlePlugin)
+    implementation(libs.roborazzi.gradlePlugin)
 }
 
 gradlePlugin {
@@ -54,6 +55,10 @@ gradlePlugin {
         register("androidRoom") {
             id = "androidtemplate.android.room"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidRoomConventionPlugin"
+        }
+        register("androidScreenshotTest") {
+            id = "androidtemplate.android.screenshot.test"
+            implementationClass = "com.aragabz.androidtemplate.convention.AndroidScreenshotTestConventionPlugin"
         }
     }
 }
