@@ -4,12 +4,12 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Architecture
 
-* [ ] Create standalone `:core:domain` module
+* [x] Create standalone `:core:domain` module
 
-    * [ ] Move shared business logic into `:core:domain`
-    * [ ] Move common interfaces/repositories contracts
-    * [ ] Move base use cases
-    * [ ] Remove cross-feature dependencies and prevent circular references
+    * [x] Move shared business logic into `:core:domain`
+    * [x] Move common interfaces/repositories contracts
+    * [x] Move base use cases
+    * [x] Remove cross-feature dependencies and prevent circular references
 
 * [ ] Implement centralized error handling
 
@@ -92,18 +92,18 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Architecture Governance
 
-* [ ] Add Dependency Analysis Plugin
-* [ ] Generate module dependency graph
-* [ ] Detect unused dependencies
-* [ ] Detect dependency violations
+* [x] Add Dependency Analysis Plugin
+* [x] Generate module dependency graph
+* [x] Detect unused dependencies
+* [x] Detect dependency violations
 
 ## CI/CD Enhancements
 
-* [ ] Enable Dependabot or Renovate
-* [ ] Add Gradle build caching
-* [ ] Publish Detekt reports to Pull Requests
-* [ ] Publish Android Lint reports to Pull Requests
-* [ ] Add architecture validation checks to CI
+* [x] Enable Dependabot or Renovate (Enabled Dependabot)
+* [x] Add Gradle build caching (Added to CI workflow)
+* [x] Publish Detekt reports to Pull Requests (Via SARIF upload)
+* [x] Publish Android Lint reports to Pull Requests (Via SARIF upload)
+* [x] Add architecture validation checks to CI (Added ./gradlew assertModuleGraph)
 
 ---
 
@@ -127,23 +127,23 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Productivity
 
-* [ ] Create Android Studio Live Templates
+* [x] Create Android Studio Live Templates
 
-    * [ ] Hilt ViewModel template
-    * [ ] Compose Screen template
-    * [ ] AppResult Flow template
-    * [ ] Repository template
+    * [x] Hilt ViewModel template
+    * [x] Compose Screen template
+    * [x] AppResult Flow template
+    * [x] Repository template
 
 ## Automation
 
-* [ ] Create `create_feature.sh`
+* [x] Create `create_feature.sh`
 
-    * [ ] Generate feature module
-    * [ ] Generate package structure
-    * [ ] Generate `build.gradle.kts`
-    * [ ] Generate navigation setup
-    * [ ] Generate ViewModel
-    * [ ] Generate UI screen boilerplate
+    * [x] Generate feature module
+    * [x] Generate package structure
+    * [x] Generate `build.gradle.kts`
+    * [x] Generate navigation setup
+    * [x] Generate ViewModel
+    * [x] Generate UI screen boilerplate
 
 ---
 
@@ -151,19 +151,19 @@ Here's the list organized into actionable TODOs with priorities:
 
 ## Localization
 
-* [ ] Implement RTL support guidelines
-* [ ] Support runtime language switching
-* [ ] Add ContextWrapper localization solution
-* [ ] Create localization documentation
+* [x] Implement RTL support guidelines (Created `docs/localization.md` and `Modifier.mirrorRtl()`)
+* [x] Support runtime language switching (Integrated with `UserPreferencesRepository`)
+* [x] Add ContextWrapper localization solution (Added `LocalizationContextWrapper`)
+* [x] Create localization documentation (Created `docs/localization.md`)
 
 ## Image Loading
 
-* [ ] Create `AppImage` composable in `:core:designsystem`
-* [ ] Wrap Coil implementation
-* [ ] Add default cross-fade
-* [ ] Add default error placeholder
-* [ ] Add default loading placeholder
-* [ ] Enforce accessibility content descriptions
+* [x] Create `AppImage` composable in `:core:designsystem`
+* [x] Wrap Coil implementation
+* [x] Add default cross-fade
+* [x] Add default error placeholder
+* [x] Add default loading placeholder
+* [x] Enforce accessibility content descriptions
 
 ---
 

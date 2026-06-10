@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.ksp.gradlePlugin)
     implementation(libs.room.gradlePlugin)
     implementation(libs.roborazzi.gradlePlugin)
+    implementation(libs.detekt.gradlePlugin)
 }
 
 gradlePlugin {
@@ -63,6 +64,10 @@ gradlePlugin {
         register("androidLint") {
             id = "androidtemplate.android.lint"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidLintConventionPlugin"
+        }
+        register("detekt") {
+            id = "androidtemplate.detekt"
+            implementationClass = "com.aragabz.androidtemplate.convention.DetektConventionPlugin"
         }
     }
 }

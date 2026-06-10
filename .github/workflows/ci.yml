@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # for uploading sarif
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Architecture Validation
+        run: ./gradlew assertModuleGraph
+
+      - name: Lint
+        run: ./gradlew lintDebug
+
+      - name: Detekt
+        run: ./gradlew detektAll
+
+      - name: Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Collect SARIF reports
+        if: always()
+        run: |
+          mkdir -p build/sarif-reports
+          find . -type f -name "*.sarif" -exec cp {} build/sarif-reports/ \;
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: build/sarif-reports
+          category: static-analysis
+
+      - name: Upload Lint Reports (XML/HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: "**/build/reports/lint-results-*.xml"
+
+      - name: Upload Detekt Reports (XML/HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-reports
+          path: "**/build/reports/detekt/*.xml"

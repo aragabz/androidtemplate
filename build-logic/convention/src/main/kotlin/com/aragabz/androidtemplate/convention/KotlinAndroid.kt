@@ -29,6 +29,13 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
         buildFeatures.apply {
             buildConfig = true
         }
+
+        lint.apply {
+            abortOnError = false
+            xmlReport = true
+            sarifReport = true
+            checkDependencies = true
+        }
     }
 
     extensions.configure<KotlinAndroidProjectExtension> {
