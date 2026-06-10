@@ -56,4 +56,16 @@ sealed interface Route {
      */
     @Serializable
     data class TodoDetails(val id: String) : Route
+
+    /**
+     * Empty screen route
+     */
+    @Serializable
+    data object Empty : Route
+
+    /**
+     * Error screen route
+     */
+    @Serializable
+    data object Error : Route
 }

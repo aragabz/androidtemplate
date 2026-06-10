@@ -11,6 +11,7 @@ android {
 dependencies {
     // Core modules
     api(project(":core:common"))
+    implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
