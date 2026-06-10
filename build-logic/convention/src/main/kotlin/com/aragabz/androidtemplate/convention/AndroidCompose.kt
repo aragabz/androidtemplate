@@ -3,6 +3,8 @@ package com.aragabz.androidtemplate.convention
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
  * Configure Compose-specific options
@@ -12,6 +14,19 @@ internal fun Project.configureAndroidCompose(
 ) {
     commonExtension.apply {
         buildFeatures.compose = true
+    }
+
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                    project.layout.buildDirectory.dir("compose_compiler").get().asFile.absolutePath,
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                    project.layout.buildDirectory.dir("compose_compiler").get().asFile.absolutePath,
+            )
+        }
     }
 
     dependencies {

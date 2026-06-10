@@ -169,13 +169,13 @@ Here's the list organized into actionable TODOs with priorities:
 
 # 🌟 Nice-to-Have / World-Class Template Extras
 
-* [ ] Add Macrobenchmark module
-* [ ] Add Compose Metrics reporting
-* [ ] Add Crash Reporting abstraction
-* [ ] Add Feature Flags framework
+* [x] Add Macrobenchmark module (Integrated into `:baselineprofile`)
+* [x] Add Compose Metrics reporting (Added to `AndroidCompose.kt`)
+* [x] Add Crash Reporting abstraction (Created `:core:crash`)
+* [x] Add Feature Flags framework (Created `:core:flags`)
 * [ ] Add Offline-first architecture sample
 * [ ] Add Sample App showcasing all architecture patterns
-* [ ] Add Architecture Decision Records (ADR) documentation
+* [x] Add Architecture Decision Records (ADR) documentation (Created `docs/adr`)
 * [ ] Add automated dependency vulnerability scanning
 * [ ] Add performance monitoring abstraction
 * [ ] Add multi-module template documentation site
