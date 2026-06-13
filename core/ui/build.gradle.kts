@@ -13,15 +13,9 @@ dependencies {
     implementation(project(":core:common"))
 
     // Compose
-    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.animation)
-    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.coil)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
     testImplementation(libs.junit)
-    testImplementation(libs.androidx.compose.ui.test.junit4)
 }

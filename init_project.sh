@@ -38,12 +38,10 @@ echo "Copying template to target path..."
 mkdir -p "$TARGET_PATH"
 
 # Copy files excluding build artifacts and git
-# Using rsync if available for cleaner exclude, otherwise simple cp
 if command -v rsync >/dev/null 2>&1; then
     rsync -a --exclude={'.git','.gradle','.idea','build','.agent','*.sh'} "$TEMPLATE_DIR/" "$TARGET_PATH/"
 else
     cp -R "$TEMPLATE_DIR/." "$TARGET_PATH/"
-    # Manual cleanup if rsync wasn't used
     rm -rf "$TARGET_PATH/.git" "$TARGET_PATH/.gradle" "$TARGET_PATH/.idea" "$TARGET_PATH/build" "$TARGET_PATH/.agent"
     rm -f "$TARGET_PATH/init_project.sh"
 fi
@@ -80,27 +78,14 @@ find . -type d -path "*/$OLD_PKG_PATH" | while read -r dir; do
     mkdir -p "$NEW_DIR"
     cp -R "$dir/"* "$NEW_DIR/"
     rm -rf "$dir"
-
-    # Clean up empty parent directories
-    PARENT=$(dirname "$dir")
-    while [[ "$PARENT" == *"/com" || "$PARENT" == *"/com/aragabz" ]]; do
-        if [ -d "$PARENT" ] && [ -z "$(ls -A "$PARENT")" ]; then
-            rmdir "$PARENT"
-            PARENT=$(dirname "$PARENT")
-        else
-            break
-        fi
-    done
 done
 
-# 5. Specifically handle the renamed feature's internal package path
-NEW_FEATURE_PKG_PATH=$(echo "$NEW_PACKAGE.feature.$NEW_FEATURE" | tr '.' '/')
-OLD_FEATURE_PKG_PATH=$(echo "$NEW_PACKAGE.feature.$OLD_FEATURE" | tr '.' '/')
-
-find . -type d -path "*/$OLD_FEATURE_PKG_PATH" | while read -r dir; do
-    BASE_PATH=${dir%/$OLD_FEATURE_PKG_PATH}
-    TARGET_DIR="$BASE_PATH/$NEW_FEATURE_PKG_PATH"
-
+# 5. Specifically handle the renamed feature's internal package paths (domain, data, ui)
+echo "Handling feature sub-packages..."
+find . -type d -name "$OLD_FEATURE" | grep "feature/$NEW_FEATURE" | while read -r dir; do
+    PARENT=$(dirname "$dir")
+    TARGET_DIR="$PARENT/$NEW_FEATURE"
+    
     mkdir -p "$TARGET_DIR"
     cp -R "$dir/"* "$TARGET_DIR/"
     rm -rf "$dir"

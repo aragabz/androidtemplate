@@ -2,7 +2,6 @@ package com.aragabz.androidtemplate.core.database.dao
 
 import androidx.room.Delete
 import androidx.room.Upsert
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Base DAO interface providing common database operations.
@@ -28,9 +27,4 @@ interface BaseDao<T> {
      */
     @Delete
     suspend fun delete(entity: T)
-
-    /**
-     * Get all entities as a Flow for reactive updates.
-     */
-    fun getAll(): Flow<List<T>>
 }

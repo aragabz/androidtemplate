@@ -1,6 +1,7 @@
 plugins {
     id("androidtemplate.android.application.compose")
     id("androidtemplate.android.hilt")
+    id("androidtemplate.android.room")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.baselineprofile)
 }
@@ -52,10 +53,8 @@ dependencies {
 
     // Feature modules
     implementation(project(":feature:home"))
-    implementation(project(":feature:todos"))
-
-    // Material Icons
-    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(project(":feature:todos:ui"))
+    implementation(project(":feature:todos:data"))
 
     // Navigation
     implementation(libs.androidx.navigation3.runtime)
@@ -65,12 +64,11 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
     // Testing
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    debugImplementation(libs.androidx.compose.ui.tooling)
 }

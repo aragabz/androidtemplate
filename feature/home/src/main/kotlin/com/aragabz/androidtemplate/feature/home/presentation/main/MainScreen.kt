@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.aragabz.androidtemplate.feature.home.presentation.home.HomeScreen
-import com.aragabz.androidtemplate.feature.todos.presentation.todos.TodosScreen
+import com.aragabz.androidtemplate.feature.todos.ui.presentation.todos.TodosScreen
 
 /**
  * Tab definitions for bottom navigation bar.

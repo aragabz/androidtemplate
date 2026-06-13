@@ -11,7 +11,6 @@ android {
 dependencies {
     // Core modules
     api(project(":core:common"))
-    implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
@@ -19,7 +18,7 @@ dependencies {
     implementation(project(":core:navigation"))
 
     // Feature modules
-    implementation(project(":feature:todos"))
+    implementation(project(":feature:todos:ui"))
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -28,9 +27,6 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
-
-    // Material Icons
-    implementation(libs.androidx.compose.material.icons.extended)
 
     // Testing
     testImplementation(libs.junit)
