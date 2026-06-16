@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.1"
 kotlin = "2.3.0"
-kotlin-metadata = "2.3.0"
+kotlin-metadata = "2.4.0"
 ksp = "2.3.9"
 coreKtx = "1.19.0"
 composeBom = "2026.05.01"
