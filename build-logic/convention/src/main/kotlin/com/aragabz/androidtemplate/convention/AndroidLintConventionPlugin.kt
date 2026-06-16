@@ -10,7 +10,7 @@ class AndroidLintConventionPlugin : Plugin<Project> {
         with(target) {
             // Apply lint checks to all modules
             dependencies {
-                add("lintChecks", project(":core:lint"))
+                add("lintChecks", project(":lint"))
             }
         }
     }
