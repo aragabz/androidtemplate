@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
  */
 internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileSdk = 36
+        compileSdk = 37
 
         defaultConfig.apply {
             minSdk = 26
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
         compileOptions.apply {
@@ -27,6 +28,13 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
 
         buildFeatures.apply {
             buildConfig = true
+        }
+
+        lint.apply {
+            abortOnError = false
+            xmlReport = true
+            sarifReport = true
+            checkDependencies = true
         }
     }
 

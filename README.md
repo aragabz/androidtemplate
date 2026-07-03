@@ -1,3 +1,189 @@
+# Android Template Project
+
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
+[![Gradle](https://img.shields.io/badge/Gradle-9.5.1-green.svg)](https://gradle.org)
+[![AGP](https://img.shields.io/badge/AGP-9.2.1-blue.svg)](https://developer.android.com/studio/releases/gradle-plugin)
+[![Compose](https://img.shields.io/badge/Compose_BOM-2026.05.01-purple.svg)](https://developer.android.com/jetpack/compose)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+A **production-ready Android template** showcasing modern Android development with multi-module clean architecture, Jetpack Compose, and comprehensive tooling. Use it as a starting point for scalable, testable, and maintainable Android applications.
+
+---
+
+## ✨ Highlights
+
+| Category | Features |
+|----------|----------|
+| **Architecture** | Multi-module clean architecture · Convention plugins · Dependency graph enforcement |
+| **UI** | Jetpack Compose · Material 3 · Dynamic colors · Two-tier design system · Adaptive layouts |
+| **Navigation** | Type-safe routes via kotlinx.serialization · Nested navigation graphs |
+| **Networking** | Retrofit 3 · OkHttp 5 · Custom `AppResult` call adapter · 401 session management |
+| **Persistence** | Room (aggregator pattern) · DataStore preferences |
+| **DI** | Hilt across all layers · WorkManager integration |
+| **Background** | WorkManager-based sync abstraction · Periodic & one-time work |
+| **Quality** | Ktlint · Detekt · Custom Lint rules · Module graph assertion · Dependency analysis |
+| **Testing** | JUnit · Turbine · MockK · Roborazzi screenshot tests · Macrobenchmarks |
+| **CI/CD** | GitHub Actions · Fastlane · Dependabot · SARIF reports |
+| **Extras** | Crash reporter abstraction · Feature flags framework · Baseline profiles |
+
+---
+
+## 🏗️ Architecture
+
+```
+app/                           → Entry point, DI aggregation, Room database, NavHost
+├── core/
+│   ├── common/                → AppResult, NetworkMonitor, Dispatcher qualifiers
+│   ├── domain/                → Base use cases (UseCase, FlowUseCase)
+│   ├── network/               → Retrofit, OkHttp, ApiResultCallAdapter, SessionManager
+│   ├── database/              → BaseDao, Room contracts
+│   ├── datastore/             → DataStore UserPreferences
+│   ├── designsystem/          → Theme, Colors, Spacing, AppButton, AppImage
+│   ├── ui/                    → LoadingScreen, ErrorScreen, EmptyScreen, NetworkBanner
+│   ├── navigation/            → Type-safe Route definitions, NavHost
+│   ├── sync/                  → WorkManager abstraction (SyncManager, SyncWorker)
+│   ├── crash/                 → CrashReporter interface + Timber impl
+│   └── flags/                 → Feature flag framework
+├── feature/
+│   ├── home/                  → Splash, Main shell with bottom nav
+│   └── todos/                 → Full domain/data/ui reference implementation
+│       ├── domain/            → Models, repository interfaces, use cases
+│       ├── data/              → Room entities, DAOs, repository impl
+│       └── ui/                → Screens, ViewModels, navigation graph
+├── lint/                      → Custom lint rules (DirectColor, ViewModel naming)
+├── baselineprofile/           → Startup benchmarks & profile generation
+└── build-logic/               → Gradle convention plugins
+```
+
+> **Full architecture documentation:** [docs/architecture/overview.md](docs/architecture/overview.md)
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone
+git clone <your-repo-url> && cd androidtemplate
+
+# (Optional) Initialize as a new project with custom package name
+./init_project.sh
+
+# Build
+./gradlew assembleDebug
+
+# Run quality checks
+./gradlew ktlintFormat && ./gradlew ktlintCheck detektAll test lintDebug
+```
+
+> **Detailed setup guide:** [docs/guides/getting-started.md](docs/guides/getting-started.md)
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Libraries |
+|-------|-----------|
+| **Language** | Kotlin 2.3.0 · Coroutines 1.11.0 · kotlinx.serialization 1.11.0 |
+| **UI** | Jetpack Compose (BOM 2026.05.01) · Material 3 · Coil 2.7.0 |
+| **DI** | Hilt 2.59.2 · KSP 2.3.9 |
+| **Network** | Retrofit 3.0.0 · OkHttp 5.4.0 |
+| **Storage** | Room 2.8.4 · DataStore 1.2.1 |
+| **Navigation** | Navigation Compose 2.9.8 · Navigation 3 1.1.2 |
+| **Background** | WorkManager 2.11.2 |
+| **Testing** | JUnit 4.13.2 · Turbine 1.2.1 · MockK 1.14.11 · Roborazzi 1.64.0 · Macrobenchmark |
+| **Quality** | Ktlint 14.2.0 · Detekt 1.23.8 · Custom Lint rules |
+| **CI/CD** | GitHub Actions · Fastlane · Dependabot |
+
+---
+
+## 📐 Key Patterns
+
+### AppResult — Unified Error Handling
+```kotlin
+sealed interface AppResult<out T> {
+    data class Success<T>(val data: T) : AppResult<T>
+    data class Error(val exception: AppError) : AppResult<Nothing>
+    data object Loading : AppResult<Nothing>
+}
+```
+
+### Type-Safe Navigation
+```kotlin
+@Serializable sealed interface Route {
+    @Serializable data object Home : Route
+    @Serializable data class TodoDetails(val todoId: String) : Route
+}
+navController.navigate(Route.TodoDetails(todoId = "abc"))
+```
+
+### Convention Plugins
+```kotlin
+// One line replaces 30+ lines of build config
+plugins { id("androidtemplate.android.feature") }
+```
+
+> **All patterns explained:** [docs/architecture/patterns.md](docs/architecture/patterns.md)
+
+---
+
+## 🎯 Build Commands
+
+| Task | Command |
+|------|---------|
+| Debug APK | `./gradlew assembleDebug` |
+| Release AAB | `./gradlew bundleRelease` |
+| Unit tests | `./gradlew test` |
+| Format code | `./gradlew ktlintFormat` |
+| Static analysis | `./gradlew detektAll` |
+| Architecture check | `./gradlew assertModuleGraph` |
+| Dependency health | `./gradlew buildHealth` |
+| Full CI (Fastlane) | `bundle exec fastlane ci` |
+
+---
+
+## 🧰 Create a New Feature
+
+```bash
+./create_feature.sh my_feature
+```
+
+Scaffolds the full `domain/data/ui` module structure with boilerplate code, then register in `settings.gradle.kts`.
+
+> **Feature module guide:** [docs/modules/feature-modules.md](docs/modules/feature-modules.md)
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| **Architecture** | |
+| [Architecture Overview](docs/architecture/overview.md) | Layers, principles, and data flow |
+| [Module Graph](docs/architecture/module-graph.md) | Visual dependency graph and enforcement rules |
+| [Architecture Patterns](docs/architecture/patterns.md) | AppResult, UseCases, Repository, Aggregator patterns |
+| **Modules** | |
+| [Core Modules](docs/modules/core-modules.md) | All 11 core modules with APIs and dependencies |
+| [Feature Modules](docs/modules/feature-modules.md) | Feature structure and the Todos reference implementation |
+| [Build Logic](docs/modules/build-logic.md) | Convention plugins and how to extend them |
+| **Guides** | |
+| [Getting Started](docs/guides/getting-started.md) | Setup, prerequisites, and development workflow |
+| [Design System](docs/guides/design-system.md) | Theme, tokens, components, and adaptive layouts |
+| [Navigation](docs/guides/navigation.md) | Type-safe routing and nested navigation |
+| [Dependency Injection](docs/guides/dependency-injection.md) | Hilt setup across all layers |
+| [Networking](docs/guides/networking.md) | Retrofit, call adapter, session management |
+| [Data Persistence](docs/guides/data-persistence.md) | Room aggregator pattern and DataStore |
+| [Background Sync](docs/guides/background-sync.md) | WorkManager abstraction |
+| [Testing](docs/guides/testing.md) | Unit, screenshot, and performance testing |
+| [Localization & RTL](docs/localization.md) | Language switching and RTL support |
+| **Tooling** | |
+| [Code Quality](docs/tooling/code-quality.md) | Ktlint, Detekt, custom lint, dependency analysis |
+| [CI/CD & Automation](docs/tooling/ci-cd.md) | GitHub Actions, Fastlane, Dependabot, scripts |
+| **ADRs** | |
+| [ADR Template](docs/adr/template.md) | Template for new architecture decisions |
+| [ADR-0001](docs/adr/0001-record-architecture-decisions.md) | Record architecture decisions |
+
+---
+
 ## Module Graph
 
 ```mermaid
@@ -10,7 +196,6 @@
 graph LR
   subgraph :core
     :core:navigation["navigation"]
-    :core:lint["lint"]
     :core:common["common"]
     :core:database["database"]
     :core:datastore["datastore"]
@@ -19,35 +204,13 @@ graph LR
     :core:network["network"]
     :core:sync["sync"]
     :core:ui["ui"]
+    :core:crash["crash"]
+    :core:flags["flags"]
   end
   subgraph :feature
     :feature:home["home"]
     :feature:todos["todos"]
   end
-  :core:navigation --> :core:lint
-  : --> :app
-  : --> :baselineprofile
-  : --> :core
-  : --> :feature
-  : --> :core:common
-  : --> :core:database
-  : --> :core:datastore
-  : --> :core:designsystem
-  : --> :core:domain
-  : --> :core:lint
-  : --> :core:navigation
-  : --> :core:network
-  : --> :core:sync
-  : --> :core:ui
-  : --> :feature:home
-  : --> :feature:todos
-  :core:database --> :core:common
-  :core:database --> :core:lint
-  :core:sync --> :core:common
-  :core:sync --> :core:domain
-  :core:sync --> :core:lint
-  :core:common --> :core:lint
-  :app --> :baselineprofile
   :app --> :core:common
   :app --> :core:network
   :app --> :core:database
@@ -57,417 +220,39 @@ graph LR
   :app --> :core:navigation
   :app --> :feature:home
   :app --> :feature:todos
-  :app --> :core:lint
-  :baselineprofile --> :app
-  :core:designsystem --> :core:lint
+  :core:database --> :core:common
   :core:network --> :core:common
-  :core:network --> :core:lint
-  :feature:home --> :core:common
-  :feature:home --> :core:ui
-  :feature:home --> :core:domain
-  :feature:home --> :core:network
-  :feature:home --> :core:database
-  :feature:home --> :core:datastore
-  :feature:home --> :core:navigation
-  :feature:home --> :feature:todos
-  :feature:home --> :core:lint
+  :core:datastore --> :core:common
+  :core:sync --> :core:common
+  :core:sync --> :core:domain
   :core:ui --> :core:designsystem
   :core:ui --> :core:common
-  :core:ui --> :core:lint
   :core:domain --> :core:common
-  :core:domain --> :core:lint
+  :feature:home --> :core:common
+  :feature:home --> :core:ui
+  :feature:home --> :core:navigation
+  :feature:home --> :feature:todos
   :feature:todos --> :core:common
   :feature:todos --> :core:ui
   :feature:todos --> :core:domain
-  :feature:todos --> :core:network
   :feature:todos --> :core:database
   :feature:todos --> :core:datastore
   :feature:todos --> :core:navigation
-  :feature:todos --> :core:lint
-  :core:datastore --> :core:common
-  :core:datastore --> :core:lint
-```
-# Android Template Project
-
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-blue.svg)](https://kotlinlang.org)
-[![Gradle](https://img.shields.io/badge/Gradle-9.5.1-green.svg)](https://gradle.org)
-[![AGP](https://img.shields.io/badge/AGP-9.2.1-blue.svg)](https://developer.android.com/studio/releases/gradle-plugin)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-A production-ready Android template showcasing modern Android development with multi-module architecture, clean architecture principles, Jetpack Compose, and comprehensive tooling.
-
-## 📱 Features
-
-- 🏗️ **Multi-Module Architecture** - 8 modules following clean architecture
-- 🎨 **Two-Tier Design System** - Separates design tokens from UI components
-- 🧭 **Type-Safe Navigation** - Navigation 3 with kotlinx.serialization
-- 🌐 **Offline-First Ready** - NetworkMonitor and AppResult patterns
-- 💉 **Hilt Dependency Injection** - Throughout all layers
-- 🔄 **Reactive Patterns** - Kotlin Flow and StateFlow
-- 🎭 **Material Design 3** - Modern UI with Light/Dark themes
-- 🛠️ **Code Quality Tools** - Ktlint, Detekt, and Fastlane
-- 🧪 **Testing Ready** - Unit testing structure with Turbine
-- 🚀 **CI/CD Ready** - Fastlane lanes for automation
-
-## 🏗️ Architecture
-
-### Module Structure
-
-```
-androidtemplate/
-├── app/                        # Main application module
-│
-├── core/
-│   ├── common/                # Utilities, AppResult, NetworkMonitor
-│   ├── network/               # Retrofit, OkHttp, API adapter
-│   ├── database/              # Room database, BaseDao
-│   ├── datastore/             # DataStore preferences
-│   ├── designsystem/          # Design tokens (Theme, Colors, Spacing)
-│   ├── ui/                    # Shared screens (Loading, Error, Empty)
-│   └── navigation/            # Type-safe navigation routes
-│
-└── feature/                    # Feature modules (coming soon)
-    └── [feature-name]/
-        ├── data/              # Repositories, API, local storage
-        ├── domain/            # Use cases, models
-        └── presentation/      # ViewModels, Composables
 ```
 
-### Dependency Graph
+---
 
-```
-app → core:ui → core:designsystem
-   → core:navigation
-   → core:network → core:common
-   → core:database → core:common
-   → core:datastore → core:common
-```
-
-### Layer Responsibilities
-
-- **core:designsystem** - Pure design tokens, basic components (Button, TextField)
-- **core:ui** - Shared screens, complex patterns (LoadingScreen, NetworkBanner)
-- **core:common** - Foundation utilities (AppResult, NetworkMonitor, Dispatchers)
-- **core:network** - API layer (Retrofit, ApiResultCallAdapter, SessionManager)
-- **core:database** - Persistence (Room, BaseDao, TypeConverters)
-- **core:datastore** - User preferences (DataStore)
-- **core:navigation** - Type-safe routing (Navigation 3)
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Android Studio** Ladybug | 2024.2.1 or later
-- **JDK** 21
-- **Gradle** 9.5.1+ (included via wrapper)
-- **Ruby** 3.0+ (for Fastlane, optional)
-
-### Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd androidtemplate
-   ```
-
-2. **Install dependencies** (optional, for Fastlane)
-   ```bash
-   gem install bundler
-   bundle install
-   ```
-
-3. **Sync the project**
-   ```bash
-   ./gradlew tasks
-   ```
-   Or in Android Studio: **File → Sync Project with Gradle Files**
-
-4. **Build the project**
-   ```bash
-   ./gradlew assembleDebug
-   # or
-   bundle exec fastlane build_debug
-   ```
-
-## 🎯 Build Commands
-
-### Gradle Tasks
-
-```bash
-# Build
-./gradlew assembleDebug              # Build debug APK
-./gradlew assembleRelease            # Build release APK
-./gradlew bundleRelease              # Build release AAB
-
-# Testing
-./gradlew test                       # Unit tests
-./gradlew connectedAndroidTest       # Instrumented tests
-
-# Code Quality
-./gradlew ktlintCheck                # Check code style
-./gradlew ktlintFormat               # Auto-format code
-./gradlew detektAll                  # Static analysis
-
-# Architecture
-./gradlew createModuleGraph          # Update module graph in README
-./gradlew assertModuleGraph          # Verify dependency rules
-./gradlew buildHealth                # Analyze dependency health
-
-# Module-specific
-./gradlew :app:test
-./gradlew :core:common:ktlintCheck
-```
-
-### Fastlane Lanes
-
-```bash
-# Build
-bundle exec fastlane build_debug     # Build debug APK
-bundle exec fastlane build_release   # Build release APK
-bundle exec fastlane build_bundle    # Build AAB
-
-# Testing
-bundle exec fastlane test            # Run unit tests
-
-# Code Quality
-bundle exec fastlane lint_kotlin     # Run ktlint
-bundle exec fastlane format_kotlin   # Auto-format
-bundle exec fastlane analyze         # Run detekt
-bundle exec fastlane quality         # All quality checks
-
-# CI/CD
-bundle exec fastlane ci              # Full CI pipeline
-```
-
-## 🛠️ Tech Stack
-
-### Core
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Kotlin | 2.3.21 | Programming language |
-| Android Gradle Plugin | 9.2.1 | Build system |
-| Jetpack Compose | 2026.05.01 | UI framework |
-| Material3 | Latest | Design system |
-| Hilt | 2.59.2 | Dependency injection |
-| Coroutines | 1.11.0 | Async programming |
-
-### Networking
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Retrofit | 3.0.0 | REST API client |
-| OkHttp | 5.3.2 | HTTP client |
-| Kotlinx Serialization | 1.11.0 | JSON serialization |
-
-### Storage
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Room | 2.8.4 | Local database |
-| DataStore | 1.2.1 | Key-value storage |
-
-### Navigation
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Navigation Compose | 2.8.5 | Type-safe navigation |
-| Kotlinx Serialization | 1.11.0 | Route serialization |
-
-### Code Quality
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Ktlint | 12.1.2 | Code formatting |
-| Detekt | 1.23.7 | Static analysis |
-| Fastlane | ~2.220 | Build automation |
-
-### Testing
-
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| JUnit | 4.13.2 | Unit testing |
-| Turbine | 1.2.1 | Flow testing |
-| Mockk | 1.14.11 | Mocking |
-
-## 📐 Architecture Patterns
-
-### AppResult Pattern
-```kotlin
-sealed interface AppResult<out T> {
-    data class Success<T>(val data: T) : AppResult<T>
-    data class Error(val exception: Throwable) : AppResult<Nothing>
-    data object Loading : AppResult<Nothing>
-}
-```
-Used throughout the app for consistent error handling.
-
-### NetworkMonitor
-```kotlin
-interface NetworkMonitor {
-    val isOnline: Flow<Boolean>
-}
-```
-Reactive connectivity checking for offline-first features.
-
-### BaseDao
-```kotlin
-interface BaseDao<T> {
-    @Upsert suspend fun upsert(entity: T)
-    @Upsert suspend fun upsertAll(entities: List<T>)
-    fun getAll(): Flow<List<T>>
-}
-```
-Consistent CRUD operations across all DAOs.
-
-### Type-Safe Navigation
-```kotlin
-@Serializable
-sealed interface Route {
-    @Serializable data object Home : Route
-    @Serializable data class Details(val id: String) : Route
-}
-
-// Usage
-navController.navigate(Route.Details(id = "123"))
-```
-
-## 🎨 Design System
-
-### Theme Usage
-```kotlin
-AppTheme {
-    val spacing = LocalSpacing.current
-    
-    Column(modifier = Modifier.padding(spacing.medium)) {
-        AppButton(
-            text = "Click Me",
-            onClick = { },
-            variant = AppButtonVariant.PRIMARY
-        )
-    }
-}
-```
-
-### Available Components
-- **AppButton** - 4 variants (Primary, Secondary, Ghost, Destructive)
-- **LoadingScreen** - Full-screen loading state
-- **ErrorScreen** - Error state with retry
-- **EmptyScreen** - Empty state with action
-- **NetworkBanner** - Offline indicator
-
-### Design Tokens
-- **Colors** - Light/Dark schemes + semantic colors
-- **Typography** - Material3 type scale
-- **Spacing** - 4dp to 48dp scale via `LocalSpacing`
-- **Shapes** - Corner radius definitions
-
-## 🧪 Testing
-
-### Unit Tests
-```bash
-# Run all tests
-./gradlew test
-
-# Run specific module tests
-./gradlew :core:common:test
-```
-
-### Test Structure
-```kotlin
-class MyViewModelTest {
-    @Test
-    fun `when data loads successfully, state is updated`() = runTest {
-        // Arrange
-        val viewModel = MyViewModel(fakeRepository)
-        
-        // Act
-        viewModel.loadData()
-        
-        // Assert
-        viewModel.uiState.test {
-            assertEquals(Loading, awaitItem())
-            assertEquals(Success(data), awaitItem())
-        }
-    }
-}
-```
-
-## 🚦 Code Quality
-
-### Before Every Commit
-```bash
-# 1. Auto-format your code
-./gradlew ktlintFormat
-
-# 2. Check for issues
-./gradlew ktlintCheck detektAll
-
-# 3. Run tests
-./gradlew test
-
-# 4. run lint
-./gradlew lint
-
-# Or use one command:
-bundle exec fastlane quality
-```
-
-### CI/CD Integration
-
-#### GitHub Actions
-```yaml
-name: CI
-
-on: [push, pull_request]
-
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-      - run: bundle exec fastlane ci
-```
-
-## 📝 Code Style
-
-This project follows:
-- **Kotlin Coding Conventions**
-- **Material Design Guidelines**
-- **Clean Architecture Principles**
-
-### Rules
-- Max line length: 120 characters
-- Indent: 4 spaces
-- No wildcard imports
-- KDoc for all public APIs
-- No `TODO`, `FIXME`, or `STOPSHIP` comments
-
-## �� Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Run quality checks (`bundle exec fastlane quality`)
-4. Commit your changes (`git commit -m 'Add amazing feature'`)
-5. Push to the branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
+4. Commit your changes
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Android team for Jetpack Compose
-- Square for Retrofit and OkHttp
-- JetBrains for Kotlin and Coroutines
-- Community for amazing libraries
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
