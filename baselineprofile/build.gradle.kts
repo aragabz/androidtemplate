@@ -27,6 +27,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+    buildToolsVersion = "37.0.0"
+    ndkVersion = "30.0.14904198 rc1"
 }
 
 dependencies {
