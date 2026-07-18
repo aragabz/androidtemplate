@@ -10,6 +10,10 @@ val releaseStoreFilePath = providers.gradleProperty("RELEASE_STORE_FILE").orNull
 val releaseStorePassword = providers.gradleProperty("RELEASE_STORE_PASSWORD").orNull
 val releaseKeyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS").orNull
 val releaseKeyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD").orNull
+val hasReleaseSigningConfig = !releaseStoreFilePath.isNullOrBlank() &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
 
 android {
     namespace = "com.aragabz.androidtemplate"
@@ -34,10 +38,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            // CI and local builds without release secrets can still validate packaging.
+            signingConfig = if (hasReleaseSigningConfig) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

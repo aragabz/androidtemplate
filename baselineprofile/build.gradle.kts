@@ -36,3 +36,9 @@ dependencies {
     implementation(libs.androidx.benchmark.macro.junit4)
     implementation(libs.androidx.junit)
 }
+
+tasks.register("verifyBaselineProfileSetup") {
+    group = "verification"
+    description = "Ensures the benchmark build variant is configured and buildable."
+    dependsOn("assembleBenchmarkRelease")
+}

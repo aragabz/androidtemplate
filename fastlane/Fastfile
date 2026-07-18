@@ -47,6 +47,17 @@ platform :android do
     gradle(task: "lintDebug")
   end
 
+  desc "Generate debug unit test coverage reports"
+  lane :coverage do
+    gradle(task: ":app:testDebugUnitTest :app:createDebugUnitTestCoverageReport")
+  end
+
+  desc "Validate release packaging and baseline profile setup"
+  lane :release_readiness do
+    gradle(task: ":app:assembleRelease :app:bundleRelease")
+    gradle(task: ":baselineprofile:verifyBaselineProfileSetup")
+  end
+
   # CI/CD lane
   desc "Run CI checks"
   lane :ci do
@@ -55,6 +66,8 @@ platform :android do
     gradle(task: "detekt")
     gradle(task: "test")
     gradle(task: "lintDebug")
+    gradle(task: ":app:createDebugUnitTestCoverageReport")
+    gradle(task: ":app:assembleRelease")
   end
 
 end
