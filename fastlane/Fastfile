@@ -58,6 +58,20 @@ platform :android do
     gradle(task: ":baselineprofile:verifyBaselineProfileSetup")
   end
 
+  desc "Build a release candidate with quality and readiness checks"
+  lane :release_candidate do
+    gradle(task: "clean")
+    gradle(task: "ktlintCheck detektAll testDebugUnitTest")
+    gradle(task: ":app:verifyDebugCoverage")
+    release_readiness
+  end
+
+  desc "Release packaging automation entry point"
+  lane :release_automation do
+    release_candidate
+    gradle(task: ":app:assembleProdRelease :app:bundleProdRelease")
+  end
+
   # CI/CD lane
   desc "Run CI checks"
   lane :ci do

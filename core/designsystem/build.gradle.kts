@@ -1,5 +1,6 @@
 plugins {
     id("androidtemplate.android.library.compose")
+    id("androidtemplate.android.screenshot.test")
 }
 
 android {

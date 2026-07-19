@@ -1,6 +1,7 @@
 plugins {
     id("androidtemplate.android.feature")
     id("androidtemplate.android.hilt")
+    id("androidtemplate.android.screenshot.test")
 }
 
 android {
@@ -19,4 +20,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.junit)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

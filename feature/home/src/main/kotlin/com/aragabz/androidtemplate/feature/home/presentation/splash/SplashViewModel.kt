@@ -33,8 +33,8 @@ class SplashViewModel
 
         private fun checkNavigationTarget() {
             viewModelScope.launch {
-                // Keep the splash screen visible for at least 1.5 seconds for branding (Vaulty)
-                delay(1500.milliseconds)
+                // System splash covers initial startup; keep composable splash brief for handoff polish.
+                delay(500.milliseconds)
                 _state.value = SplashState.NavigateToMain
             }
         }

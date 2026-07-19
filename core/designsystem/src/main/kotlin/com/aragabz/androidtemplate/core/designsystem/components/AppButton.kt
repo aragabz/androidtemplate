@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 
 enum class AppButtonVariant {
@@ -37,12 +39,18 @@ fun AppButton(
     leadingIcon: ImageVector? = null,
 ) {
     val contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+    val accessibilityModifier =
+        modifier.semantics {
+            if (isLoading) {
+                stateDescription = "Loading"
+            }
+        }
 
     when (variant) {
         AppButtonVariant.PRIMARY ->
             Button(
                 onClick = onClick,
-                modifier = modifier,
+                modifier = accessibilityModifier,
                 enabled = enabled && !isLoading,
                 contentPadding = contentPadding,
             ) {
@@ -51,7 +59,7 @@ fun AppButton(
         AppButtonVariant.SECONDARY ->
             OutlinedButton(
                 onClick = onClick,
-                modifier = modifier,
+                modifier = accessibilityModifier,
                 enabled = enabled && !isLoading,
                 contentPadding = contentPadding,
             ) {
@@ -60,7 +68,7 @@ fun AppButton(
         AppButtonVariant.GHOST ->
             TextButton(
                 onClick = onClick,
-                modifier = modifier,
+                modifier = accessibilityModifier,
                 enabled = enabled && !isLoading,
                 contentPadding = contentPadding,
             ) {
@@ -69,7 +77,7 @@ fun AppButton(
         AppButtonVariant.DESTRUCTIVE ->
             Button(
                 onClick = onClick,
-                modifier = modifier,
+                modifier = accessibilityModifier,
                 enabled = enabled && !isLoading,
                 colors =
                     ButtonDefaults.buttonColors(

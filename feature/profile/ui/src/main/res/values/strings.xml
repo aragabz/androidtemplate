@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_loading">Loading profile</string>
+    <string name="profile_empty_message">No active profile</string>
+    <string name="profile_empty_subtitle">Sign in from the Authentication tab to view profile details.</string>
+    <string name="profile_title">Profile</string>
+    <string name="profile_user_id">User ID: %1$s</string>
+    <string name="profile_name">Name: %1$s</string>
+    <string name="profile_email">Email: %1$s</string>
+    <string name="profile_refresh">Refresh</string>
+    <string name="profile_sign_out">Sign Out</string>
+</resources>

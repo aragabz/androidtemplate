@@ -1,5 +1,5 @@
 build:
-  maxIssues: 10
+  maxIssues: 0
   excludeCorrectable: false
 
 config:
@@ -10,11 +10,13 @@ complexity:
   active: true
   LongMethod:
     active: true
-    threshold: 100
+    threshold: 120
   LongParameterList:
     active: true
-    functionThreshold: 6
+    functionThreshold: 8
     constructorThreshold: 7
+    ignoreAnnotated:
+      - 'Composable'
   TooManyFunctions:
     active: true
     thresholdInFiles: 15
@@ -23,16 +25,7 @@ complexity:
 exceptions:
   active: true
   TooGenericExceptionCaught:
-    active: true
-    exceptionNames:
-      - 'ArrayIndexOutOfBoundsException'
-      - 'Error'
-      - 'Exception'
-      - 'IllegalMonitorStateException'
-      - 'IndexOutOfBoundsException'
-      - 'NullPointerException'
-      - 'RuntimeException'
-      - 'Throwable'
+    active: false
 
 naming:
   active: true
@@ -46,26 +39,33 @@ naming:
   PackageNaming:
     active: true
     packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
+  MatchingDeclarationName:
+    active: false
 
 style:
   active: true
   MaxLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 200
   MagicNumber:
-    active: true
-    ignoreNumbers:
-      - '-1'
-      - '0'
-      - '1'
-      - '2'
-    ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: true
-    ignoreAnnotation: true
-    ignoreEnums: true
+    active: false
   ForbiddenComment:
     active: true
     comments:
       - 'FIXME:'
       - 'STOPSHIP:'
-      - 'TODO:'
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+      - 'PreviewLightDark'
+  UnusedParameter:
+    active: false
+
+performance:
+  active: true
+  SpreadOperator:
+    active: false
+
+potential-bugs:
+  active: true

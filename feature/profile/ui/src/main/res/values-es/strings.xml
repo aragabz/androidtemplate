@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_loading">Cargando perfil</string>
+    <string name="profile_empty_message">No hay perfil activo</string>
+    <string name="profile_empty_subtitle">Inicia sesion desde la pestana de autenticacion para ver los detalles del perfil.</string>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_user_id">ID de usuario: %1$s</string>
+    <string name="profile_name">Nombre: %1$s</string>
+    <string name="profile_email">Correo: %1$s</string>
+    <string name="profile_refresh">Actualizar</string>
+    <string name="profile_sign_out">Cerrar sesion</string>
+</resources>

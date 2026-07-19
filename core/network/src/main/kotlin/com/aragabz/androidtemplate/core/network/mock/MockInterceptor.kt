@@ -1,22 +1,21 @@
 package com.aragabz.androidtemplate.core.network.mock
 
+import com.aragabz.androidtemplate.core.network.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import javax.inject.Inject
 
 /**
  * Mock interceptor for development and testing.
- * Intercepts API calls and returns mock responses.
- *
- * Set ENABLE_MOCK = true to use mock data instead of real API.
+ * Intercepts API calls and returns mock responses when enabled in BuildConfig.
  */
-class MockInterceptor : Interceptor {
+class MockInterceptor
+    @Inject
+    constructor() : Interceptor {
     companion object {
-        // Toggle this to enable/disable mocking
-        const val ENABLE_MOCK = true
-
         private const val HTTP_OK = 200
         private const val DELAY_LOGIN = 500L
         private const val DELAY_REGISTER = 800L
@@ -25,7 +24,7 @@ class MockInterceptor : Interceptor {
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (!ENABLE_MOCK) {
+        if (!BuildConfig.DEBUG || !BuildConfig.ENABLE_MOCK_INTERCEPTOR) {
             return chain.proceed(chain.request())
         }
 

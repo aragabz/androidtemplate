@@ -9,6 +9,13 @@ android {
 
     defaultConfig {
         buildConfigField("String", "BASE_URL", "\"https://jsonplaceholder.typicode.com/\"")
+        buildConfigField("boolean", "ENABLE_MOCK_INTERCEPTOR", "false")
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("boolean", "ENABLE_MOCK_INTERCEPTOR", "true")
+        }
     }
 }
 

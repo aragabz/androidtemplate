@@ -2,7 +2,12 @@ package com.aragabz.androidtemplate.core.network.di
 
 import com.aragabz.androidtemplate.core.network.BuildConfig
 import com.aragabz.androidtemplate.core.network.adapter.ApiResultCallAdapterFactory
+import com.aragabz.androidtemplate.core.network.interceptor.AuthInterceptor
+import com.aragabz.androidtemplate.core.network.interceptor.CachePolicyInterceptor
+import com.aragabz.androidtemplate.core.network.interceptor.RetryInterceptor
 import com.aragabz.androidtemplate.core.network.mock.MockInterceptor
+import com.aragabz.androidtemplate.core.network.session.AuthTokenProvider
+import com.aragabz.androidtemplate.core.network.session.DefaultAuthTokenProvider
 import com.aragabz.androidtemplate.core.network.session.SessionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -36,13 +41,25 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideAuthTokenProvider(default: DefaultAuthTokenProvider): AuthTokenProvider = default
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        mockInterceptor: MockInterceptor,
+        authInterceptor: AuthInterceptor,
+        retryInterceptor: RetryInterceptor,
+        cachePolicyInterceptor: CachePolicyInterceptor,
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
-            // Add MockInterceptor FIRST (before logging)
-            .addInterceptor(MockInterceptor())
+            // Order: mock -> auth -> retry -> cache policy -> logging
+            .addInterceptor(mockInterceptor)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(retryInterceptor)
+            .addInterceptor(cachePolicyInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
                     level =

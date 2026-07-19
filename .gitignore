@@ -1,12 +1,16 @@
 # Gradle files
 .gradle/
 build/
+out/
 
 # Local configuration file (sdk path, etc)
 local.properties
 
 # Log/OS Files
 *.log
+Thumbs.db
+*.tmp
+*.swp
 
 # Android Studio generated files and folders
 captures/
@@ -19,9 +23,14 @@ output-metadata.json
 # IntelliJ
 *.iml
 .idea/
+.vscode/
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
+
+# JVM artifacts
+*.class
+*.jar
 
 # Keystore files
 *.jks
@@ -51,3 +60,6 @@ detekt-report.html
 detekt-report.xml
 detekt-report.sarif
 .DS_Store
+
+# Environment files
+.env*

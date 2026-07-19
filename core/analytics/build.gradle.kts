@@ -1,5 +1,6 @@
 plugins {
     id("androidtemplate.android.library")
+    id("androidtemplate.android.hilt")
 }
 
 android {
@@ -8,4 +9,8 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(libs.timber)
+    implementation(libs.javax.inject)
+
+    testImplementation(libs.junit)
 }

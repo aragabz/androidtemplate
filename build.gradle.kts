@@ -15,6 +15,15 @@ plugins {
     alias(libs.plugins.module.graph.assertion)
 }
 
+// Configure Kotlin version for all subprojects
+subprojects {
+    pluginManager.withPlugin("org.jetbrains.kotlin.android") {
+        configure<org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension> {
+            // Kotlin options are configured in convention plugins
+        }
+    }
+}
+
 moduleGraphConfig {
     readmePath.set("./README.md")
     heading.set("## Module Graph")

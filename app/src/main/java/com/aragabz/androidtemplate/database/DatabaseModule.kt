@@ -2,6 +2,7 @@ package com.aragabz.androidtemplate.database
 
 import android.content.Context
 import androidx.room.Room
+import com.aragabz.androidtemplate.core.database.DatabaseMigrations
 import com.aragabz.androidtemplate.feature.todos.data.local.dao.TodoDao
 import dagger.Module
 import dagger.Provides
@@ -18,12 +19,15 @@ object DatabaseModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context,
     ): AppDatabase {
+        val migrations = DatabaseMigrations.from(DatabaseMigrations.CURRENT_VERSION - 1)
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME,
         )
-            .fallbackToDestructiveMigration()
+            .apply {
+                migrations.forEach { addMigrations(it) }
+            }
             .build()
     }
 

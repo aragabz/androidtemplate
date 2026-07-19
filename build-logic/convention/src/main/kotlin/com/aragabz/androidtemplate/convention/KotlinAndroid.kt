@@ -11,6 +11,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 /**
  * Configure base Kotlin with Android options
+ * 
+ * Note: Since AGP 9.0+, Kotlin support is built-in to Android Gradle Plugin.
+ * The Kotlin version is automatically derived from the AGP version and doesn't need 
+ * explicit Kotlin Android plugin application. The version is defined in libs.versions.toml
+ * and applied through the Android Gradle Plugin itself.
+ * 
+ * For more details: https://kotl.in/gradle/agp-built-in-kotlin
  */
 internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
@@ -38,6 +45,8 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
         }
     }
 
+    // Configure Kotlin compiler options
+    // AGP 9.0+ automatically applies Kotlin based on the version in gradle/libs.versions.toml
     extensions.configure<KotlinAndroidProjectExtension> {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)

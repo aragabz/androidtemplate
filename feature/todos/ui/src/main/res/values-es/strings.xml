@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="todo_add_title">Nueva tarea</string>
+    <string name="todo_back">Atras</string>
+    <string name="todo_title_label">Titulo</string>
+    <string name="todo_title_placeholder">Escribe el titulo de la tarea</string>
+    <string name="todo_description_label">Descripcion</string>
+    <string name="todo_description_placeholder">Escribe una descripcion (opcional)</string>
+    <string name="todo_create">Crear tarea</string>
+    <string name="todo_list_title">Mis tareas</string>
+    <string name="todo_add">Agregar tarea</string>
+    <string name="todo_loading">Cargando tareas</string>
+    <string name="todo_empty_message">Aun no hay tareas</string>
+    <string name="todo_empty_subtitle">Pulsa + para agregar tu primera tarea</string>
+    <string name="todo_completed_message">Todas las tareas completadas</string>
+    <string name="todo_completed_subtitle">Buen trabajo. Puedes agregar otra tarea cuando quieras.</string>
+    <string name="todo_delete">Eliminar</string>
+    <string name="todo_details_title">Detalle de tarea</string>
+    <string name="todo_not_found">No se encontro la tarea</string>
+    <string name="todo_delete_title">Eliminar tarea</string>
+    <string name="todo_delete_confirm">Estas seguro de que quieres eliminar esta tarea?</string>
+    <string name="todo_cancel">Cancelar</string>
+    <string name="todo_status_completed">Completada</string>
+    <string name="todo_status_not_completed">Sin completar</string>
+    <string name="todo_created">Creada</string>
+    <string name="todo_last_updated">Ultima actualizacion</string>
+</resources>

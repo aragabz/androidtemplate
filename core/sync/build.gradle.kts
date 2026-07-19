@@ -10,6 +10,7 @@ android {
 dependencies {
     api(project(":core:common"))
     api(project(":core:domain"))
+    implementation(project(":core:datastore"))
 
     implementation(libs.work.runtime.ktx)
     implementation(libs.hilt.android)

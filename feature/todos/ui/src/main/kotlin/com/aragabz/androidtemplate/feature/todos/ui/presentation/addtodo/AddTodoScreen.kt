@@ -25,12 +25,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.feature.todos.ui.R
 
 /**
  * Add todo screen - create new todo.
@@ -66,12 +68,12 @@ fun AddTodoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("New Todo") },
+                title = { Text(stringResource(id = R.string.todo_add_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.todo_back),
                         )
                     }
                 },
@@ -91,8 +93,8 @@ fun AddTodoScreen(
             OutlinedTextField(
                 value = uiState.title,
                 onValueChange = { viewModel.onEvent(AddTodoEvent.OnTitleChanged(it)) },
-                label = { Text("Title") },
-                placeholder = { Text("Enter todo title") },
+                label = { Text(stringResource(id = R.string.todo_title_label)) },
+                placeholder = { Text(stringResource(id = R.string.todo_title_placeholder)) },
                 isError = uiState.titleError != null,
                 supportingText = uiState.titleError?.let { { Text(it) } },
                 enabled = !uiState.isLoading,
@@ -105,8 +107,8 @@ fun AddTodoScreen(
             OutlinedTextField(
                 value = uiState.description,
                 onValueChange = { viewModel.onEvent(AddTodoEvent.OnDescriptionChanged(it)) },
-                label = { Text("Description") },
-                placeholder = { Text("Enter description (optional)") },
+                label = { Text(stringResource(id = R.string.todo_description_label)) },
+                placeholder = { Text(stringResource(id = R.string.todo_description_placeholder)) },
                 enabled = !uiState.isLoading,
                 minLines = 5,
                 maxLines = 10,
@@ -116,7 +118,7 @@ fun AddTodoScreen(
             Spacer(modifier = Modifier.height(spacing.large))
 
             AppButton(
-                text = "Create Todo",
+                text = stringResource(id = R.string.todo_create),
                 onClick = { viewModel.onEvent(AddTodoEvent.OnSaveClicked) },
                 enabled = !uiState.isLoading,
                 isLoading = uiState.isLoading,

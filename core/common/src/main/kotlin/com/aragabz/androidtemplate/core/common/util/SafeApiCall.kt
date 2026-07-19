@@ -1,10 +1,9 @@
 package com.aragabz.androidtemplate.core.common.util
 
-import com.aragabz.androidtemplate.core.common.result.AppError
+import com.aragabz.androidtemplate.core.common.error.toAppError
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 /**
  * Executes the given API call block and wraps the result in AppResult.
@@ -21,9 +20,7 @@ suspend fun <T> safeApiCall(
     withContext(dispatcher) {
         try {
             AppResult.Success(block())
-        } catch (e: IOException) {
-            AppResult.Error(AppError.NetworkError(e))
         } catch (e: Exception) {
-            AppResult.Error(AppError.UnknownError(e))
+            AppResult.Error(e.toAppError())
         }
     }

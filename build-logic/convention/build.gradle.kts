@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.tasks.testing.Test
 
 plugins {
     `kotlin-dsl`
@@ -20,11 +21,29 @@ kotlin {
 dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.kotlin.metadata.jvm)
     implementation(libs.compose.gradlePlugin)
     implementation(libs.ksp.gradlePlugin)
     implementation(libs.room.gradlePlugin)
     implementation(libs.roborazzi.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
+}
+
+tasks.withType<Test>().configureEach {
+    reports.junitXml.required.set(true)
+    reports.html.required.set(true)
+}
+
+tasks.register("verifyCoverageThresholdConfig") {
+    group = "verification"
+    description = "Validates the shared COVERAGE_MIN_LINE property format used by verification tasks."
+
+    val coverageMinLineProvider = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.70")
+    inputs.property("coverageMinLine", coverageMinLineProvider)
+
+    doLast {
+        (inputs.properties["coverageMinLine"] as String).toDouble()
+    }
 }
 
 gradlePlugin {

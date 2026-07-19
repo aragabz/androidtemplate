@@ -32,11 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.aragabz.androidtemplate.feature.home.R
 import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
@@ -63,7 +65,7 @@ fun HomeScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = if (isListView) "List View" else "Dashboard View",
+                text = if (isListView) stringResource(id = R.string.home_view_mode_list) else stringResource(id = R.string.home_view_mode_dashboard),
                 style = MaterialTheme.typography.titleMedium
             )
             Switch(
@@ -118,7 +120,7 @@ private fun DashboardView() {
         Spacer(modifier = Modifier.height(spacing.large))
 
         Text(
-            text = "Home Dashboard",
+            text = stringResource(id = R.string.home_dashboard_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -127,7 +129,7 @@ private fun DashboardView() {
         Spacer(modifier = Modifier.height(spacing.small))
 
         Text(
-            text = "Your offline database is ready and secured locally.",
+            text = stringResource(id = R.string.home_dashboard_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -152,16 +154,14 @@ private fun DashboardView() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Welcome!",
+                    text = stringResource(id = R.string.home_welcome_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(spacing.extraSmall))
                 Text(
-                    text =
-                        "Use the tabs below to manage your local todos, " +
-                            "view or switch accounts, and configure settings.",
+                    text = stringResource(id = R.string.home_welcome_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -182,7 +182,7 @@ private fun ComponentsList(navController: NavHostController) {
     ) {
         item {
             Text(
-                text = "Navigation Examples",
+                text = stringResource(id = R.string.home_navigation_examples),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(vertical = spacing.small)
             )
@@ -193,12 +193,12 @@ private fun ComponentsList(navController: NavHostController) {
                 horizontalArrangement = Arrangement.spacedBy(spacing.medium)
             ) {
                 AppButton(
-                    text = "Empty Screen",
+                    text = stringResource(id = R.string.home_empty_screen),
                     onClick = { navController.navigate(Route.Empty) },
                     modifier = Modifier.weight(1f)
                 )
                 AppButton(
-                    text = "Error Screen",
+                    text = stringResource(id = R.string.home_error_screen),
                     onClick = { navController.navigate(Route.Error) },
                     variant = AppButtonVariant.DESTRUCTIVE,
                     modifier = Modifier.weight(1f),
@@ -210,7 +210,7 @@ private fun ComponentsList(navController: NavHostController) {
         item {
             HorizontalDivider(modifier = Modifier.padding(vertical = spacing.medium))
             Text(
-                text = "Component Examples",
+                text = stringResource(id = R.string.home_component_examples),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = spacing.small)
             )
@@ -219,7 +219,7 @@ private fun ComponentsList(navController: NavHostController) {
         items(items) { item ->
             ListItem(
                 headlineContent = { Text(item) },
-                supportingContent = { Text("Example of $item component") },
+                supportingContent = { Text(stringResource(id = R.string.home_component_example_template, item)) },
                 trailingContent = {
                     val variant = when (item) {
                         "Button Primary" -> AppButtonVariant.PRIMARY
@@ -229,7 +229,7 @@ private fun ComponentsList(navController: NavHostController) {
                         else -> AppButtonVariant.PRIMARY
                     }
                     AppButton(
-                        text = "Click",
+                        text = stringResource(id = R.string.home_click),
                         onClick = { },
                         variant = variant
                     )

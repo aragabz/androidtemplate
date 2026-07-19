@@ -1,6 +1,5 @@
 package com.aragabz.androidtemplate.feature.todos.ui.presentation.todos
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -36,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,6 +41,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.aragabz.androidtemplate.core.navigation.Route
+import com.aragabz.androidtemplate.core.ui.screens.EmptyScreen
+import com.aragabz.androidtemplate.core.ui.screens.ErrorScreen
+import com.aragabz.androidtemplate.core.ui.screens.LoadingScreen
+import com.aragabz.androidtemplate.core.ui.screens.SuccessScreen
+import com.aragabz.androidtemplate.feature.todos.ui.R
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
 
 /**
@@ -57,62 +60,96 @@ fun TodosScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Show error snackbar
     val context = androidx.compose.ui.platform.LocalContext.current
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let { error ->
-            Log.e("error", error.asString(context))
-            snackbarHostState.showSnackbar(error.asString(context))
-            viewModel.onEvent(TodosEvent.OnDismissError)
-        }
-    }
 
+    TodosScreenContent(
+        uiState = uiState,
+        errorMessage = uiState.error?.asString(context),
+        onAddTodo = { navController.navigate(Route.AddTodo) },
+        onTodoClick = { id -> navController.navigate(Route.TodoDetails(id)) },
+        onToggleTodo = { id -> viewModel.onEvent(TodosEvent.OnToggleTodo(id)) },
+        onDeleteTodo = { id -> viewModel.onEvent(TodosEvent.OnDeleteTodo(id)) },
+        onRefresh = { viewModel.onEvent(TodosEvent.OnRefresh) },
+        onDismissError = { viewModel.onEvent(TodosEvent.OnDismissError) },
+        snackbarHostState = snackbarHostState,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun TodosScreenContent(
+    uiState: TodosUiState,
+    errorMessage: String?,
+    onAddTodo: () -> Unit,
+    onTodoClick: (String) -> Unit,
+    onToggleTodo: (String) -> Unit,
+    onDeleteTodo: (String) -> Unit,
+    onRefresh: () -> Unit,
+    onDismissError: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("My Todos") },
+                title = { Text(stringResource(id = R.string.todo_list_title)) },
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Route.AddTodo) },
+                onClick = onAddTodo,
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Todo")
+                Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.todo_add))
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-        ) {
+        Box(modifier = Modifier.padding(paddingValues)) {
+            val isEmpty = uiState.todos.isEmpty()
+            val allCompleted = uiState.todos.isNotEmpty() && uiState.todos.all { it.isCompleted }
+
             when {
-                uiState.isLoading && uiState.todos.isEmpty() -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
+                uiState.isLoading && isEmpty -> {
+                    LoadingScreen(message = stringResource(id = R.string.todo_loading))
+                }
+                errorMessage != null && isEmpty -> {
+                    ErrorScreen(
+                        message = errorMessage,
+                        onRetry = onRefresh,
                     )
                 }
-                uiState.todos.isEmpty() -> {
-                    EmptyTodosContent(
-                        modifier = Modifier.align(Alignment.Center),
+                isEmpty -> {
+                    EmptyScreen(
+                        message = stringResource(id = R.string.todo_empty_message),
+                        subtitle = stringResource(id = R.string.todo_empty_subtitle),
+                        actionLabel = stringResource(id = R.string.todo_add),
+                        onAction = onAddTodo,
+                    )
+                }
+                allCompleted -> {
+                    SuccessScreen(
+                        message = stringResource(id = R.string.todo_completed_message),
+                        subtitle = stringResource(id = R.string.todo_completed_subtitle),
+                        actionLabel = stringResource(id = R.string.todo_add),
+                        onAction = onAddTodo,
                     )
                 }
                 else -> {
                     TodosList(
                         todos = uiState.todos,
-                        onTodoClick = { id ->
-                            navController.navigate(Route.TodoDetails(id))
-                        },
-                        onToggleTodo = { id ->
-                            viewModel.onEvent(TodosEvent.OnToggleTodo(id))
-                        },
-                        onDeleteTodo = { id ->
-                            viewModel.onEvent(TodosEvent.OnDeleteTodo(id))
-                        },
+                        onTodoClick = onTodoClick,
+                        onToggleTodo = onToggleTodo,
+                        onDeleteTodo = onDeleteTodo,
                         modifier = Modifier.fillMaxSize(),
                     )
+                }
+            }
+
+            if (errorMessage != null && !isEmpty) {
+                LaunchedEffect(errorMessage) {
+                    snackbarHostState.showSnackbar(errorMessage)
+                    onDismissError()
                 }
             }
         }
@@ -200,34 +237,10 @@ private fun TodoItem(
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.todo_delete),
                     tint = MaterialTheme.colorScheme.error,
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun EmptyTodosContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            Icons.Default.Check,
-            contentDescription = null,
-            modifier = Modifier.padding(bottom = 16.dp),
-            tint = MaterialTheme.colorScheme.primary,
-        )
-        Text(
-            text = "No todos yet",
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            text = "Tap + to add your first todo",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }

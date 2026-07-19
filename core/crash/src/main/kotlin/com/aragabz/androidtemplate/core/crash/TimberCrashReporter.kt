@@ -1,5 +1,7 @@
 package com.aragabz.androidtemplate.core.crash
 
+import com.aragabz.androidtemplate.core.common.result.ErrorRecord
+import com.aragabz.androidtemplate.core.common.result.ErrorSeverity
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,5 +27,44 @@ class TimberCrashReporter @Inject constructor() : CrashReporter {
 
     override fun setUserId(userId: String) {
         Timber.d("CrashReport UserID: $userId")
+    }
+
+    override fun logStructuredError(record: ErrorRecord, throwable: Throwable?) {
+        val msg = buildString {
+            append("StructuredError[")
+            append(record.category)
+            append("] severity=")
+            append(record.severity)
+            append(" retryable=")
+            append(record.isRetryable)
+            record.httpCode?.let {
+                append(" httpCode=")
+                append(it)
+            }
+            append(" cause=")
+            append(record.causeType)
+            append(" message=")
+            append(record.message)
+        }
+
+        if (throwable != null) {
+            Timber.e(throwable, msg)
+        } else {
+            Timber.e(msg)
+        }
+    }
+
+    override fun logEvent(event: CrashReportEvent) {
+        val metadata =
+            if (event.metadata.isEmpty()) "{}" else event.metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
+
+        val message = "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
+        when (event.severity) {
+            ErrorSeverity.INFO -> Timber.i(message)
+            ErrorSeverity.WARNING -> Timber.w(message)
+            ErrorSeverity.ERROR,
+            ErrorSeverity.CRITICAL,
+            -> Timber.e(message)
+        }
     }
 }

@@ -54,9 +54,17 @@ fun SplashScreen(
         }
     }
 
+    SplashScreenContent(scale = scale.value)
+}
+
+@Composable
+internal fun SplashScreenContent(
+    scale: Float,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
@@ -74,7 +82,7 @@ fun SplashScreen(
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.scale(scale.value),
+            modifier = Modifier.scale(scale),
         )
     }
 }

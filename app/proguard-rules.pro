@@ -31,3 +31,8 @@
 
 # Baseline profile and startup tooling.
 -keep class androidx.baselineprofile.** { *; }
+
+# Optional annotation-only dependencies used by transitive security libraries.
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn com.google.j2objc.annotations.**
+-dontwarn org.checkerframework.checker.nullness.qual.**

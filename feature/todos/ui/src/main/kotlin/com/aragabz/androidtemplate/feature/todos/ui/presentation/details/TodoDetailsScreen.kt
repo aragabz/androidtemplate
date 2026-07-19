@@ -38,12 +38,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.feature.todos.ui.R
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
 
 /**
@@ -81,12 +83,12 @@ fun TodoDetailsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Todo Details") },
+                title = { Text(stringResource(id = R.string.todo_details_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.todo_back),
                         )
                     }
                 },
@@ -97,7 +99,7 @@ fun TodoDetailsScreen(
                     ) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(id = R.string.todo_delete),
                             tint = MaterialTheme.colorScheme.error,
                         )
                     }
@@ -129,7 +131,7 @@ fun TodoDetailsScreen(
                 }
                 else -> {
                     Text(
-                        text = "Todo not found",
+                        text = stringResource(id = R.string.todo_not_found),
                         modifier = Modifier.align(Alignment.Center),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -142,8 +144,8 @@ fun TodoDetailsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Todo") },
-            text = { Text("Are you sure you want to delete this todo?") },
+            title = { Text(stringResource(id = R.string.todo_delete_title)) },
+            text = { Text(stringResource(id = R.string.todo_delete_confirm)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -151,12 +153,12 @@ fun TodoDetailsScreen(
                         viewModel.onEvent(TodoDetailsEvent.OnDeleteTodo)
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(id = R.string.todo_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.todo_cancel))
                 }
             },
         )
@@ -194,7 +196,7 @@ private fun TodoDetailsContent(
                     onCheckedChange = { onToggleComplete() },
                 )
                 Text(
-                    text = if (todo.isCompleted) "Completed" else "Not completed",
+                    text = if (todo.isCompleted) stringResource(id = R.string.todo_status_completed) else stringResource(id = R.string.todo_status_not_completed),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = spacing.small),
                 )
@@ -213,7 +215,7 @@ private fun TodoDetailsContent(
 
         // Title
         Text(
-            text = "Title",
+            text = stringResource(id = R.string.todo_title_label),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -233,7 +235,7 @@ private fun TodoDetailsContent(
         if (!description.isNullOrBlank()) {
             Spacer(modifier = Modifier.height(spacing.large))
             Text(
-                text = "Description",
+                text = stringResource(id = R.string.todo_description_label),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -262,12 +264,12 @@ private fun TodoDetailsContent(
                 verticalArrangement = Arrangement.spacedBy(spacing.small),
             ) {
                 MetadataRow(
-                    label = "Created",
+                    label = stringResource(id = R.string.todo_created),
                     value = todo.createdAt,
                 )
                 todo.updatedAt?.let { updatedAt ->
                     MetadataRow(
-                        label = "Last updated",
+                        label = stringResource(id = R.string.todo_last_updated),
                         value = updatedAt,
                     )
                 }
