@@ -9,10 +9,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.aragabz.androidtemplate.core.datastore.model.AppTheme
 import com.aragabz.androidtemplate.core.datastore.model.UserPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 

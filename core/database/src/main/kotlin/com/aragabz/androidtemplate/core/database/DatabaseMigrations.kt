@@ -16,7 +16,8 @@ object DatabaseMigrations {
     val ALL = arrayOf(MIGRATION_3_4)
 
     fun from(version: Int): Array<Migration> =
-        ALL.filter { it.startVersion >= version }
+        ALL
+            .filter { it.startVersion >= version }
             .sortedBy { it.startVersion }
             .toTypedArray()
 }

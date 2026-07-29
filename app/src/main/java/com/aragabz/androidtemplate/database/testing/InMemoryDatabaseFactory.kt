@@ -9,7 +9,8 @@ import com.aragabz.androidtemplate.database.AppDatabase
  */
 object InMemoryDatabaseFactory {
     fun create(context: Context): AppDatabase =
-        Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+        Room
+            .inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
 }

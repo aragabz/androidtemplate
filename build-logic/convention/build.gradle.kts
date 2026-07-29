@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.room.gradlePlugin)
     implementation(libs.roborazzi.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
+    // Ktlint plugin is applied via plugin portal, not as a classpath dependency
 }
 
 tasks.withType<Test>().configureEach {
@@ -87,6 +88,14 @@ gradlePlugin {
         register("detekt") {
             id = "androidtemplate.detekt"
             implementationClass = "com.aragabz.androidtemplate.convention.DetektConventionPlugin"
+        }
+        register("ktlint") {
+            id = "androidtemplate.ktlint"
+            implementationClass = "com.aragabz.androidtemplate.convention.KtlintConventionPlugin"
+        }
+        register("explicitApi") {
+            id = "androidtemplate.kotlin.explicit.api"
+            implementationClass = "com.aragabz.androidtemplate.convention.ExplicitApiConventionPlugin"
         }
     }
 }

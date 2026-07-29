@@ -11,7 +11,8 @@ class SecureSessionStorageImpl(
         EncryptedSharedPreferences.create(
             context,
             FILE_NAME,
-            MasterKey.Builder(context)
+            MasterKey
+                .Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                 .build(),
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,

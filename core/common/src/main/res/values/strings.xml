@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Network Errors -->
     <string name="error_network">No internet connection. Please check your network settings.</string>
+    <string name="error_timeout">Request timed out. Please try again.</string>
+    
+    <!-- HTTP Errors -->
     <string name="error_http_unauthorized">Unauthorized access. Please login again.</string>
+    <string name="error_http_forbidden">Access forbidden.</string>
     <string name="error_http_not_found">Resource not found.</string>
+    <string name="error_http_conflict">Conflict occurred. The resource may already exist.</string>
+    <string name="error_http_validation">Invalid request. Please check your input.</string>
     <string name="error_http_server">Server error occurred. Please try again later.</string>
+    <string name="error_http_service_unavailable">Service temporarily unavailable. Please try again later.</string>
     <string name="error_http_unknown">An unexpected error occurred (Code: %1$d).</string>
+    
+    <!-- Database Errors -->
+    <string name="error_database">Failed to save data. Please try again.</string>
+    <string name="error_database_operation">Failed to %1$s data. Please try again.</string>
+    
+    <!-- Validation Errors -->
+    <string name="error_validation">Invalid input. Please check your data.</string>
+    <string name="error_validation_field">%1$s is invalid.</string>
+    
+    <!-- Authentication Errors -->
+    <string name="error_auth_invalid_credentials">Invalid username or password.</string>
+    <string name="error_auth_token_expired">Session expired. Please login again.</string>
+    <string name="error_auth_session_expired">Your session has expired. Please login again.</string>
+    <string name="error_auth_unauthorized">You are not authorized to perform this action.</string>
+    <string name="error_auth_unknown">Authentication failed. Please try again.</string>
+    
+    <!-- Parsing Errors -->
+    <string name="error_parsing">Failed to process server response.</string>
+    
+    <!-- Unknown Errors -->
     <string name="error_unknown">An unknown error occurred. Please try again.</string>
 </resources>

@@ -16,31 +16,33 @@ class UserPreferencesRepositoryImplAndroidTest {
     private lateinit var secureSessionStorage: SecureSessionStorage
 
     @Before
-    fun setUp() = runBlocking {
-        secureSessionStorage = SecureSessionStorageImpl(ApplicationProvider.getApplicationContext())
-        repository =
-            UserPreferencesRepositoryImpl(
-                context = ApplicationProvider.getApplicationContext(),
-                secureSessionStorage = secureSessionStorage,
-            )
-        repository.clearSession()
-        repository.updateTheme(AppTheme.SYSTEM)
-        repository.updateLanguage("en")
-    }
+    fun setUp() =
+        runBlocking {
+            secureSessionStorage = SecureSessionStorageImpl(ApplicationProvider.getApplicationContext())
+            repository =
+                UserPreferencesRepositoryImpl(
+                    context = ApplicationProvider.getApplicationContext(),
+                    secureSessionStorage = secureSessionStorage,
+                )
+            repository.clearSession()
+            repository.updateTheme(AppTheme.SYSTEM)
+            repository.updateLanguage("en")
+        }
 
     @Test
-    fun persistsUpdatedPreferences() = runBlocking {
-        repository.saveUserId("ragab")
-        repository.saveAuthToken("token-123")
-        repository.updateTheme(AppTheme.DARK)
-        repository.updateLanguage("ar")
+    fun persistsUpdatedPreferences() =
+        runBlocking {
+            repository.saveUserId("ragab")
+            repository.saveAuthToken("token-123")
+            repository.updateTheme(AppTheme.DARK)
+            repository.updateLanguage("ar")
 
-        val preferences = repository.userPreferences.first()
+            val preferences = repository.userPreferences.first()
 
-        assertEquals("ragab", preferences.userId)
-        assertEquals("token-123", preferences.authToken)
-        assertEquals(AppTheme.DARK, preferences.theme)
-        assertEquals("ar", preferences.language)
-        assertEquals("token-123", secureSessionStorage.getAuthToken())
-    }
+            assertEquals("ragab", preferences.userId)
+            assertEquals("token-123", preferences.authToken)
+            assertEquals(AppTheme.DARK, preferences.theme)
+            assertEquals("ar", preferences.language)
+            assertEquals("token-123", secureSessionStorage.getAuthToken())
+        }
 }

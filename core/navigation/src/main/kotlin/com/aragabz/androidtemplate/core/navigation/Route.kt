@@ -14,6 +14,12 @@ sealed interface Route {
     data object Splash : Route
 
     /**
+     * Auth screen route - authentication screen
+     */
+    @Serializable
+    data object Auth : Route
+
+    /**
      * Main screen route - bottom navigation bar container
      */
     @Serializable
@@ -42,7 +48,9 @@ sealed interface Route {
      * @param id The ID of the item to display
      */
     @Serializable
-    data class Details(val id: String) : Route
+    data class Details(
+        val id: String,
+    ) : Route
 
     /**
      * Add todo screen route - create new todo
@@ -55,7 +63,9 @@ sealed interface Route {
      * @param id The ID of the todo to display
      */
     @Serializable
-    data class TodoDetails(val id: String) : Route
+    data class TodoDetails(
+        val id: String,
+    ) : Route
 
     /**
      * Empty screen route

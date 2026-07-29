@@ -45,14 +45,15 @@ class TimberCrashReporterTest {
         val reporter = TimberCrashReporter()
 
         reporter.logStructuredError(
-            record = ErrorRecord(
-                category = ErrorCategory.HTTP,
-                severity = ErrorSeverity.ERROR,
-                message = "Server failed",
-                causeType = "HttpError",
-                isRetryable = true,
-                httpCode = 500,
-            ),
+            record =
+                ErrorRecord(
+                    category = ErrorCategory.HTTP,
+                    severity = ErrorSeverity.ERROR,
+                    message = "Server failed",
+                    causeType = "HttpError",
+                    isRetryable = true,
+                    httpCode = 500,
+                ),
         )
 
         assertTrue(recordingTree.messages.any { it.contains("StructuredError[HTTP]") })
@@ -62,7 +63,12 @@ class TimberCrashReporterTest {
     private class RecordingTree : Timber.Tree() {
         val messages = mutableListOf<String>()
 
-        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        override fun log(
+            priority: Int,
+            tag: String?,
+            message: String,
+            t: Throwable?,
+        ) {
             messages += message
         }
     }

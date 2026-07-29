@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_title">Autenticacion</string>
-    <string name="auth_signed_in_as">Sesion iniciada como %1$s</string>
-    <string name="auth_sign_in_hint">Inicia sesion para habilitar perfil y ajustes personalizados.</string>
-    <string name="auth_user_id">ID de usuario</string>
-    <string name="auth_sign_in">Iniciar sesion</string>
-    <string name="auth_sign_out">Cerrar sesion</string>
+    <string name="auth_title_sign_in">Bienvenido de nuevo</string>
+    <string name="auth_title_sign_up">Crear cuenta</string>
+    <string name="auth_subtitle_sign_in">Inicia sesión para continuar</string>
+    <string name="auth_subtitle_sign_up">Regístrate para comenzar</string>
+    <string name="auth_email">Correo electrónico</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_sign_in">Iniciar sesión</string>
+    <string name="auth_sign_up">Registrarse</string>
+    <string name="auth_sign_out">Cerrar sesión</string>
+    <string name="auth_toggle_sign_up">¿No tienes cuenta? Regístrate</string>
+    <string name="auth_toggle_sign_in">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="auth_signed_in_as">Sesión iniciada como %1$s</string>
+    <string name="auth_error_invalid_email">Por favor ingresa un correo válido</string>
+    <string name="auth_error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
 </resources>

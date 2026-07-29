@@ -7,11 +7,12 @@ import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.core.ui.screens.EmptyScreen
 import com.aragabz.androidtemplate.core.ui.screens.ErrorScreen
 import com.aragabz.androidtemplate.feature.home.presentation.main.MainScreen
-import com.aragabz.androidtemplate.feature.home.presentation.splash.SplashScreen
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
-    composable<Route.Splash> {
-        SplashScreen(navController = navController)
+    composable<Route.Auth> {
+        com.aragabz.androidtemplate.feature.auth.ui.presentation.AuthScreen(
+            navController = navController as androidx.navigation.NavHostController
+        )
     }
 
     composable<Route.Main> {

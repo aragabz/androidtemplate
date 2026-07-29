@@ -27,6 +27,9 @@ jobs:
       - name: Architecture Validation
         run: ./gradlew assertModuleGraph
 
+      - name: Ktlint Check
+        run: ./gradlew ktlintCheck
+
       - name: Lint
         run: ./gradlew lintDebug
 

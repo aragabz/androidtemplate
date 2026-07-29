@@ -1,6 +1,7 @@
 plugins {
     id("androidtemplate.android.library")
     id("androidtemplate.android.hilt")
+    id("androidtemplate.kotlin.explicit.api")
     alias(libs.plugins.kotlin.serialization)
 }
 

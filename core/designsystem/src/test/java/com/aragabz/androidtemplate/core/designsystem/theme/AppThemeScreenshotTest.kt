@@ -35,7 +35,10 @@ class AppThemeScreenshotTest {
         captureTheme("AppTheme_Dark", darkTheme = true)
     }
 
-    private fun captureTheme(name: String, darkTheme: Boolean) {
+    private fun captureTheme(
+        name: String,
+        darkTheme: Boolean,
+    ) {
         composeTestRule.setContent {
             AppTheme(darkTheme = darkTheme) {
                 Surface {
@@ -59,7 +62,7 @@ class AppThemeScreenshotTest {
         }
 
         composeTestRule.onRoot().captureRoboImage(
-            filePath = "src/test/snapshots/${name}.png",
+            filePath = "src/test/snapshots/$name.png",
         )
     }
 }

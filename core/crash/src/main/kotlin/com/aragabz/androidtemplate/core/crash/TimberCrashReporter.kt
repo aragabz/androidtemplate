@@ -12,59 +12,74 @@ import javax.inject.Singleton
  * In a real app, you would swap this with Firebase Crashlytics or similar.
  */
 @Singleton
-class TimberCrashReporter @Inject constructor() : CrashReporter {
-    override fun logException(throwable: Throwable) {
-        Timber.e(throwable)
-    }
+class TimberCrashReporter
+    @Inject
+    constructor() : CrashReporter {
+        override fun logException(throwable: Throwable) {
+            Timber.e(throwable)
+        }
 
-    override fun logMessage(message: String) {
-        Timber.d("CrashReport: $message")
-    }
+        override fun logMessage(message: String) {
+            Timber.d("CrashReport: $message")
+        }
 
-    override fun setCustomKey(key: String, value: Any) {
-        Timber.d("CrashReport Key: $key = $value")
-    }
+        override fun setCustomKey(
+            key: String,
+            value: Any,
+        ) {
+            Timber.d("CrashReport Key: $key = $value")
+        }
 
-    override fun setUserId(userId: String) {
-        Timber.d("CrashReport UserID: $userId")
-    }
+        override fun setUserId(userId: String) {
+            Timber.d("CrashReport UserID: $userId")
+        }
 
-    override fun logStructuredError(record: ErrorRecord, throwable: Throwable?) {
-        val msg = buildString {
-            append("StructuredError[")
-            append(record.category)
-            append("] severity=")
-            append(record.severity)
-            append(" retryable=")
-            append(record.isRetryable)
-            record.httpCode?.let {
-                append(" httpCode=")
-                append(it)
+        override fun logStructuredError(
+            record: ErrorRecord,
+            throwable: Throwable?,
+        ) {
+            val msg =
+                buildString {
+                    append("StructuredError[")
+                    append(record.category)
+                    append("] severity=")
+                    append(record.severity)
+                    append(" retryable=")
+                    append(record.isRetryable)
+                    record.httpCode?.let {
+                        append(" httpCode=")
+                        append(it)
+                    }
+                    append(" cause=")
+                    append(record.causeType)
+                    append(" message=")
+                    append(record.message)
+                }
+
+            if (throwable != null) {
+                Timber.e(throwable, msg)
+            } else {
+                Timber.e(msg)
             }
-            append(" cause=")
-            append(record.causeType)
-            append(" message=")
-            append(record.message)
         }
 
-        if (throwable != null) {
-            Timber.e(throwable, msg)
-        } else {
-            Timber.e(msg)
-        }
-    }
+        override fun logEvent(event: CrashReportEvent) {
+            val metadata =
+                if (event.metadata.isEmpty()) {
+                    "{}"
+                } else {
+                    event.metadata.entries.joinToString(
+                        ", ",
+                    ) { "${it.key}=${it.value}" }
+                }
 
-    override fun logEvent(event: CrashReportEvent) {
-        val metadata =
-            if (event.metadata.isEmpty()) "{}" else event.metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
-
-        val message = "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
-        when (event.severity) {
-            ErrorSeverity.INFO -> Timber.i(message)
-            ErrorSeverity.WARNING -> Timber.w(message)
-            ErrorSeverity.ERROR,
-            ErrorSeverity.CRITICAL,
-            -> Timber.e(message)
+            val message = "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
+            when (event.severity) {
+                ErrorSeverity.INFO -> Timber.i(message)
+                ErrorSeverity.WARNING -> Timber.w(message)
+                ErrorSeverity.ERROR,
+                ErrorSeverity.CRITICAL,
+                -> Timber.e(message)
+            }
         }
     }
-}

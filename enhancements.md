@@ -11,13 +11,20 @@ Here's the list organized into actionable TODOs with priorities:
     * [x] Move base use cases
     * [x] Remove cross-feature dependencies and prevent circular references
 
-* [ ] Implement centralized error handling
+* [x] Implement centralized error handling
 
-    * [ ] Create `ErrorMapper`
-    * [ ] Map Network exceptions → `UiText`
-    * [ ] Map Database exceptions → `UiText`
-    * [ ] Map Validation exceptions → `UiText`
-    * [ ] Integrate with `AppResult`
+    * [x] Create `ErrorMapper`
+    * [x] Map Network exceptions → `UiText`
+    * [x] Map Database exceptions → `UiText`
+    * [x] Map Validation exceptions → `UiText`
+    * [x] Map Authentication exceptions → `UiText`
+    * [x] Map Timeout exceptions → `UiText`
+    * [x] Map Parsing exceptions → `UiText`
+    * [x] Integrate with `AppResult`
+    * [x] Create `withErrorHandling` utility
+    * [x] Create `catchAsAppError` Flow extension
+    * [x] Add comprehensive tests
+    * [x] Document usage patterns
 
 ## Background Processing
 
@@ -109,11 +116,27 @@ Here's the list organized into actionable TODOs with priorities:
 
 # 🧹 Code Quality
 
-## Formatting
+## Code Quality
 
-* [ ] Add Ktlint plugin (`org.jlleitschuh.gradle.ktlint`)
-* [ ] Configure formatting rules
-* [ ] Integrate with CI pipeline
+* [x] Add Ktlint plugin (`org.jlleitschuh.gradle.ktlint`)
+
+    * [x] Create KtlintConventionPlugin
+    * [x] Apply to all Android modules
+    * [x] Configure formatting rules in .editorconfig
+    * [x] Configure Android-specific rules in .ktlintrc
+    * [x] Add ktlintCheck task to CI pipeline
+    * [x] Add ktlintFormat task for auto-formatting
+    * [x] Document usage and configuration
+    * [x] Integrate with CI pipeline
+
+* [x] Enable `explicitApi()` in core modules
+
+    * [x] Create ExplicitApiConventionPlugin
+    * [x] Apply to all 12 core modules
+    * [x] Verify compilation with explicit API mode
+    * [x] Audit public/internal exposure
+    * [x] Generate API audit report (docs/api-audit.md)
+    * [x] Document usage and best practices (docs/explicit-api.md)
 
 ## API Visibility
 

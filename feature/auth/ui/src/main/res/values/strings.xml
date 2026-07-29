@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_title">Authentication</string>
-    <string name="auth_signed_in_as">Signed in as %1$s</string>
-    <string name="auth_sign_in_hint">Sign in to enable personalized profile and settings.</string>
-    <string name="auth_user_id">User ID</string>
+    <string name="auth_title_sign_in">Welcome Back</string>
+    <string name="auth_title_sign_up">Create Account</string>
+    <string name="auth_subtitle_sign_in">Sign in to continue</string>
+    <string name="auth_subtitle_sign_up">Sign up to get started</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
     <string name="auth_sign_in">Sign In</string>
+    <string name="auth_sign_up">Sign Up</string>
     <string name="auth_sign_out">Sign Out</string>
+    <string name="auth_toggle_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="auth_toggle_sign_in">Already have an account? Sign In</string>
+    <string name="auth_signed_in_as">Signed in as %1$s</string>
+    <string name="auth_error_invalid_email">Please enter a valid email</string>
+    <string name="auth_error_password_too_short">Password must be at least 6 characters</string>
 </resources>

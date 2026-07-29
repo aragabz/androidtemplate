@@ -19,7 +19,10 @@ interface CrashReporter {
     /**
      * Set a custom key-value pair for the crash report.
      */
-    fun setCustomKey(key: String, value: Any)
+    fun setCustomKey(
+        key: String,
+        value: Any,
+    )
 
     /**
      * Set the user ID for the crash report.

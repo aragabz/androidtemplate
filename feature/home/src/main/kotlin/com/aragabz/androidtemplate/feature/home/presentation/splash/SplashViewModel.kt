@@ -2,11 +2,13 @@ package com.aragabz.androidtemplate.feature.home.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aragabz.androidtemplate.feature.auth.domain.usecase.GetAuthSessionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -17,9 +19,13 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class SplashViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        private val getAuthSessionUseCase: GetAuthSessionUseCase,
+    ) : ViewModel() {
         sealed interface SplashState {
             object Loading : SplashState
+
+            object NavigateToAuth : SplashState
 
             object NavigateToMain : SplashState
         }
@@ -35,7 +41,15 @@ class SplashViewModel
             viewModelScope.launch {
                 // System splash covers initial startup; keep composable splash brief for handoff polish.
                 delay(500.milliseconds)
-                _state.value = SplashState.NavigateToMain
+
+                // Check if user is already authenticated
+                val session = getAuthSessionUseCase().first()
+                _state.value =
+                    if (session.isAuthenticated) {
+                        SplashState.NavigateToMain
+                    } else {
+                        SplashState.NavigateToAuth
+                    }
             }
         }
     }

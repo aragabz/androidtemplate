@@ -1,7 +1,10 @@
 package com.aragabz.androidtemplate.core.datastore
 
 interface CachePolicyStore {
-    suspend fun touchTodosCache(userId: String, count: Int)
+    suspend fun touchTodosCache(
+        userId: String,
+        count: Int,
+    )
 
     suspend fun readTodosCacheLastUpdated(userId: String): Long?
 

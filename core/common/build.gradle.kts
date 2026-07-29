@@ -1,6 +1,7 @@
 plugins {
     id("androidtemplate.android.library.compose")
     id("androidtemplate.android.hilt")
+    id("androidtemplate.kotlin.explicit.api")
 }
 
 android {

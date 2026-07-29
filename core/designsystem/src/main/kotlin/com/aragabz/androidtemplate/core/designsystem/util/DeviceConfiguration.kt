@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 enum class DeviceType {
     Phone,
     Tablet,
-    Foldable
+    Foldable,
 }
 
 /**
@@ -19,7 +19,7 @@ enum class DeviceType {
 @Composable
 fun rememberDeviceType(): DeviceType {
     val windowSizeClass = rememberWindowSizeClass()
-    
+
     return remember(windowSizeClass) {
         when (windowSizeClass.widthSizeClass) {
             WindowWidthSizeClass.Compact -> DeviceType.Phone

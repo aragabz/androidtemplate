@@ -52,3 +52,21 @@ tasks.register("detektAll") {
     
     dependsOn(subprojects.map { "${it.path}:detekt" })
 }
+
+tasks.register("ktlintCheck") {
+    description = "Run ktlint check on all modules"
+    group = "verification"
+    
+    dependsOn(subprojects.mapNotNull { subproject ->
+        subproject.tasks.findByName("ktlintCheck")?.path
+    })
+}
+
+tasks.register("ktlintFormat") {
+    description = "Run ktlint format on all modules"
+    group = "formatting"
+    
+    dependsOn(subprojects.mapNotNull { subproject ->
+        subproject.tasks.findByName("ktlintFormat")?.path
+    })
+}

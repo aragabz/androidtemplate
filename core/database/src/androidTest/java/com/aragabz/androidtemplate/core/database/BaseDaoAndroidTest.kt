@@ -25,10 +25,12 @@ class BaseDaoAndroidTest {
     @Before
     fun setUp() {
         database =
-            Room.inMemoryDatabaseBuilder(
-                ApplicationProvider.getApplicationContext(),
-                TestDatabase::class.java,
-            ).allowMainThreadQueries().build()
+            Room
+                .inMemoryDatabaseBuilder(
+                    ApplicationProvider.getApplicationContext(),
+                    TestDatabase::class.java,
+                ).allowMainThreadQueries()
+                .build()
         dao = database.testEntityDao()
     }
 
@@ -38,15 +40,16 @@ class BaseDaoAndroidTest {
     }
 
     @Test
-    fun upsertAndDelete_roundTripsEntity() = runBlocking {
-        val entity = TestEntity(id = "1", value = "first")
+    fun upsertAndDelete_roundTripsEntity() =
+        runBlocking {
+            val entity = TestEntity(id = "1", value = "first")
 
-        dao.upsert(entity)
-        assertEquals(listOf(entity), dao.getAll())
+            dao.upsert(entity)
+            assertEquals(listOf(entity), dao.getAll())
 
-        dao.delete(entity)
-        assertEquals(emptyList<TestEntity>(), dao.getAll())
-    }
+            dao.delete(entity)
+            assertEquals(emptyList<TestEntity>(), dao.getAll())
+        }
 }
 
 @Entity(tableName = "test_entities")

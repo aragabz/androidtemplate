@@ -12,6 +12,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("com.android.library")
                 apply("androidtemplate.android.lint")
                 apply("androidtemplate.detekt")
+                apply("androidtemplate.ktlint")
             }
 
             extensions.configure<LibraryExtension> {

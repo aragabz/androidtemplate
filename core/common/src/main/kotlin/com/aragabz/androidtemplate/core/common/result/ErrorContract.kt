@@ -6,6 +6,11 @@ package com.aragabz.androidtemplate.core.common.result
 enum class ErrorCategory {
     NETWORK,
     HTTP,
+    DATABASE,
+    VALIDATION,
+    AUTH,
+    TIMEOUT,
+    PARSING,
     UNKNOWN,
 }
 
@@ -29,4 +34,6 @@ data class ErrorRecord(
     val causeType: String,
     val isRetryable: Boolean,
     val httpCode: Int? = null,
+    val field: String? = null,
+    val operation: String? = null,
 )

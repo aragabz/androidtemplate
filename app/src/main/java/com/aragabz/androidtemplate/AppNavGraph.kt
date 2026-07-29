@@ -10,16 +10,18 @@ import com.aragabz.androidtemplate.feature.todos.ui.presentation.navigation.todo
 /**
  * Main app navigation graph.
  *
- * Flow: Splash → (Register | Login | Main)
- * Splash checks local accounts DB to decide the initial destination.
+ * Flow: Auth | Main (determined by authentication status)
  */
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(
+    navController: NavHostController,
+    startDestination: Route = Route.Auth,
+) {
     NavHost(
         navController = navController,
-        startDestination = Route.Splash,
+        startDestination = startDestination,
     ) {
-        // Home feature routes (Splash, Main, Details)
+        // Home feature routes (Auth, Main, Details)
         homeGraph(navController = navController)
 
         // Todos sub-routes (AddTodo, TodoDetails) — navigated from within MainScreen's Todos tab

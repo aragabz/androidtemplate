@@ -13,7 +13,10 @@ interface FeatureFlagManager {
 /**
  * List of features that can be toggled.
  */
-enum class Feature(val key: String, val defaultValue: Boolean) {
+enum class Feature(
+    val key: String,
+    val defaultValue: Boolean,
+) {
     NEW_TODO_DESIGN("new_todo_design", false),
-    EXPERIMENTAL_SYNC("experimental_sync", true)
+    EXPERIMENTAL_SYNC("experimental_sync", true),
 }

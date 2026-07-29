@@ -26,10 +26,9 @@ fun NavController.navigateToDetails(
 fun NavController.popBackStackSafely(
     route: Any? = null,
     inclusive: Boolean = false,
-): Boolean {
-    return if (route != null) {
+): Boolean =
+    if (route != null) {
         popBackStack(route, inclusive)
     } else {
         popBackStack()
     }
-}

@@ -13,17 +13,19 @@ class SecureSessionStorageImplAndroidTest {
     private lateinit var secureSessionStorage: SecureSessionStorage
 
     @Before
-    fun setUp() = runBlocking {
-        secureSessionStorage = SecureSessionStorageImpl(ApplicationProvider.getApplicationContext())
-        secureSessionStorage.clearSession()
-    }
+    fun setUp() =
+        runBlocking {
+            secureSessionStorage = SecureSessionStorageImpl(ApplicationProvider.getApplicationContext())
+            secureSessionStorage.clearSession()
+        }
 
     @Test
-    fun savesAndClearsEncryptedAuthToken() = runBlocking {
-        secureSessionStorage.saveAuthToken("token-456")
-        assertEquals("token-456", secureSessionStorage.getAuthToken())
+    fun savesAndClearsEncryptedAuthToken() =
+        runBlocking {
+            secureSessionStorage.saveAuthToken("token-456")
+            assertEquals("token-456", secureSessionStorage.getAuthToken())
 
-        secureSessionStorage.clearSession()
-        assertEquals(null, secureSessionStorage.getAuthToken())
-    }
+            secureSessionStorage.clearSession()
+            assertEquals(null, secureSessionStorage.getAuthToken())
+        }
 }

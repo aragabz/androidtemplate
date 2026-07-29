@@ -13,6 +13,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("com.android.application")
                 apply("androidtemplate.android.lint")
                 apply("androidtemplate.detekt")
+                apply("androidtemplate.ktlint")
             }
 
             extensions.configure<ApplicationExtension> {

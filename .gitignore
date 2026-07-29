@@ -63,3 +63,5 @@ detekt-report.sarif
 
 # Environment files
 .env*
+
+.env

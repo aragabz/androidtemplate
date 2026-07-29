@@ -5,9 +5,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
 
 private val Context.cachePolicyDataStore by preferencesDataStore(name = "cache_policy_store")
 
@@ -17,7 +17,10 @@ class CachePolicyStoreImpl
     constructor(
         @ApplicationContext private val context: Context,
     ) : CachePolicyStore {
-        override suspend fun touchTodosCache(userId: String, count: Int) {
+        override suspend fun touchTodosCache(
+            userId: String,
+            count: Int,
+        ) {
             val nowMillis = System.currentTimeMillis()
             context.cachePolicyDataStore.edit { prefs ->
                 prefs[userScopedKey(userId)] = nowMillis

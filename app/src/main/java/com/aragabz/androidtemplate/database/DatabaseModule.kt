@@ -20,15 +20,14 @@ object DatabaseModule {
         @ApplicationContext context: Context,
     ): AppDatabase {
         val migrations = DatabaseMigrations.from(DatabaseMigrations.CURRENT_VERSION - 1)
-        return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            AppDatabase.DATABASE_NAME,
-        )
-            .apply {
+        return Room
+            .databaseBuilder(
+                context,
+                AppDatabase::class.java,
+                AppDatabase.DATABASE_NAME,
+            ).apply {
                 migrations.forEach { addMigrations(it) }
-            }
-            .build()
+            }.build()
     }
 
     @Provides

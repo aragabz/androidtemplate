@@ -13,16 +13,16 @@ plugins {
     alias(libs.plugins.androidx.baselineprofile)
 }
 
-
 val releaseStoreFilePath = providers.gradleProperty("RELEASE_STORE_FILE").orNull
 val releaseStorePassword = providers.gradleProperty("RELEASE_STORE_PASSWORD").orNull
 val releaseKeyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS").orNull
 val releaseKeyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD").orNull
 val minimumLineCoverage = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.00").map(String::toDouble)
-val hasReleaseSigningConfig = !releaseStoreFilePath.isNullOrBlank() &&
-    !releaseStorePassword.isNullOrBlank() &&
-    !releaseKeyAlias.isNullOrBlank() &&
-    !releaseKeyPassword.isNullOrBlank()
+val hasReleaseSigningConfig =
+    !releaseStoreFilePath.isNullOrBlank() &&
+        !releaseStorePassword.isNullOrBlank() &&
+        !releaseKeyAlias.isNullOrBlank() &&
+        !releaseKeyPassword.isNullOrBlank()
 
 android {
     namespace = "com.aragabz.androidtemplate"
@@ -85,11 +85,12 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             // CI and local builds without release secrets can still validate packaging.
-            signingConfig = if (hasReleaseSigningConfig) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig =
+                if (hasReleaseSigningConfig) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -125,6 +126,7 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:todos:ui"))
     implementation(project(":feature:todos:data"))
+    implementation(project(":feature:auth:domain"))
 
     // Navigation
     implementation(libs.androidx.navigation3.runtime)
@@ -170,20 +172,24 @@ tasks.register("verifyDebugCoverage") {
     doLast {
         val reportFile = reportFileProvider.get().asFile
         if (!reportFile.exists()) {
-            throw GradleException("Coverage report not found at ${reportFile.path}. Run createDevDebugUnitTestCoverageReport first.")
+            throw GradleException(
+                "Coverage report not found at ${reportFile.path}. Run createDevDebugUnitTestCoverageReport first.",
+            )
         }
 
-        val dbFactory = DocumentBuilderFactory.newInstance().apply {
-            setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-            setFeature("http://xml.org/sax/features/external-general-entities", false)
-            setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-            isXIncludeAware = false
-            isExpandEntityReferences = false
-        }
+        val dbFactory =
+            DocumentBuilderFactory.newInstance().apply {
+                setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+                setFeature("http://xml.org/sax/features/external-general-entities", false)
+                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+                isXIncludeAware = false
+                isExpandEntityReferences = false
+            }
 
-        val builder = dbFactory.newDocumentBuilder().apply {
-            setEntityResolver { _, _ -> InputSource(StringReader("")) }
-        }
+        val builder =
+            dbFactory.newDocumentBuilder().apply {
+                setEntityResolver { _, _ -> InputSource(StringReader("")) }
+            }
 
         val document = builder.parse(reportFile)
         val counters = document.getElementsByTagName("counter")
@@ -216,11 +222,21 @@ tasks.register("verifyDebugCoverage") {
             """.trimIndent() + "\n",
         )
 
-        this.logger.lifecycle("Debug unit test coverage: ${String.format(Locale.US, "%.2f", coveragePercent)}% (min ${String.format(Locale.US, "%.2f", minimumPercent)}%)")
+        this.logger.lifecycle(
+            "Debug unit test coverage: ${String.format(
+                Locale.US,
+                "%.2f",
+                coveragePercent,
+            )}% (min ${String.format(Locale.US, "%.2f", minimumPercent)}%)",
+        )
 
         if (coverageRatio < minimumRatio) {
             throw GradleException(
-                "Coverage check failed: ${String.format(Locale.US, "%.2f", coveragePercent)}% < ${String.format(Locale.US, "%.2f", minimumPercent)}%",
+                "Coverage check failed: ${String.format(
+                    Locale.US,
+                    "%.2f",
+                    coveragePercent,
+                )}% < ${String.format(Locale.US, "%.2f", minimumPercent)}%",
             )
         }
     }

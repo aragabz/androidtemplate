@@ -2,11 +2,11 @@ package com.aragabz.androidtemplate
 
 import android.app.Application
 import android.os.SystemClock
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.aragabz.androidtemplate.core.analytics.AnalyticsEvent
 import com.aragabz.androidtemplate.core.analytics.AnalyticsTracker
 import com.aragabz.androidtemplate.core.analytics.PerformanceMonitor
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
 import com.aragabz.androidtemplate.core.network.BuildConfig
 import com.aragabz.androidtemplate.core.sync.Sync
 import com.aragabz.androidtemplate.core.sync.manager.SyncManager
@@ -18,7 +18,9 @@ import javax.inject.Inject
  * Main Application class with Hilt initialization.
  */
 @HiltAndroidApp
-class MainApplication : Application(), Configuration.Provider {
+class MainApplication :
+    Application(),
+    Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
@@ -32,7 +34,8 @@ class MainApplication : Application(), Configuration.Provider {
     lateinit var performanceMonitor: PerformanceMonitor
 
     override fun getWorkManagerConfiguration(): Configuration =
-        Configuration.Builder()
+        Configuration
+            .Builder()
             .setWorkerFactory(workerFactory)
             .build()
 

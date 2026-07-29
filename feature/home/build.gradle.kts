@@ -28,6 +28,7 @@ dependencies {
     // Feature modules
     implementation(project(":feature:todos:ui"))
     implementation(project(":feature:auth:ui"))
+    implementation(project(":feature:auth:domain"))
     implementation(project(":feature:profile:ui"))
     implementation(project(":feature:settings:ui"))
 

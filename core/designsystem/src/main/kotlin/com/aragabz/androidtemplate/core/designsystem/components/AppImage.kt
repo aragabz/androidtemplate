@@ -29,7 +29,8 @@ fun AppImage(
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
+        model = ImageRequest
+            .Builder(LocalContext.current)
             .data(model)
             .crossfade(true)
             .build(),

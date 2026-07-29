@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.aragabz.androidtemplate.feature.home.R
-import com.aragabz.androidtemplate.feature.auth.ui.presentation.AuthScreen
 import com.aragabz.androidtemplate.feature.home.presentation.home.HomeScreen
 import com.aragabz.androidtemplate.feature.profile.ui.presentation.ProfileScreen
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsScreen
@@ -38,7 +37,6 @@ import com.aragabz.androidtemplate.feature.todos.ui.presentation.todos.TodosScre
 enum class MainTab {
     Home,
     Todos,
-    Auth,
     Profile,
     Settings,
 }
@@ -80,17 +78,6 @@ fun MainScreen(
                     label = { Text(stringResource(id = R.string.home_tab_todos)) },
                 )
                 NavigationBarItem(
-                    selected = selectedTab == MainTab.Auth,
-                    onClick = { selectedTab = MainTab.Auth },
-                    icon = {
-                        Icon(
-                            imageVector = if (selectedTab == MainTab.Auth) Icons.Filled.Person else Icons.Outlined.Person,
-                            contentDescription = stringResource(id = R.string.home_tab_auth),
-                        )
-                    },
-                    label = { Text(stringResource(id = R.string.home_tab_auth)) },
-                )
-                NavigationBarItem(
                     selected = selectedTab == MainTab.Profile,
                     onClick = { selectedTab = MainTab.Profile },
                     icon = {
@@ -124,7 +111,6 @@ fun MainScreen(
             when (selectedTab) {
                 MainTab.Home -> HomeScreen(navController)
                 MainTab.Todos -> TodosScreen(navController)
-                MainTab.Auth -> AuthScreen()
                 MainTab.Profile -> ProfileScreen()
                 MainTab.Settings -> SettingsScreen()
             }

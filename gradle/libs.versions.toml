@@ -3,10 +3,10 @@
 # - Group major upgrades (Kotlin/AGP/Compose BOM/Hilt/Room) in dedicated PRs.
 # - Keep weekly dependency rollups for patch and minor updates.
 # - Verify with CI + release candidate lanes before merge.
-agp = "9.2.1"
+agp = "9.3.1"
 kotlin = "2.4.10"
 kotlin-metadata = "2.3.21"
-ksp = "2.3.9"
+ksp = "2.3.10"
 coreKtx = "1.19.0"
 coreSplashscreen = "1.2.0"
 composeBom = "2026.06.01"
@@ -37,13 +37,13 @@ turbine = "1.2.1"
 mockk = "1.14.11"
 ktlint = "14.2.0"
 detekt = "1.23.8"
-roborazzi = "1.69.0"
+roborazzi = "1.70.0"
 robolectric = "4.16.1"
 androidxBaselineProfile = "1.5.0-alpha07"
 androidxMacroBenchmark = "1.5.0-alpha07"
 uiAutomator = "2.4.0"
-androidLint = "32.3.0"
-dependency-analysis = "3.17.0"
+androidLint = "32.3.1"
+dependency-analysis = "3.18.0"
 module-graph = "0.13.0"
 module-graph-assertion = "2.9.1"
 
@@ -143,6 +143,7 @@ compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compile
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle.ktlint", name = "org.jlleitschuh.gradle.ktlint.gradle.plugin", version.ref = "ktlint" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

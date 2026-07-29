@@ -45,6 +45,11 @@ fun SplashScreen(
 
     LaunchedEffect(state) {
         when (state) {
+            SplashViewModel.SplashState.NavigateToAuth -> {
+                navController.navigate(Route.Auth) {
+                    popUpTo(Route.Splash) { inclusive = true }
+                }
+            }
             SplashViewModel.SplashState.NavigateToMain -> {
                 navController.navigate(Route.Main) {
                     popUpTo(Route.Splash) { inclusive = true }
