@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.home.presentation.navigation.homeGraph
+import com.aragabz.androidtemplate.feature.settings.ui.presentation.navigation.settingsScreen
 import com.aragabz.androidtemplate.feature.todos.ui.presentation.navigation.todosScreen
 
 /**
@@ -26,5 +27,8 @@ fun AppNavGraph(
 
         // Todos sub-routes (AddTodo, TodoDetails) — navigated from within MainScreen's Todos tab
         todosScreen(navController = navController)
+
+        // Settings sub-routes (SettingsTheme, SettingsLanguage) — navigated from within MainScreen's Settings tab
+        settingsScreen(navController = navController)
     }
 }

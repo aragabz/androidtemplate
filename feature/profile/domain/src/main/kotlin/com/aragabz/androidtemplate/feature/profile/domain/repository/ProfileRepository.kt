@@ -6,6 +6,4 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
     fun getProfile(): Flow<AppResult<UserProfile?>>
-
-    fun signOut(): Flow<AppResult<Unit>>
 }

@@ -27,26 +27,27 @@ public fun Modifier.shimmerEffect(
         Color(0xFFE0E0E0),
     ),
     durationMillis: Int = 1000,
-): Modifier = composed {
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val translateAnim by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = durationMillis),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "shimmer_translate",
-    )
+): Modifier =
+    composed {
+        val transition = rememberInfiniteTransition(label = "shimmer")
+        val translateAnim by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1000f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = durationMillis),
+                repeatMode = RepeatMode.Restart,
+            ),
+            label = "shimmer_translate",
+        )
 
-    background(
-        brush = Brush.linearGradient(
-            colors = colors,
-            start = Offset(translateAnim - 1000f, translateAnim - 1000f),
-            end = Offset(translateAnim, translateAnim),
-        ),
-    )
-}
+        background(
+            brush = Brush.linearGradient(
+                colors = colors,
+                start = Offset(translateAnim - 1000f, translateAnim - 1000f),
+                end = Offset(translateAnim, translateAnim),
+            ),
+        )
+    }
 
 /**
  * Pulsing animation for emphasis.
@@ -80,9 +81,7 @@ public fun rememberPulsingAlpha(
  * @param durationMillis Duration of one complete rotation
  */
 @Composable
-public fun rememberRotatingAngle(
-    durationMillis: Int = 1000,
-): Float {
+public fun rememberRotatingAngle(durationMillis: Int = 1000): Float {
     val transition = rememberInfiniteTransition(label = "rotate")
     val angle by transition.animateFloat(
         initialValue = 0f,

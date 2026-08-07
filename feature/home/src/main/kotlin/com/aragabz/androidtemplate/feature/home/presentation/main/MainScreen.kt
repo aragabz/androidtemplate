@@ -112,7 +112,7 @@ fun MainScreen(
                 MainTab.Home -> HomeScreen(navController)
                 MainTab.Todos -> TodosScreen(navController)
                 MainTab.Profile -> ProfileScreen()
-                MainTab.Settings -> SettingsScreen()
+                MainTab.Settings -> SettingsScreen(navController)
             }
         }
     }

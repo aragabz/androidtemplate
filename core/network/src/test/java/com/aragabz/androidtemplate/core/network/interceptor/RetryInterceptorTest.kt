@@ -3,21 +3,25 @@ package com.aragabz.androidtemplate.core.network.interceptor
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.IOException
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
-import okhttp3.Response
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.io.IOException
 
 class RetryInterceptorTest {
     @Test
     fun `retries once for GET request on IOException`() {
         val chain = mockk<Interceptor.Chain>()
-        val request = Request.Builder().url("https://example.com").get().build()
+        val request = Request
+            .Builder()
+            .url("https://example.com")
+            .get()
+            .build()
 
         every { chain.request() } returns request
         every { chain.proceed(request) } throws IOException("first failure") andThen responseFor(request)
@@ -31,7 +35,11 @@ class RetryInterceptorTest {
     @Test(expected = IOException::class)
     fun `does not retry non-GET request and propagates IOException`() {
         val chain = mockk<Interceptor.Chain>()
-        val request = Request.Builder().url("https://example.com").post("x".toRequestBody()).build()
+        val request = Request
+            .Builder()
+            .url("https://example.com")
+            .post("x".toRequestBody())
+            .build()
 
         every { chain.request() } returns request
         every { chain.proceed(request) } throws IOException("post failure")
@@ -40,7 +48,8 @@ class RetryInterceptorTest {
     }
 
     private fun responseFor(request: Request): Response =
-        Response.Builder()
+        Response
+            .Builder()
             .request(request)
             .protocol(Protocol.HTTP_1_1)
             .code(200)

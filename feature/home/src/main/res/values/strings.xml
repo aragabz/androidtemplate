@@ -17,4 +17,8 @@
     <string name="home_component_examples">Component Examples</string>
     <string name="home_component_example_template">Example of %1$s component</string>
     <string name="home_click">Click</string>
+    <string name="home_error_message">Something went wrong on this screen.</string>
+    <string name="home_empty_screen_message">This is an empty screen</string>
+    <string name="home_empty_screen_subtitle">You can navigate back from here</string>
+    <string name="home_empty_screen_action">Go Back</string>
 </resources>

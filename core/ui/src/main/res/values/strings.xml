@@ -2,4 +2,16 @@
 <resources>
     <string name="network_offline_label">Offline</string>
     <string name="network_offline_message">You\'re offline</string>
+    
+    <!-- Loading Screen -->
+    <string name="loading_default_message">Loading…</string>
+    
+    <!-- Error Screen -->
+    <string name="error_icon_content_description">Error</string>
+    <string name="error_title">Something went wrong</string>
+    <string name="error_action_retry">Try Again</string>
+    
+    <!-- Splash Screen -->
+    <string name="splash_app_name">Android Template</string>
+    <string name="splash_tagline">Build something great</string>
 </resources>

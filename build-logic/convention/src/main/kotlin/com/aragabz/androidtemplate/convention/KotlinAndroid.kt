@@ -5,6 +5,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -31,6 +32,8 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
         compileOptions.apply {
             sourceCompatibility = JavaVersion.VERSION_21
             targetCompatibility = JavaVersion.VERSION_21
+            // Enable desugaring to support Java 8+ APIs on API 26+
+            isCoreLibraryDesugaringEnabled = true
         }
 
         buildFeatures.apply {
@@ -43,6 +46,11 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
             sarifReport = true
             checkDependencies = true
         }
+    }
+
+    // Add desugaring dependency when enabled
+    dependencies {
+        add("coreLibraryDesugaring", libs.findLibrary("android.desugarJdkLibs").get())
     }
 
     // Configure Kotlin compiler options

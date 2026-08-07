@@ -39,7 +39,7 @@ class WorkManagerSyncManager
         override fun triggerImmediateSync() {
             val workRequest =
                 OneTimeWorkRequestBuilder<SyncWorker>()
-                    .setConstraints(SyncConstraints)
+                    .setConstraints(SyncConstraintsRelaxed)
                     .build()
 
             workManager.enqueueUniqueWork(

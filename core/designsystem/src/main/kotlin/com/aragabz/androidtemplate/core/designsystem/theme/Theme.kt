@@ -86,9 +86,12 @@ fun AppTheme(
         else -> LightColorScheme
     }
 
+    val semanticColors = if (darkTheme) DarkSemanticColors else LightSemanticColors
+
     CompositionLocalProvider(
         LocalSpacing provides Spacing(),
         LocalIsDarkTheme provides darkTheme,
+        LocalSemanticColors provides semanticColors,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

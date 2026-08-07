@@ -77,4 +77,3 @@ public fun <T : Comparable<T>> AnimatedSlideContent(
         content(state)
     }
 }
-

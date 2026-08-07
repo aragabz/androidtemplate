@@ -1,5 +1,6 @@
 package com.aragabz.androidtemplate.core.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +45,7 @@ fun SuccessScreen(
         modifier =
             modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(spacing.large)
                 .semantics { liveRegion = LiveRegionMode.Polite },
         horizontalAlignment = Alignment.CenterHorizontally,

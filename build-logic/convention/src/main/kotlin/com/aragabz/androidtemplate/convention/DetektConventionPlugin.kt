@@ -13,7 +13,8 @@ class DetektConventionPlugin : Plugin<Project> {
             pluginManager.apply("io.gitlab.arturbosch.detekt")
 
             extensions.configure<DetektExtension> {
-                toolVersion = "1.23.8"
+                // Use version from version catalog instead of hardcoding
+                toolVersion = libs.findVersion("detekt").get().toString()
                 config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
                 buildUponDefaultConfig = true
                 allRules = false

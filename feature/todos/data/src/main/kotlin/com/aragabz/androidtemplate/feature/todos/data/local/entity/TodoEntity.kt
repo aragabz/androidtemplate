@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey
 
 /**
  * Entity representing a todo item in the database.
+ *
+ * Dates are stored as epoch milliseconds (Long) for consistency.
  */
 @Entity(tableName = "todos")
 data class TodoEntity(
@@ -14,6 +16,6 @@ data class TodoEntity(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
-    val createdAt: String,
-    val updatedAt: String?,
+    val createdAt: Long,
+    val updatedAt: Long?,
 )

@@ -10,7 +10,6 @@ android {
 
 dependencies {
     implementation(project(":feature:settings:domain"))
-    implementation(project(":feature:settings:data"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

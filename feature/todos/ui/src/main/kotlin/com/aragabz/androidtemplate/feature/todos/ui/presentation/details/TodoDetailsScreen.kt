@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.aragabz.androidtemplate.core.common.util.DateTimeUtils
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 import com.aragabz.androidtemplate.feature.todos.ui.R
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
@@ -120,17 +121,16 @@ fun TodoDetailsScreen(
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
-                uiState.todo != null -> {
-                    TodoDetailsContent(
-                        todo = uiState.todo!!,
-                        onToggleComplete = {
-                            viewModel.onEvent(TodoDetailsEvent.OnToggleTodo)
-                        },
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
                 else -> {
-                    Text(
+                    uiState.todo?.let { todo ->
+                        TodoDetailsContent(
+                            todo = todo,
+                            onToggleComplete = {
+                                viewModel.onEvent(TodoDetailsEvent.OnToggleTodo)
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    } ?: Text(
                         text = stringResource(id = R.string.todo_not_found),
                         modifier = Modifier.align(Alignment.Center),
                         style = MaterialTheme.typography.bodyLarge,
@@ -265,12 +265,12 @@ private fun TodoDetailsContent(
             ) {
                 MetadataRow(
                     label = stringResource(id = R.string.todo_created),
-                    value = todo.createdAt,
+                    value = DateTimeUtils.formatDateTime(todo.createdAt),
                 )
                 todo.updatedAt?.let { updatedAt ->
                     MetadataRow(
                         label = stringResource(id = R.string.todo_last_updated),
-                        value = updatedAt,
+                        value = DateTimeUtils.formatDateTime(updatedAt),
                     )
                 }
             }

@@ -16,7 +16,8 @@ class AuthInterceptor
                 if (token.isNullOrBlank()) {
                     chain.request()
                 } else {
-                    chain.request()
+                    chain
+                        .request()
                         .newBuilder()
                         .addHeader("Authorization", "Bearer $token")
                         .build()

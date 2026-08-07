@@ -17,4 +17,8 @@
     <string name="home_component_examples">Ejemplos de componentes</string>
     <string name="home_component_example_template">Ejemplo del componente %1$s</string>
     <string name="home_click">Pulsar</string>
+    <string name="home_error_message">Algo salió mal en esta pantalla.</string>
+    <string name="home_empty_screen_message">Esta es una pantalla vacía</string>
+    <string name="home_empty_screen_subtitle">Puedes regresar desde aquí</string>
+    <string name="home_empty_screen_action">Volver</string>
 </resources>

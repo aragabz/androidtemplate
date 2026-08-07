@@ -1,13 +1,62 @@
 package com.aragabz.androidtemplate.core.network.mock
 
 /**
- * Debug-only registry that can be expanded to map endpoint paths to local payloads.
+ * Debug-only registry that maps endpoint paths to indicate which should be mocked.
+ *
+ * This registry is consulted by MockInterceptor to determine if a request should
+ * return a mock response or proceed to the real network.
+ *
+ * Usage:
+ * - Add paths here to enable mocking for those endpoints
+ * - Remove paths to allow real network calls
+ * - Check [isMocked] to determine if a path should be intercepted
  */
 object DebugMockRegistry {
-    private val mockedPaths = setOf(
-        "/todos",
-        "/users",
-    )
+    /**
+     * Set of endpoint paths that should be mocked in debug builds.
+     * Paths should match the encoded path from the request URL.
+     */
+    private val mockedPaths =
+        setOf(
+            // Auth endpoints
+            "/login",
+            "/register",
+            // User endpoints
+            "/user/profile",
+            // Todos endpoint
+            "/todos",
+            // Users endpoint
+            "/users",
+        )
 
-    fun isMocked(path: String): Boolean = mockedPaths.contains(path)
+    /**
+     * Checks if the given path should be mocked.
+     *
+     * @param path The encoded path from the request URL
+     * @return true if this path should return a mock response, false otherwise
+     */
+    fun isMocked(path: String): Boolean = mockedPaths.any { path.contains(it) }
+
+    /**
+     * Returns all registered mock paths for debugging/logging.
+     */
+    fun getAllMockedPaths(): Set<String> = mockedPaths
+
+    /**
+     * Enables mocking for a specific path at runtime (for testing).
+     * Note: This is not thread-safe and should only be used in tests.
+     */
+    private val runtimeMockedPaths = mutableSetOf<String>()
+
+    fun enableMockingFor(path: String) {
+        runtimeMockedPaths.add(path)
+    }
+
+    fun disableMockingFor(path: String) {
+        runtimeMockedPaths.remove(path)
+    }
+
+    fun clearRuntimeMocks() {
+        runtimeMockedPaths.clear()
+    }
 }

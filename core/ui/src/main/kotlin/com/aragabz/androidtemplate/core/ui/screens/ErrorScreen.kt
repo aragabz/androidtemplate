@@ -1,5 +1,6 @@
 package com.aragabz.androidtemplate.core.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -25,6 +27,7 @@ import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.core.ui.R
 
 /**
  * Full-screen error state with optional retry action.
@@ -35,7 +38,7 @@ fun ErrorScreen(
     message: String,
     modifier: Modifier = Modifier,
     onRetry: (() -> Unit)? = null,
-    iconContentDescription: String = "Error",
+    iconContentDescription: String = stringResource(R.string.error_icon_content_description),
 ) {
     val spacing = LocalSpacing.current
 
@@ -43,6 +46,7 @@ fun ErrorScreen(
         modifier =
             modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(spacing.large)
                 .semantics { liveRegion = LiveRegionMode.Assertive },
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,7 +62,7 @@ fun ErrorScreen(
         Spacer(modifier = Modifier.height(spacing.medium))
 
         Text(
-            text = "Something went wrong",
+            text = stringResource(R.string.error_title),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -75,7 +79,7 @@ fun ErrorScreen(
         if (onRetry != null) {
             Spacer(modifier = Modifier.height(spacing.large))
             AppButton(
-                text = "Try Again",
+                text = stringResource(R.string.error_action_retry),
                 onClick = onRetry,
                 variant = AppButtonVariant.PRIMARY,
             )

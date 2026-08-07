@@ -3,16 +3,17 @@ package com.aragabz.androidtemplate.feature.settings.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.feature.settings.domain.model.AppLanguage
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.ObserveSettingsUseCase
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.UpdateLanguageUseCase
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.UpdateThemeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel
@@ -43,7 +44,7 @@ class SettingsViewModel
                     _uiState.update {
                         it.copy(
                             selectedTheme = settings.theme,
-                            selectedLanguage = settings.language,
+                            selectedLanguage = AppLanguage.fromCode(settings.language),
                         )
                     }
                 }
@@ -58,9 +59,9 @@ class SettingsViewModel
             }
         }
 
-        private fun updateLanguage(language: String) {
+        private fun updateLanguage(language: AppLanguage) {
             viewModelScope.launch {
-                updateLanguageUseCase(language).collect { result ->
+                updateLanguageUseCase(language.code).collect { result ->
                     handleMutationResult(result)
                 }
             }

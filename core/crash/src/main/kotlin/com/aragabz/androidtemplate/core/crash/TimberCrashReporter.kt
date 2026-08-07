@@ -73,7 +73,8 @@ class TimberCrashReporter
                     ) { "${it.key}=${it.value}" }
                 }
 
-            val message = "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
+            val message =
+                "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
             when (event.severity) {
                 ErrorSeverity.INFO -> Timber.i(message)
                 ErrorSeverity.WARNING -> Timber.w(message)

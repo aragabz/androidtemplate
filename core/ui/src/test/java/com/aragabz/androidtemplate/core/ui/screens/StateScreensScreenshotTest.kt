@@ -64,4 +64,22 @@ class StateScreensScreenshotTest {
             )
         }
     }
+
+    @Test
+    fun splashScreen_light() {
+        captureAppScreenshot(composeTestRule = composeTestRule, name = "SplashScreen") {
+            SplashScreen()
+        }
+    }
+
+    @Test
+    fun splashScreen_dark() {
+        captureAppScreenshot(
+            composeTestRule = composeTestRule,
+            name = "SplashScreen",
+            darkTheme = true,
+        ) {
+            SplashScreen()
+        }
+    }
 }

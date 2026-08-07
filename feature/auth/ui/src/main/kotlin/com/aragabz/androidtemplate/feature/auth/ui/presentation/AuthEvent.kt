@@ -12,4 +12,10 @@ sealed interface AuthEvent {
     data object OnSignOut : AuthEvent
 
     data object OnDismissError : AuthEvent
+
+    data object OnBiometricAuthRequested : AuthEvent
+
+    data class OnBiometricAuthResult(val success: Boolean) : AuthEvent
+
+    data class OnBiometricToggled(val enabled: Boolean) : AuthEvent
 }

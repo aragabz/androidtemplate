@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aragabz.androidtemplate.core.common.network.NetworkMonitor
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
+import com.aragabz.androidtemplate.core.designsystem.theme.LocalSemanticColors
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
-import com.aragabz.androidtemplate.core.designsystem.theme.Warning
 import com.aragabz.androidtemplate.core.ui.R
 
 /**
@@ -55,12 +55,13 @@ fun NetworkBanner(
 @Composable
 fun OfflineBanner(modifier: Modifier = Modifier) {
     val spacing = LocalSpacing.current
+    val semanticColors = LocalSemanticColors.current
 
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(Warning)
+                .background(semanticColors.warning)
                 .padding(spacing.small)
                 .semantics { liveRegion = LiveRegionMode.Assertive },
         contentAlignment = Alignment.Center,

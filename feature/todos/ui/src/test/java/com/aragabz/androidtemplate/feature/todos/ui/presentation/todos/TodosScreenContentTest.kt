@@ -54,7 +54,7 @@ class TodosScreenContentTest {
                                         title = "Ship tests",
                                         description = null,
                                         isCompleted = true,
-                                        createdAt = "now",
+                                        createdAt = System.currentTimeMillis(),
                                         updatedAt = null,
                                     ),
                                 ),

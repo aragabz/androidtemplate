@@ -41,7 +41,7 @@ class AddTodoViewModelTest {
                     title = "Ship hardening",
                     description = null,
                     isCompleted = false,
-                    createdAt = "now",
+                    createdAt = System.currentTimeMillis(),
                     updatedAt = null,
                 )
             val viewModel =

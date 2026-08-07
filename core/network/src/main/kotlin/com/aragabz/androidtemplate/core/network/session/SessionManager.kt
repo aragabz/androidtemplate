@@ -13,18 +13,20 @@ import javax.inject.Singleton
 class SessionManager
     @Inject
     constructor() {
-        private val _onUnauthorized = MutableSharedFlow<Unit>(replay = 0)
+        private val _onUnauthorized = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
 
         /**
          * SharedFlow that emits when a 401 Unauthorized response is received.
-         * Collect this in your app to handle logout/navigation to login.
+         * Collect this in your app (e.g., MainActivity) with lifecycle scope to handle logout/navigation.
          */
         val onUnauthorized: SharedFlow<Unit> = _onUnauthorized.asSharedFlow()
 
         /**
          * Call this when a 401 response is detected to notify all collectors.
+         * Non-suspending — uses tryEmit for fire-and-forget notification.
+         * Actual handling (navigation, logout) should happen in lifecycle-scoped collectors.
          */
-        suspend fun notifyUnauthorized() {
-            _onUnauthorized.emit(Unit)
+        fun notifyUnauthorized() {
+            _onUnauthorized.tryEmit(Unit)
         }
     }

@@ -32,6 +32,9 @@ class UserPreferencesRepositoryImpl
             val AUTH_TOKEN = stringPreferencesKey("auth_token")
             val THEME = stringPreferencesKey("theme")
             val LANGUAGE = stringPreferencesKey("language")
+            val BIOMETRIC_AUTH_ENABLED = androidx.datastore.preferences.core.booleanPreferencesKey(
+                "biometric_auth_enabled",
+            )
         }
 
         private val secureAuthToken = MutableStateFlow(secureSessionStorage.getAuthToken())
@@ -46,6 +49,7 @@ class UserPreferencesRepositoryImpl
                             AppTheme.valueOf(it)
                         } ?: AppTheme.SYSTEM,
                     language = preferences[PreferencesKeys.LANGUAGE] ?: "en",
+                    biometricAuthEnabled = preferences[PreferencesKeys.BIOMETRIC_AUTH_ENABLED] ?: false,
                 )
             }
 
@@ -72,6 +76,12 @@ class UserPreferencesRepositoryImpl
         override suspend fun updateLanguage(language: String) {
             context.dataStore.edit { preferences ->
                 preferences[PreferencesKeys.LANGUAGE] = language
+            }
+        }
+
+        override suspend fun updateBiometricAuthEnabled(enabled: Boolean) {
+            context.dataStore.edit { preferences ->
+                preferences[PreferencesKeys.BIOMETRIC_AUTH_ENABLED] = enabled
             }
         }
 

@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.aragabz.androidtemplate.core.designsystem.R
 
 enum class AppButtonVariant {
     PRIMARY,
@@ -39,10 +41,11 @@ fun AppButton(
     leadingIcon: ImageVector? = null,
 ) {
     val contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+    val loadingStateDescription = stringResource(R.string.button_loading_state)
     val accessibilityModifier =
         modifier.semantics {
             if (isLoading) {
-                stateDescription = "Loading"
+                stateDescription = loadingStateDescription
             }
         }
 

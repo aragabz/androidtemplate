@@ -50,8 +50,9 @@ object NetworkModule {
         authInterceptor: AuthInterceptor,
         retryInterceptor: RetryInterceptor,
         cachePolicyInterceptor: CachePolicyInterceptor,
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
             .connectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
@@ -77,7 +78,6 @@ object NetworkModule {
             //         .build()
             // )
             .build()
-    }
 
     @Provides
     @Singleton
@@ -87,7 +87,8 @@ object NetworkModule {
         sessionManager: SessionManager,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))

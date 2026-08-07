@@ -10,11 +10,11 @@ android {
 
 dependencies {
     implementation(project(":feature:auth:domain"))
-    implementation(project(":feature:auth:data"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:datastore"))
 
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

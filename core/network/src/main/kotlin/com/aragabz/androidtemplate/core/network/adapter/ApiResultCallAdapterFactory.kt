@@ -3,9 +3,6 @@ package com.aragabz.androidtemplate.core.network.adapter
 import com.aragabz.androidtemplate.core.common.result.AppError
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.network.session.SessionManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.Call
@@ -50,9 +47,7 @@ private class ApiResultCallAdapter<T>(
 ) : CallAdapter<T, Call<AppResult<T>>> {
     override fun responseType(): Type = successType
 
-    override fun adapt(call: Call<T>): Call<AppResult<T>> {
-        return AppResultCall(call, sessionManager)
-    }
+    override fun adapt(call: Call<T>): Call<AppResult<T>> = AppResultCall(call, sessionManager)
 }
 
 private class AppResultCall<T>(
@@ -79,11 +74,10 @@ private class AppResultCall<T>(
                         } else {
                             val code = response.code()
 
-                            // Handle 401 Unauthorized
+                            // Handle 401 Unauthorized - notify SessionManager
+                            // Actual handling (logout, navigation) happens in lifecycle-scoped collectors
                             if (code == HTTP_UNAUTHORIZED) {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    sessionManager.notifyUnauthorized()
-                                }
+                                sessionManager.notifyUnauthorized()
                             }
 
                             AppResult.Error(
@@ -112,9 +106,8 @@ private class AppResultCall<T>(
         )
     }
 
-    override fun execute(): Response<AppResult<T>> {
+    override fun execute(): Response<AppResult<T>> =
         throw UnsupportedOperationException("AppResultCall does not support execute()")
-    }
 
     override fun isExecuted(): Boolean = delegate.isExecuted
 

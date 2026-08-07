@@ -10,7 +10,7 @@ android {
 
 dependencies {
     implementation(project(":feature:profile:domain"))
-    implementation(project(":feature:profile:data"))
+    implementation(project(":feature:auth:domain"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

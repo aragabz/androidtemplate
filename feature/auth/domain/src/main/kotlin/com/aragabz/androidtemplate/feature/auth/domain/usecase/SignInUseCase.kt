@@ -15,13 +15,13 @@ class SignInUseCase
         @IoDispatcher dispatcher: CoroutineDispatcher,
     ) : FlowUseCase<SignInUseCase.Params, AppResult<Unit>>(dispatcher) {
         data class Params(
-            val userId: String,
+            val email: String,
             val token: String,
         )
 
         override fun execute(parameters: Params): Flow<AppResult<Unit>> =
             repository.signIn(
-                userId = parameters.userId,
+                userId = parameters.email,
                 token = parameters.token,
             )
     }

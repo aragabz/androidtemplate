@@ -126,7 +126,13 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:todos:ui"))
     implementation(project(":feature:todos:data"))
+    implementation(project(":feature:auth:ui"))
     implementation(project(":feature:auth:domain"))
+    implementation(project(":feature:auth:data"))
+    implementation(project(":feature:profile:ui"))
+    implementation(project(":feature:profile:data"))
+    implementation(project(":feature:settings:ui"))
+    implementation(project(":feature:settings:data"))
 
     // Navigation
     implementation(libs.androidx.navigation3.runtime)

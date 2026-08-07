@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
+import com.aragabz.androidtemplate.feature.settings.domain.model.AppLanguage
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 import org.junit.Rule
 import org.junit.Test
@@ -25,15 +26,15 @@ class SettingsScreenContentTest {
                     uiState =
                         SettingsUiState(
                             selectedTheme = ThemePreference.DARK,
-                            selectedLanguage = "ar",
+                            selectedLanguage = AppLanguage.ARABIC,
                         ),
-                    onEvent = {},
                 )
             }
         }
 
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-        composeTestRule.onNodeWithText("DARK (selected)").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Dark").assertIsDisplayed()
         composeTestRule.onNodeWithText("Language").assertIsDisplayed()
+        composeTestRule.onNodeWithText("العربية").assertIsDisplayed()
     }
 }

@@ -7,6 +7,9 @@ import org.junit.Test
 class TodoEntityMappingTest {
     @Test
     fun `toExternalModel maps all fields`() {
+        val createdTime = System.currentTimeMillis()
+        val updatedTime = createdTime + 3600_000 // 1 hour later
+        
         val entity =
             TodoEntity(
                 id = "todo-1",
@@ -14,8 +17,8 @@ class TodoEntityMappingTest {
                 title = "Buy milk",
                 description = "2 liters",
                 isCompleted = true,
-                createdAt = "2026-07-18T00:00:00Z",
-                updatedAt = "2026-07-18T01:00:00Z",
+                createdAt = createdTime,
+                updatedAt = updatedTime,
             )
 
         val model = entity.toExternalModel()

@@ -50,7 +50,8 @@ class AuthInterceptorTest {
     }
 
     private fun responseFor(request: Request): Response =
-        Response.Builder()
+        Response
+            .Builder()
             .request(request)
             .protocol(Protocol.HTTP_1_1)
             .code(200)

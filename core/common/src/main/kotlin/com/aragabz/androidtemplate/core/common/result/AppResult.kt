@@ -107,3 +107,32 @@ inline fun <T> AppResult<T>.onLoading(block: () -> Unit): AppResult<T> {
     }
     return this
 }
+
+/**
+ * Exhaustive pattern matching for AppResult.
+ * Forces the caller to handle all three states (Success, Error, Loading).
+ *
+ * Example:
+ * ```kotlin
+ * val message = result.fold(
+ *     onSuccess = { data -> "Got: $data" },
+ *     onError = { error -> "Failed: ${error.message}" },
+ *     onLoading = { "Loading..." }
+ * )
+ * ```
+ *
+ * @param onSuccess handler for Success state
+ * @param onError handler for Error state
+ * @param onLoading handler for Loading state
+ * @return the result of the matching handler
+ */
+inline fun <T, R> AppResult<T>.fold(
+    onSuccess: (T) -> R,
+    onError: (Throwable) -> R,
+    onLoading: () -> R,
+): R =
+    when (this) {
+        is AppResult.Success -> onSuccess(data)
+        is AppResult.Error -> onError(exception)
+        is AppResult.Loading -> onLoading()
+    }

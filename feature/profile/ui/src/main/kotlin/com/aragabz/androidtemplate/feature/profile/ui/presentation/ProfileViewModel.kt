@@ -3,8 +3,8 @@ package com.aragabz.androidtemplate.feature.profile.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.feature.auth.domain.usecase.SignOutUseCase
 import com.aragabz.androidtemplate.feature.profile.domain.usecase.GetProfileUseCase
-import com.aragabz.androidtemplate.feature.profile.domain.usecase.SignOutProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ class ProfileViewModel
     @Inject
     constructor(
         private val getProfileUseCase: GetProfileUseCase,
-        private val signOutProfileUseCase: SignOutProfileUseCase,
+        private val signOutUseCase: SignOutUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ProfileUiState())
         val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -60,7 +60,7 @@ class ProfileViewModel
 
         private fun signOut() {
             viewModelScope.launch {
-                signOutProfileUseCase().collect { result ->
+                signOutUseCase().collect { result ->
                     when (result) {
                         is AppResult.Loading -> _uiState.update { it.copy(isLoading = true) }
                         is AppResult.Success -> _uiState.update {

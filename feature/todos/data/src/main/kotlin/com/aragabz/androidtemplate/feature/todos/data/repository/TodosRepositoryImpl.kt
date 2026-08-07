@@ -98,6 +98,7 @@ class TodosRepositoryImpl
             flow {
                 emit(AppResult.Loading)
                 val userId = getActiveUserId()
+                val now = System.currentTimeMillis()
                 val newTodo =
                     TodoEntity(
                         id = UUID.randomUUID().toString(),
@@ -105,7 +106,7 @@ class TodosRepositoryImpl
                         title = title,
                         description = description,
                         isCompleted = false,
-                        createdAt = System.currentTimeMillis().toString(),
+                        createdAt = now,
                         updatedAt = null,
                     )
                 todoDao.upsert(newTodo)
@@ -118,10 +119,11 @@ class TodosRepositoryImpl
                 emit(AppResult.Loading)
                 val todo = todoDao.getTodoById(id)
                 if (todo != null) {
+                    val now = System.currentTimeMillis()
                     val updated =
                         todo.copy(
                             isCompleted = !todo.isCompleted,
-                            updatedAt = System.currentTimeMillis().toString(),
+                            updatedAt = now,
                         )
                     todoDao.upsert(updated)
                     cachePolicyStore.touchTodosCache(updated.userId, inMemoryCache[updated.userId]?.size ?: 1)
@@ -145,6 +147,7 @@ class TodosRepositoryImpl
             preferencesRepository.userPreferences.first().userId ?: "default"
 
         private suspend fun addDefaultTodos(userId: String) {
+            val baseTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7) // 7 days ago
             val defaults =
                 listOf(
                     TodoEntity(
@@ -153,7 +156,7 @@ class TodosRepositoryImpl
                         title = "Welcome to Android Template!",
                         description = "This is your first todo item in this account.",
                         isCompleted = false,
-                        createdAt = "2024-06-01T00:00:00Z",
+                        createdAt = baseTime,
                         updatedAt = null,
                     ),
                     TodoEntity(
@@ -162,7 +165,7 @@ class TodosRepositoryImpl
                         title = "Add a new account",
                         description = "Go to settings and create a new account to test switching.",
                         isCompleted = false,
-                        createdAt = "2024-06-01T00:00:00Z",
+                        createdAt = baseTime + TimeUnit.HOURS.toMillis(1), // 1 hour after first
                         updatedAt = null,
                     ),
                 )

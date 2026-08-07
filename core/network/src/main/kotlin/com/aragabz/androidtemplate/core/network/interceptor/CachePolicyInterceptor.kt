@@ -18,7 +18,8 @@ class CachePolicyInterceptor
             val response = chain.proceed(requestBuilder.build())
 
             return if (request.method == "GET") {
-                response.newBuilder()
+                response
+                    .newBuilder()
                     .header("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
                     .build()
             } else {

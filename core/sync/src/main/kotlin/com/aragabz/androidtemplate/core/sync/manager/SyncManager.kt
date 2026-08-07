@@ -31,9 +31,30 @@ interface SyncManager {
 
 /**
  * Standard constraints for synchronization tasks.
+ *
+ * These constraints ensure sync only runs when:
+ * - Device is on unmetered network (Wi-Fi, not mobile data)
+ * - Battery is not low (above critical level)
+ * - Device has sufficient storage space
+ *
+ * This prevents sync from draining battery on mobile data or when battery is low.
  */
 val SyncConstraints =
     Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.UNMETERED)
+        .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
+        .build()
+
+/**
+ * Relaxed constraints for user-initiated sync.
+ *
+ * Less restrictive - allows sync on any network (including metered/mobile data)
+ * but still respects battery and storage constraints.
+ */
+val SyncConstraintsRelaxed =
+    Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
         .build()

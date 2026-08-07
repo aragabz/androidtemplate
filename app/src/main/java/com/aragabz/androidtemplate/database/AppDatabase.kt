@@ -14,7 +14,7 @@ import com.aragabz.androidtemplate.feature.todos.data.local.entity.TodoEntity
     entities = [
         TodoEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

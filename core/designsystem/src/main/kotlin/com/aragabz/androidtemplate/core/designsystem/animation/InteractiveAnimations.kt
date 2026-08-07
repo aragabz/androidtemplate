@@ -31,26 +31,27 @@ import kotlinx.coroutines.launch
 public fun Modifier.pressAnimation(
     pressedScale: Float = 0.95f,
     animationSpec: AnimationSpec<Float> = AnimationSpecs.fast,
-): Modifier = composed {
-    var isPressed by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) pressedScale else 1f,
-        animationSpec = animationSpec,
-        label = "press_scale",
-    )
+): Modifier =
+    composed {
+        var isPressed by remember { mutableStateOf(false) }
+        val scale by animateFloatAsState(
+            targetValue = if (isPressed) pressedScale else 1f,
+            animationSpec = animationSpec,
+            label = "press_scale",
+        )
 
-    this
-        .scale(scale)
-        .pointerInput(Unit) {
-            detectTapGestures(
-                onPress = {
-                    isPressed = true
-                    tryAwaitRelease()
-                    isPressed = false
-                },
-            )
-        }
-}
+        this
+            .scale(scale)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        isPressed = false
+                    },
+                )
+            }
+    }
 
 /**
  * Animates elevation on press (lift effect).
@@ -67,13 +68,12 @@ public fun animateElevationAsState(
     normalElevation: Dp = 2.dp,
     pressedElevation: Dp = 8.dp,
     animationSpec: AnimationSpec<Dp> = AnimationSpecs.fastDp,
-): Dp {
-    return animateDpAsState(
+): Dp =
+    animateDpAsState(
         targetValue = if (pressed) pressedElevation else normalElevation,
         animationSpec = animationSpec,
         label = "elevation",
     ).value
-}
 
 /**
  * Shake animation modifier for error states or attention grabbing.
@@ -84,26 +84,27 @@ public fun animateElevationAsState(
 public fun Modifier.shakeAnimation(
     enabled: Boolean,
     shakeDistance: Float = 10f,
-): Modifier = composed {
-    val offsetX = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
+): Modifier =
+    composed {
+        val offsetX = remember { Animatable(0f) }
+        val scope = rememberCoroutineScope()
 
-    LaunchedEffect(enabled) {
-        if (enabled) {
-            scope.launch {
-                // Shake pattern: right -> left -> right -> center
-                offsetX.animateTo(shakeDistance, AnimationSpecs.fast)
-                offsetX.animateTo(-shakeDistance, AnimationSpecs.fast)
-                offsetX.animateTo(shakeDistance / 2, AnimationSpecs.fast)
-                offsetX.animateTo(0f, AnimationSpecs.fast)
+        LaunchedEffect(enabled) {
+            if (enabled) {
+                scope.launch {
+                    // Shake pattern: right -> left -> right -> center
+                    offsetX.animateTo(shakeDistance, AnimationSpecs.fast)
+                    offsetX.animateTo(-shakeDistance, AnimationSpecs.fast)
+                    offsetX.animateTo(shakeDistance / 2, AnimationSpecs.fast)
+                    offsetX.animateTo(0f, AnimationSpecs.fast)
+                }
             }
         }
-    }
 
-    graphicsLayer {
-        translationX = offsetX.value
+        graphicsLayer {
+            translationX = offsetX.value
+        }
     }
-}
 
 /**
  * Bounce animation modifier for emphasis or success states.
@@ -114,21 +115,22 @@ public fun Modifier.shakeAnimation(
 public fun Modifier.bounceAnimation(
     enabled: Boolean,
     bounceScale: Float = 1.2f,
-): Modifier = composed {
-    val scale = remember { Animatable(1f) }
-    val scope = rememberCoroutineScope()
+): Modifier =
+    composed {
+        val scale = remember { Animatable(1f) }
+        val scope = rememberCoroutineScope()
 
-    LaunchedEffect(enabled) {
-        if (enabled) {
-            scope.launch {
-                scale.animateTo(bounceScale, AnimationSpecs.springMedium)
-                scale.animateTo(1f, AnimationSpecs.springMedium)
+        LaunchedEffect(enabled) {
+            if (enabled) {
+                scope.launch {
+                    scale.animateTo(bounceScale, AnimationSpecs.springMedium)
+                    scale.animateTo(1f, AnimationSpecs.springMedium)
+                }
             }
         }
-    }
 
-    scale(scale.value)
-}
+        scale(scale.value)
+    }
 
 /**
  * Rotation animation modifier.
@@ -141,14 +143,15 @@ public fun Modifier.rotateAnimation(
     enabled: Boolean,
     degrees: Float = 180f,
     animationSpec: AnimationSpec<Float> = AnimationSpecs.standard,
-): Modifier = composed {
-    val rotation by animateFloatAsState(
-        targetValue = if (enabled) degrees else 0f,
-        animationSpec = animationSpec,
-        label = "rotation",
-    )
+): Modifier =
+    composed {
+        val rotation by animateFloatAsState(
+            targetValue = if (enabled) degrees else 0f,
+            animationSpec = animationSpec,
+            label = "rotation",
+        )
 
-    graphicsLayer {
-        rotationZ = rotation
+        graphicsLayer {
+            rotationZ = rotation
+        }
     }
-}

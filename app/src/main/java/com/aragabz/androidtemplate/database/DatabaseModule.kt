@@ -27,6 +27,9 @@ object DatabaseModule {
                 AppDatabase.DATABASE_NAME,
             ).apply {
                 migrations.forEach { addMigrations(it) }
+                // Fallback to destructive migration if no migration path exists
+                // In production, always provide explicit migrations for data safety
+                fallbackToDestructiveMigration()
             }.build()
     }
 

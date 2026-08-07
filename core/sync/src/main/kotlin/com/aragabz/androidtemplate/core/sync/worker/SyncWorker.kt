@@ -12,6 +12,13 @@ import timber.log.Timber
 
 /**
  * Main worker responsible for background synchronization.
+ *
+ * This worker respects system constraints to preserve battery and data:
+ * - Runs only on unmetered networks (Wi-Fi) for periodic sync
+ * - Requires battery to not be low
+ * - Requires sufficient storage space
+ *
+ * User-initiated sync uses relaxed constraints allowing mobile data.
  */
 @HiltWorker
 class SyncWorker

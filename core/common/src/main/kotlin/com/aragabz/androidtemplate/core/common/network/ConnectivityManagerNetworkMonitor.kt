@@ -10,11 +10,15 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Implementation of NetworkMonitor using ConnectivityManager.
+ *
+ * Uses a thread-safe synchronized set to track active networks, as callbacks
+ * may be invoked from different threads.
  */
 @Singleton
 class ConnectivityManagerNetworkMonitor
@@ -28,7 +32,8 @@ class ConnectivityManagerNetworkMonitor
 
                 val callback =
                     object : ConnectivityManager.NetworkCallback() {
-                        private val networks = mutableSetOf<Network>()
+                        // Use synchronized set for thread-safe access from multiple callback threads
+                        private val networks = Collections.synchronizedSet(mutableSetOf<Network>())
 
                         override fun onAvailable(network: Network) {
                             networks.add(network)
@@ -37,7 +42,11 @@ class ConnectivityManagerNetworkMonitor
 
                         override fun onLost(network: Network) {
                             networks.remove(network)
-                            trySend(networks.isNotEmpty())
+                            // Check size in synchronized block
+                            val hasNetworks = synchronized(networks) {
+                                networks.isNotEmpty()
+                            }
+                            trySend(hasNetworks)
                         }
                     }
 

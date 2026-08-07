@@ -44,6 +44,18 @@ sealed interface Route {
     data object Settings : Route
 
     /**
+     * Settings theme section screen route
+     */
+    @Serializable
+    data object SettingsTheme : Route
+
+    /**
+     * Settings language section screen route
+     */
+    @Serializable
+    data object SettingsLanguage : Route
+
+    /**
      * Details screen route with item ID
      * @param id The ID of the item to display
      */
