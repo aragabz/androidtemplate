@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
  * Simple fade transition for content changes.
  */
 @Composable
-public fun <T> AnimatedFadeContent(
+fun <T> AnimatedFadeContent(
     targetState: T,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit,
@@ -41,7 +41,7 @@ public fun <T> AnimatedFadeContent(
  * @param content Content to display for each state
  */
 @Composable
-public fun <T : Comparable<T>> AnimatedSlideContent(
+fun <T : Comparable<T>> AnimatedSlideContent(
     targetState: T,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit,

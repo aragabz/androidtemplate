@@ -129,6 +129,9 @@ class ProfileRepositoryImplTest {
             // Not used in these tests
         }
 
+        override suspend fun updateBiometricAuthEnabled(enabled: Boolean) {
+        }
+
         override suspend fun clearSession() {
             preferences = UserPreferences(userId = null, authToken = null)
         }

@@ -5,17 +5,17 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Storage interface for persisting feature flag overrides.
  */
-public interface FeatureFlagStore {
+interface FeatureFlagStore {
     /**
      * Get the override value for a feature flag.
      * Returns null if no override is set (should use default).
      */
-    public fun getOverride(feature: Feature): Flow<Boolean?>
+    fun getOverride(feature: Feature): Flow<Boolean?>
 
     /**
      * Set an override value for a feature flag.
      */
-    public suspend fun setOverride(
+    suspend fun setOverride(
         feature: Feature,
         enabled: Boolean,
     )
@@ -23,10 +23,10 @@ public interface FeatureFlagStore {
     /**
      * Clear the override for a feature flag (revert to default).
      */
-    public suspend fun clearOverride(feature: Feature)
+    suspend fun clearOverride(feature: Feature)
 
     /**
      * Clear all feature flag overrides.
      */
-    public suspend fun clearAllOverrides()
+    suspend fun clearAllOverrides()
 }

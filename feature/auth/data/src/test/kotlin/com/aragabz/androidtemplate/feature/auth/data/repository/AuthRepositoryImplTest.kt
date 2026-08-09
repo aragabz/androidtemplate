@@ -167,6 +167,10 @@ class AuthRepositoryImplTest {
             // Not used in these tests
         }
 
+        override suspend fun updateBiometricAuthEnabled(enabled: Boolean) {
+
+        }
+
         override suspend fun clearSession() {
             if (shouldFailClear) {
                 throw RuntimeException("Failed to clear session")

@@ -20,21 +20,21 @@ import androidx.compose.ui.Modifier
 /**
  * Standard enter/exit transitions used across the app.
  */
-public object Transitions {
+object Transitions {
     /**
      * Fade in transition.
      */
-    public val fadeIn: EnterTransition = fadeIn(animationSpec = tween(300))
+    val fadeIn: EnterTransition = fadeIn(animationSpec = tween(300))
 
     /**
      * Fade out transition.
      */
-    public val fadeOut: ExitTransition = fadeOut(animationSpec = tween(300))
+    val fadeOut: ExitTransition = fadeOut(animationSpec = tween(300))
 
     /**
      * Slide in from left + fade in.
      */
-    public val slideInFromLeft: EnterTransition = slideInHorizontally(
+    val slideInFromLeft: EnterTransition = slideInHorizontally(
         animationSpec = tween(300),
         initialOffsetX = { -it },
     ) + fadeIn(animationSpec = tween(300))
@@ -42,7 +42,7 @@ public object Transitions {
     /**
      * Slide in from right + fade in.
      */
-    public val slideInFromRight: EnterTransition = slideInHorizontally(
+    val slideInFromRight: EnterTransition = slideInHorizontally(
         animationSpec = tween(300),
         initialOffsetX = { it },
     ) + fadeIn(animationSpec = tween(300))
@@ -50,7 +50,7 @@ public object Transitions {
     /**
      * Slide in from top + fade in.
      */
-    public val slideInFromTop: EnterTransition = slideInVertically(
+    val slideInFromTop: EnterTransition = slideInVertically(
         animationSpec = tween(300),
         initialOffsetY = { -it },
     ) + fadeIn(animationSpec = tween(300))
@@ -58,7 +58,7 @@ public object Transitions {
     /**
      * Slide in from bottom + fade in.
      */
-    public val slideInFromBottom: EnterTransition = slideInVertically(
+    val slideInFromBottom: EnterTransition = slideInVertically(
         animationSpec = tween(300),
         initialOffsetY = { it },
     ) + fadeIn(animationSpec = tween(300))
@@ -66,7 +66,7 @@ public object Transitions {
     /**
      * Slide out to left + fade out.
      */
-    public val slideOutToLeft: ExitTransition = slideOutHorizontally(
+    val slideOutToLeft: ExitTransition = slideOutHorizontally(
         animationSpec = tween(300),
         targetOffsetX = { -it },
     ) + fadeOut(animationSpec = tween(300))
@@ -74,7 +74,7 @@ public object Transitions {
     /**
      * Slide out to right + fade out.
      */
-    public val slideOutToRight: ExitTransition = slideOutHorizontally(
+    val slideOutToRight: ExitTransition = slideOutHorizontally(
         animationSpec = tween(300),
         targetOffsetX = { it },
     ) + fadeOut(animationSpec = tween(300))
@@ -82,7 +82,7 @@ public object Transitions {
     /**
      * Slide out to top + fade out.
      */
-    public val slideOutToTop: ExitTransition = slideOutVertically(
+    val slideOutToTop: ExitTransition = slideOutVertically(
         animationSpec = tween(300),
         targetOffsetY = { -it },
     ) + fadeOut(animationSpec = tween(300))
@@ -90,7 +90,7 @@ public object Transitions {
     /**
      * Slide out to bottom + fade out.
      */
-    public val slideOutToBottom: ExitTransition = slideOutVertically(
+    val slideOutToBottom: ExitTransition = slideOutVertically(
         animationSpec = tween(300),
         targetOffsetY = { it },
     ) + fadeOut(animationSpec = tween(300))
@@ -98,7 +98,7 @@ public object Transitions {
     /**
      * Expand vertically from top + fade in.
      */
-    public val expandFromTop: EnterTransition = expandVertically(
+    val expandFromTop: EnterTransition = expandVertically(
         animationSpec = tween(300),
         expandFrom = Alignment.Top,
     ) + fadeIn(animationSpec = tween(300))
@@ -106,7 +106,7 @@ public object Transitions {
     /**
      * Expand vertically from center + fade in.
      */
-    public val expandFromCenter: EnterTransition = expandVertically(
+    val expandFromCenter: EnterTransition = expandVertically(
         animationSpec = tween(300),
         expandFrom = Alignment.CenterVertically,
     ) + fadeIn(animationSpec = tween(300))
@@ -114,7 +114,7 @@ public object Transitions {
     /**
      * Shrink vertically to top + fade out.
      */
-    public val shrinkToTop: ExitTransition = shrinkVertically(
+    val shrinkToTop: ExitTransition = shrinkVertically(
         animationSpec = tween(300),
         shrinkTowards = Alignment.Top,
     ) + fadeOut(animationSpec = tween(300))
@@ -122,7 +122,7 @@ public object Transitions {
     /**
      * Shrink vertically to center + fade out.
      */
-    public val shrinkToCenter: ExitTransition = shrinkVertically(
+    val shrinkToCenter: ExitTransition = shrinkVertically(
         animationSpec = tween(300),
         shrinkTowards = Alignment.CenterVertically,
     ) + fadeOut(animationSpec = tween(300))
@@ -136,7 +136,7 @@ public object Transitions {
  * @param content Content to show/hide with animation
  */
 @Composable
-public fun AnimatedFade(
+fun AnimatedFade(
     visible: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit,
@@ -158,7 +158,7 @@ public fun AnimatedFade(
  * @param content Content to show/hide with animation
  */
 @Composable
-public fun AnimatedSlideLeft(
+fun AnimatedSlideLeft(
     visible: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit,
@@ -180,7 +180,7 @@ public fun AnimatedSlideLeft(
  * @param content Content to show/hide with animation
  */
 @Composable
-public fun AnimatedSlideRight(
+fun AnimatedSlideRight(
     visible: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit,
@@ -202,7 +202,7 @@ public fun AnimatedSlideRight(
  * @param content Content to show/hide with animation
  */
 @Composable
-public fun AnimatedExpand(
+fun AnimatedExpand(
     visible: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit,

@@ -104,7 +104,7 @@ private fun captureAppScreenshot(
     variant: AppButtonVariant = AppButtonVariant.PRIMARY,
     content: @Composable () -> Unit
 ) {
-    com.aragabz.androidtemplate.core.ui.util.captureAppScreenshot(
+    captureAppScreenshot(
         composeTestRule = composeTestRule,
         name = name,
         device = device,

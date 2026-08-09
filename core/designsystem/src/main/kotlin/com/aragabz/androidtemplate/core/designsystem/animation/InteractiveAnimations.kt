@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
  * @param pressedScale Scale value when pressed (default 0.95)
  * @param animationSpec Animation spec for the scale animation
  */
-public fun Modifier.pressAnimation(
+fun Modifier.pressAnimation(
     pressedScale: Float = 0.95f,
     animationSpec: AnimationSpec<Float> = AnimationSpecs.fast,
 ): Modifier =
@@ -63,7 +63,7 @@ public fun Modifier.pressAnimation(
  * @param animationSpec Animation spec for the elevation animation
  */
 @Composable
-public fun animateElevationAsState(
+fun animateElevationAsState(
     pressed: Boolean,
     normalElevation: Dp = 2.dp,
     pressedElevation: Dp = 8.dp,
@@ -81,7 +81,7 @@ public fun animateElevationAsState(
  * @param enabled Whether the shake animation is enabled
  * @param shakeDistance Maximum horizontal shake distance in pixels
  */
-public fun Modifier.shakeAnimation(
+fun Modifier.shakeAnimation(
     enabled: Boolean,
     shakeDistance: Float = 10f,
 ): Modifier =
@@ -112,7 +112,7 @@ public fun Modifier.shakeAnimation(
  * @param enabled Whether the bounce animation is enabled
  * @param bounceScale Maximum scale during bounce
  */
-public fun Modifier.bounceAnimation(
+fun Modifier.bounceAnimation(
     enabled: Boolean,
     bounceScale: Float = 1.2f,
 ): Modifier =
@@ -139,7 +139,7 @@ public fun Modifier.bounceAnimation(
  * @param degrees Target rotation in degrees
  * @param animationSpec Animation spec for rotation
  */
-public fun Modifier.rotateAnimation(
+fun Modifier.rotateAnimation(
     enabled: Boolean,
     degrees: Float = 180f,
     animationSpec: AnimationSpec<Float> = AnimationSpecs.standard,

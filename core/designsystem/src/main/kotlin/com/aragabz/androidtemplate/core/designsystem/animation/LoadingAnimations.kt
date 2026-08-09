@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
  * @param colors Colors for the shimmer gradient
  * @param durationMillis Duration of one shimmer animation cycle
  */
-public fun Modifier.shimmerEffect(
+fun Modifier.shimmerEffect(
     colors: List<Color> = listOf(
         Color(0xFFE0E0E0),
         Color(0xFFF5F5F5),
@@ -57,7 +57,7 @@ public fun Modifier.shimmerEffect(
  * @param durationMillis Duration of one pulse cycle
  */
 @Composable
-public fun rememberPulsingAlpha(
+fun rememberPulsingAlpha(
     minAlpha: Float = 0.3f,
     maxAlpha: Float = 1f,
     durationMillis: Int = 1000,
@@ -81,7 +81,7 @@ public fun rememberPulsingAlpha(
  * @param durationMillis Duration of one complete rotation
  */
 @Composable
-public fun rememberRotatingAngle(durationMillis: Int = 1000): Float {
+fun rememberRotatingAngle(durationMillis: Int = 1000): Float {
     val transition = rememberInfiniteTransition(label = "rotate")
     val angle by transition.animateFloat(
         initialValue = 0f,

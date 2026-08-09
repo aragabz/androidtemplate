@@ -7,18 +7,18 @@ import javax.inject.Qualifier
  */
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-public annotation class IoDispatcher
+annotation class IoDispatcher
 
 /**
  * Qualifier for Main dispatcher used for UI operations.
  */
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-public annotation class MainDispatcher
+annotation class MainDispatcher
 
 /**
  * Qualifier for Default dispatcher used for CPU-intensive operations.
  */
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-public annotation class DefaultDispatcher
+annotation class DefaultDispatcher

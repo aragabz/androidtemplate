@@ -20,16 +20,16 @@ import javax.inject.Singleton
  * - Support for fingerprint, face, and iris authentication
  */
 @Singleton
-public class BiometricAuthManager
+class BiometricAuthManager
     @Inject
     constructor() {
         private val _authResults = Channel<BiometricAuthResult>(Channel.BUFFERED)
-        public val authResults: Flow<BiometricAuthResult> = _authResults.receiveAsFlow()
+        val authResults: Flow<BiometricAuthResult> = _authResults.receiveAsFlow()
 
         /**
          * Check if biometric authentication is available on this device.
          */
-        public fun canAuthenticate(activity: FragmentActivity): BiometricAvailability {
+        fun canAuthenticate(activity: FragmentActivity): BiometricAvailability {
             val biometricManager = BiometricManager.from(activity)
             return when (biometricManager.canAuthenticate(BIOMETRIC_STRONG)) {
                 BiometricManager.BIOMETRIC_SUCCESS ->
@@ -65,7 +65,7 @@ public class BiometricAuthManager
          * @param subtitle Optional subtitle shown in the prompt
          * @param negativeButtonText Text for the negative button (e.g., "Cancel")
          */
-        public fun authenticate(
+        fun authenticate(
             activity: FragmentActivity,
             title: String,
             subtitle: String? = null,
@@ -115,15 +115,15 @@ public class BiometricAuthManager
 /**
  * Result of a biometric authentication attempt.
  */
-public sealed interface BiometricAuthResult {
+sealed interface BiometricAuthResult {
     /** Authentication succeeded. */
-    public data object Success : BiometricAuthResult
+    data object Success : BiometricAuthResult
 
     /** Authentication failed (biometric not recognized). */
-    public data object Failed : BiometricAuthResult
+    data object Failed : BiometricAuthResult
 
     /** Authentication error (hardware issue, user cancelled, etc.). */
-    public data class Error(
+    data class Error(
         val errorCode: Int,
         val errorMessage: String,
     ) : BiometricAuthResult
@@ -132,28 +132,28 @@ public sealed interface BiometricAuthResult {
 /**
  * Availability status of biometric authentication.
  */
-public sealed interface BiometricAvailability {
+sealed interface BiometricAvailability {
     /** Biometric authentication is available and ready to use. */
-    public data object Available : BiometricAvailability
+    data object Available : BiometricAvailability
 
     /** No biometric hardware detected on device. */
-    public data object NoHardware : BiometricAvailability
+    data object NoHardware : BiometricAvailability
 
     /** Biometric hardware is present but currently unavailable. */
-    public data object HardwareUnavailable : BiometricAvailability
+    data object HardwareUnavailable : BiometricAvailability
 
     /** No biometric credentials enrolled (user needs to set up biometrics). */
-    public data object NoneEnrolled : BiometricAvailability
+    data object NoneEnrolled : BiometricAvailability
 
     /** A security update is required before biometrics can be used. */
-    public data object SecurityUpdateRequired : BiometricAvailability
+    data object SecurityUpdateRequired : BiometricAvailability
 
     /** Biometric authentication is not supported on this device. */
-    public data object Unsupported : BiometricAvailability
+    data object Unsupported : BiometricAvailability
 
     /** Biometric status is unknown. */
-    public data object Unknown : BiometricAvailability
+    data object Unknown : BiometricAvailability
 
     /** Check if biometric authentication can be used. */
-    public fun isAvailable(): Boolean = this is Available
+    fun isAvailable(): Boolean = this is Available
 }

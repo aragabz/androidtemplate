@@ -25,6 +25,7 @@ fun Throwable.toAppError(): AppError =
         is SerializationException -> AppError.ParsingError(this)
         is IllegalArgumentException, is IllegalStateException ->
             AppError.ValidationError(message ?: "Validation failed")
+
         else -> AppError.UnknownError(this)
     }
 
@@ -66,12 +67,16 @@ fun Throwable.toUiText(): UiText =
             when (reason) {
                 AuthErrorReason.INVALID_CREDENTIALS ->
                     UiText.StringResource(R.string.error_auth_invalid_credentials)
+
                 AuthErrorReason.TOKEN_EXPIRED ->
                     UiText.StringResource(R.string.error_auth_token_expired)
+
                 AuthErrorReason.SESSION_EXPIRED ->
                     UiText.StringResource(R.string.error_auth_session_expired)
+
                 AuthErrorReason.UNAUTHORIZED ->
                     UiText.StringResource(R.string.error_auth_unauthorized)
+
                 AuthErrorReason.UNKNOWN ->
                     UiText.StringResource(R.string.error_auth_unknown)
             }
@@ -94,9 +99,8 @@ fun Throwable.toUiText(): UiText =
 /**
  * Converts any [Throwable] to an [ErrorRecord] for structured diagnostics.
  */
-fun Throwable.toErrorRecord(): ErrorRecord {
-    val normalized = toAppError()
-    return when (normalized) {
+fun Throwable.toErrorRecord(): ErrorRecord =
+    when (val normalized = toAppError()) {
         is AppError.HttpError ->
             ErrorRecord(
                 category = normalized.category,
@@ -132,7 +136,7 @@ fun Throwable.toErrorRecord(): ErrorRecord {
         is AppError.AuthError,
         is AppError.ParsingError,
         is AppError.UnknownError,
-        ->
+            ->
             ErrorRecord(
                 category = normalized.category,
                 severity = normalized.severity,
@@ -141,4 +145,3 @@ fun Throwable.toErrorRecord(): ErrorRecord {
                 isRetryable = normalized.isRetryable,
             )
     }
-}

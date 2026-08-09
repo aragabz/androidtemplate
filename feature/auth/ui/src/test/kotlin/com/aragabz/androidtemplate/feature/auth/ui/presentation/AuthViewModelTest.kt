@@ -307,7 +307,7 @@ class AuthViewModelTest {
         }
 
         val signInUseCase = object : SignInUseCase {
-            override fun invoke(params: SignInUseCase.Params): Flow<AppResult<Unit>> = signInResult
+            override fun invoke(params: Params): Flow<AppResult<Unit>> = signInResult
         }
 
         val signOutUseCase = object : SignOutUseCase {

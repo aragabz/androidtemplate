@@ -16,6 +16,19 @@ android {
 
     targetProjectPath = ":app"
 
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+        }
+        create("staging") {
+            dimension = "environment"
+        }
+        create("prod") {
+            dimension = "environment"
+        }
+    }
+
     buildTypes {
         create("benchmark") {
             signingConfig = signingConfigs.getByName("debug")
