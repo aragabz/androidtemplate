@@ -5,7 +5,7 @@
 # - Verify with CI + release candidate lanes before merge.
 agp = "9.3.1"
 kotlin = "2.4.10"
-kotlin-metadata = "2.3.21"
+kotlin-metadata = "2.4.10"
 ksp = "2.3.10"
 coreKtx = "1.19.0"
 coreSplashscreen = "1.2.0"
