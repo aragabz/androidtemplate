@@ -10,7 +10,6 @@ import com.aragabz.androidtemplate.core.datastore.model.AppTheme
 import com.aragabz.androidtemplate.core.datastore.model.UserPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,18 +28,19 @@ class UserPreferencesRepositoryImpl
     ) : UserPreferencesRepository {
         private object PreferencesKeys {
             val USER_ID = stringPreferencesKey("user_id")
-            val AUTH_TOKEN = stringPreferencesKey("auth_token")
+
+            // Builds before SecureSessionStorage kept the token here in plaintext. It is no longer read (those
+            // installs sign in again, like the EncryptedSharedPreferences ones); signing in or out deletes it.
+            val LEGACY_AUTH_TOKEN = stringPreferencesKey("auth_token")
             val THEME = stringPreferencesKey("theme")
             val LANGUAGE = stringPreferencesKey("language")
         }
 
-        private val secureAuthToken = MutableStateFlow(secureSessionStorage.getAuthToken())
-
         override val userPreferences: Flow<UserPreferences> =
-            context.dataStore.data.combine(secureAuthToken) { preferences, authToken ->
+            context.dataStore.data.combine(secureSessionStorage.authToken) { preferences, authToken ->
                 UserPreferences(
                     userId = preferences[PreferencesKeys.USER_ID],
-                    authToken = authToken ?: preferences[PreferencesKeys.AUTH_TOKEN],
+                    authToken = authToken,
                     theme = AppTheme.fromStoredValue(preferences[PreferencesKeys.THEME]),
                     language = preferences[PreferencesKeys.LANGUAGE] ?: "en",
                 )
@@ -54,9 +54,8 @@ class UserPreferencesRepositoryImpl
 
         override suspend fun saveAuthToken(token: String) {
             secureSessionStorage.saveAuthToken(token)
-            secureAuthToken.value = token
             context.dataStore.edit { preferences ->
-                preferences.remove(PreferencesKeys.AUTH_TOKEN)
+                preferences.remove(PreferencesKeys.LEGACY_AUTH_TOKEN)
             }
         }
 
@@ -74,10 +73,9 @@ class UserPreferencesRepositoryImpl
 
         override suspend fun clearSession() {
             secureSessionStorage.clearSession()
-            secureAuthToken.value = null
             context.dataStore.edit { preferences ->
                 preferences.remove(PreferencesKeys.USER_ID)
-                preferences.remove(PreferencesKeys.AUTH_TOKEN)
+                preferences.remove(PreferencesKeys.LEGACY_AUTH_TOKEN)
             }
         }
     }

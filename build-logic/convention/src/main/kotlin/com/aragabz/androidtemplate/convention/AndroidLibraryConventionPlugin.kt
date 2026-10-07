@@ -13,6 +13,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("androidtemplate.android.lint")
                 apply("androidtemplate.detekt")
                 apply("androidtemplate.ktlint")
+                apply("com.autonomousapps.dependency-analysis")
             }
 
             extensions.configure<LibraryExtension> {

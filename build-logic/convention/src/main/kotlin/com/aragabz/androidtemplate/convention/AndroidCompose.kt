@@ -2,9 +2,9 @@ package com.aragabz.androidtemplate.convention
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 /**
  * Configure Compose-specific options
@@ -16,16 +16,15 @@ internal fun Project.configureAndroidCompose(
         buildFeatures.compose = true
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            freeCompilerArgs.addAll(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                    project.layout.buildDirectory.dir("compose_compiler").get().asFile.absolutePath,
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                    project.layout.buildDirectory.dir("compose_compiler").get().asFile.absolutePath,
-            )
+    // Compose compiler metrics/reports are opt-in: ./gradlew <task> -PcomposeCompilerReports=true
+    // writes them to <module>/build/compose_compiler.
+    val composeCompilerReports =
+        providers.gradleProperty("composeCompilerReports").map(String::toBoolean).getOrElse(false)
+    if (composeCompilerReports) {
+        extensions.configure<ComposeCompilerGradlePluginExtension> {
+            val outputDir = layout.buildDirectory.dir("compose_compiler")
+            reportsDestination.set(outputDir)
+            metricsDestination.set(outputDir)
         }
     }
 

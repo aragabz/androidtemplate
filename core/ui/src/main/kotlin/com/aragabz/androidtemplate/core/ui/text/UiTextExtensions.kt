@@ -2,7 +2,6 @@ package com.aragabz.androidtemplate.core.ui.text
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.aragabz.androidtemplate.core.common.ui.UiText
 
 /**
  * Resolves [UiText] in composition.

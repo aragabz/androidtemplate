@@ -2,6 +2,8 @@
 .gradle/
 build/
 out/
+# IDE (Eclipse/VS Code) compiler output
+bin/
 
 # Kotlin compiler cache
 .kotlin/

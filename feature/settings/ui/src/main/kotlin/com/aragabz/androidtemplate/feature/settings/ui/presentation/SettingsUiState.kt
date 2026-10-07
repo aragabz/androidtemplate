@@ -1,6 +1,6 @@
 package com.aragabz.androidtemplate.feature.settings.ui.presentation
 
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
 import com.aragabz.androidtemplate.feature.settings.domain.model.AppLanguage
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 

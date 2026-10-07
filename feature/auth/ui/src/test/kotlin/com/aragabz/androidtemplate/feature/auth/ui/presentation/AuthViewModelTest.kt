@@ -2,8 +2,8 @@ package com.aragabz.androidtemplate.feature.auth.ui.presentation
 
 import com.aragabz.androidtemplate.core.common.result.AppError
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
 import com.aragabz.androidtemplate.core.testing.MainDispatcherRule
+import com.aragabz.androidtemplate.core.ui.text.UiText
 import com.aragabz.androidtemplate.feature.auth.domain.model.AuthSession
 import com.aragabz.androidtemplate.feature.auth.domain.repository.AuthRepository
 import com.aragabz.androidtemplate.feature.auth.domain.usecase.GetAuthSessionUseCase

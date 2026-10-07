@@ -3,7 +3,8 @@ package com.aragabz.androidtemplate.feature.profile.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
+import com.aragabz.androidtemplate.core.ui.text.errorUiText
 import com.aragabz.androidtemplate.feature.profile.domain.usecase.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,11 +1,7 @@
 package com.aragabz.androidtemplate.core.common.error
 
-import android.database.sqlite.SQLiteException
-import com.aragabz.androidtemplate.core.common.R
 import com.aragabz.androidtemplate.core.common.result.AppError
-import com.aragabz.androidtemplate.core.common.result.AuthErrorReason
 import com.aragabz.androidtemplate.core.common.result.ErrorRecord
-import com.aragabz.androidtemplate.core.common.ui.UiText
 import kotlinx.serialization.SerializationException
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -21,79 +17,20 @@ fun Throwable.toAppError(): AppError =
         is SocketTimeoutException -> AppError.TimeoutError(this)
         is UnknownHostException, is SSLException -> AppError.NetworkError(this)
         is IOException -> AppError.NetworkError(this)
-        is SQLiteException -> AppError.DatabaseError(this)
         is SerializationException -> AppError.ParsingError(this)
         // IllegalArgumentException/IllegalStateException (require/check) are programming errors, not user input
         // problems; create AppError.ValidationError explicitly for real validation failures.
-        else -> AppError.UnknownError(this)
+        else -> if (isSqliteException()) AppError.DatabaseError(this) else AppError.UnknownError(this)
     }
 
 /**
- * Maps an [Exception] or [AppError] to a [UiText] for user display.
+ * Room and SQLite throw android.database.sqlite.SQLiteException (or a subclass). It is matched by class name
+ * so this module stays pure Kotlin/JVM.
  */
-fun Throwable.toUiText(): UiText =
-    when (this) {
-        is AppError.NetworkError -> UiText.StringResource(R.string.error_network)
+private fun Throwable.isSqliteException(): Boolean =
+    generateSequence<Class<*>>(javaClass) { it.superclass }.any { it.name == SQLITE_EXCEPTION_CLASS }
 
-        is AppError.TimeoutError -> UiText.StringResource(R.string.error_timeout)
-
-        is AppError.HttpError -> {
-            when (code) {
-                400 -> UiText.StringResource(R.string.error_http_validation)
-                401 -> UiText.StringResource(R.string.error_http_unauthorized)
-                403 -> UiText.StringResource(R.string.error_http_forbidden)
-                404 -> UiText.StringResource(R.string.error_http_not_found)
-                409 -> UiText.StringResource(R.string.error_http_conflict)
-                503 -> UiText.StringResource(R.string.error_http_service_unavailable)
-                in 500..599 -> UiText.StringResource(R.string.error_http_server)
-                else -> UiText.StringResource(R.string.error_http_unknown, code)
-            }
-        }
-
-        is AppError.DatabaseError -> {
-            operation?.let {
-                UiText.StringResource(R.string.error_database_operation, it)
-            } ?: UiText.StringResource(R.string.error_database)
-        }
-
-        is AppError.ValidationError -> {
-            field?.let {
-                UiText.StringResource(R.string.error_validation_field, it)
-            } ?: UiText.StringResource(R.string.error_validation)
-        }
-
-        is AppError.AuthError -> {
-            when (reason) {
-                AuthErrorReason.INVALID_CREDENTIALS ->
-                    UiText.StringResource(R.string.error_auth_invalid_credentials)
-
-                AuthErrorReason.TOKEN_EXPIRED ->
-                    UiText.StringResource(R.string.error_auth_token_expired)
-
-                AuthErrorReason.SESSION_EXPIRED ->
-                    UiText.StringResource(R.string.error_auth_session_expired)
-
-                AuthErrorReason.UNAUTHORIZED ->
-                    UiText.StringResource(R.string.error_auth_unauthorized)
-
-                AuthErrorReason.UNKNOWN ->
-                    UiText.StringResource(R.string.error_auth_unknown)
-            }
-        }
-
-        is AppError.ParsingError -> UiText.StringResource(R.string.error_parsing)
-
-        is AppError.UnknownError -> UiText.StringResource(R.string.error_unknown)
-
-        else -> {
-            val message = this.localizedMessage ?: this.message
-            if (message != null) {
-                UiText.DynamicString(message)
-            } else {
-                UiText.StringResource(R.string.error_unknown)
-            }
-        }
-    }
+private const val SQLITE_EXCEPTION_CLASS = "android.database.sqlite.SQLiteException"
 
 /**
  * Converts any [Throwable] to an [ErrorRecord] for structured diagnostics.

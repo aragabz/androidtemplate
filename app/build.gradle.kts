@@ -21,7 +21,6 @@ val releaseStoreFilePath = releaseSecret("RELEASE_STORE_FILE")
 val releaseStorePassword = releaseSecret("RELEASE_STORE_PASSWORD")
 val releaseKeyAlias = releaseSecret("RELEASE_KEY_ALIAS")
 val releaseKeyPassword = releaseSecret("RELEASE_KEY_PASSWORD")
-val minimumLineCoverage = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.00").map(String::toDouble)
 val hasReleaseSigningConfig =
     !releaseStoreFilePath.isNullOrBlank() &&
         !releaseStorePassword.isNullOrBlank() &&
@@ -33,8 +32,13 @@ android {
 
     defaultConfig {
         applicationId = "com.aragabz.androidtemplate"
-        versionCode = 1
-        versionName = "1.0"
+        // Defaults live in gradle.properties; CI/release lanes pass -PVERSION_CODE=<n> -PVERSION_NAME=<x.y.z>.
+        versionCode = providers
+            .gradleProperty("VERSION_CODE")
+            .orElse("1")
+            .get()
+            .toInt()
+        versionName = providers.gradleProperty("VERSION_NAME").orElse("1.0").get()
     }
 
     flavorDimensions += "environment"
@@ -134,9 +138,6 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -144,20 +145,13 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
-    // Security
-    implementation(libs.androidx.security.crypto)
-
     // Serialization
     implementation(libs.kotlinx.serialization.json)
-
-    // Development and test network mocking
-    debugImplementation(libs.okhttp.mockwebserver)
 
     // Testing
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.okhttp.mockwebserver)
     androidTestImplementation(libs.room.testing)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
@@ -169,7 +163,7 @@ tasks.register("verifyDebugCoverage") {
 
     val reportFileProvider = layout.buildDirectory.file("reports/coverage/test/dev/debug/report.xml")
     val summaryFileProvider = layout.buildDirectory.file("reports/coverage/test/dev/debug/coverage-summary.txt")
-    val minimumCoverageProvider = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.00")
+    val minimumCoverageProvider = providers.gradleProperty("COVERAGE_MIN_LINE")
 
     inputs.file(reportFileProvider)
     inputs.property("minimumLineCoverage", minimumCoverageProvider)

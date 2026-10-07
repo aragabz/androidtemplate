@@ -15,5 +15,4 @@ dependencies {
     // Compose
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.coil)
 }

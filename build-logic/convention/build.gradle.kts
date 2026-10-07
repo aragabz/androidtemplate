@@ -35,18 +35,6 @@ tasks.withType<Test>().configureEach {
     reports.html.required.set(true)
 }
 
-tasks.register("verifyCoverageThresholdConfig") {
-    group = "verification"
-    description = "Validates the shared COVERAGE_MIN_LINE property format used by verification tasks."
-
-    val coverageMinLineProvider = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.70")
-    inputs.property("coverageMinLine", coverageMinLineProvider)
-
-    doLast {
-        (inputs.properties["coverageMinLine"] as String).toDouble()
-    }
-}
-
 gradlePlugin {
     plugins {
         register("androidApplication") {
@@ -65,9 +53,17 @@ gradlePlugin {
             id = "androidtemplate.android.library.compose"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidLibraryComposeConventionPlugin"
         }
+        register("androidTest") {
+            id = "androidtemplate.android.test"
+            implementationClass = "com.aragabz.androidtemplate.convention.AndroidTestConventionPlugin"
+        }
         register("androidFeature") {
             id = "androidtemplate.android.feature"
             implementationClass = "com.aragabz.androidtemplate.convention.AndroidFeatureConventionPlugin"
+        }
+        register("jvmLibrary") {
+            id = "androidtemplate.jvm.library"
+            implementationClass = "com.aragabz.androidtemplate.convention.JvmLibraryConventionPlugin"
         }
         register("androidHilt") {
             id = "androidtemplate.android.hilt"

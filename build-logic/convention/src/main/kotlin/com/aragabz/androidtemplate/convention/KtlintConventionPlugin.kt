@@ -11,7 +11,7 @@ class KtlintConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply("org.jlleitschuh.gradle.ktlint")
             
-            // Configuration is handled via .editorconfig and .ktlintrc files
+            // Rules are configured in the root .editorconfig.
         }
     }
 }

@@ -15,7 +15,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class StartupBenchmarks {
-
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -23,42 +22,50 @@ class StartupBenchmarks {
     fun startupNoCompilation() = startup(CompilationMode.None())
 
     @Test
-    fun startupBaselineProfile() = startup(CompilationMode.Partial(
-        baselineProfileMode = BaselineProfileMode.Require
-    ))
+    fun startupBaselineProfile() =
+        startup(
+            CompilationMode.Partial(
+                baselineProfileMode = BaselineProfileMode.Require,
+            ),
+        )
 
     @Test
-    fun scrollBenchmark() = benchmarkRule.measureRepeated(
-        packageName = targetAppId,
-        metrics = listOf(androidx.benchmark.macro.FrameTimingMetric()),
-        compilationMode = CompilationMode.Partial(
-            baselineProfileMode = BaselineProfileMode.Require
-        ),
-        startupMode = StartupMode.WARM,
-        iterations = 5,
-        setupBlock = {
-            pressHome()
+    fun scrollBenchmark() =
+        benchmarkRule.measureRepeated(
+            packageName = targetAppId,
+            metrics = listOf(androidx.benchmark.macro.FrameTimingMetric()),
+            compilationMode = CompilationMode.Partial(
+                baselineProfileMode = BaselineProfileMode.Require,
+            ),
+            startupMode = StartupMode.WARM,
+            iterations = 5,
+            setupBlock = {
+                pressHome()
+                startActivityAndWait()
+            },
+        ) {
+            // Find a scrollable list and scroll it
+            val list = device.findObject(
+                androidx.test.uiautomator.By
+                    .scrollable(true),
+            )
+            if (list != null) {
+                list.setGestureMargin(device.displayWidth / 5)
+                list.fling(androidx.test.uiautomator.Direction.DOWN)
+            }
+        }
+
+    private fun startup(compilationMode: CompilationMode) =
+        benchmarkRule.measureRepeated(
+            packageName = targetAppId,
+            metrics = listOf(androidx.benchmark.macro.StartupTimingMetric()),
+            compilationMode = compilationMode,
+            startupMode = StartupMode.COLD,
+            iterations = 5,
+            setupBlock = {
+                pressHome()
+            },
+        ) {
             startActivityAndWait()
         }
-    ) {
-        // Find a scrollable list and scroll it
-        val list = device.findObject(androidx.test.uiautomator.By.scrollable(true))
-        if (list != null) {
-            list.setGestureMargin(device.displayWidth / 5)
-            list.fling(androidx.test.uiautomator.Direction.DOWN)
-        }
-    }
-
-    private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
-        packageName = targetAppId,
-        metrics = listOf(androidx.benchmark.macro.StartupTimingMetric()),
-        compilationMode = compilationMode,
-        startupMode = StartupMode.COLD,
-        iterations = 5,
-        setupBlock = {
-            pressHome()
-        }
-    ) {
-        startActivityAndWait()
-    }
 }

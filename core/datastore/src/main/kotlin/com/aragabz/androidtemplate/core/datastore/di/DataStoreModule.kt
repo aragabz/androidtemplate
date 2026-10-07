@@ -1,6 +1,8 @@
 package com.aragabz.androidtemplate.core.datastore.di
 
 import android.content.Context
+import com.aragabz.androidtemplate.core.common.di.ApplicationScope
+import com.aragabz.androidtemplate.core.common.di.IoDispatcher
 import com.aragabz.androidtemplate.core.datastore.CachePolicyStore
 import com.aragabz.androidtemplate.core.datastore.CachePolicyStoreImpl
 import com.aragabz.androidtemplate.core.datastore.SecureSessionStorage
@@ -13,6 +15,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 /**
@@ -32,6 +36,8 @@ abstract class DataStoreModule {
         @Singleton
         fun provideSecureSessionStorage(
             @ApplicationContext context: Context,
-        ): SecureSessionStorage = SecureSessionStorageImpl(context)
+            @ApplicationScope scope: CoroutineScope,
+            @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        ): SecureSessionStorage = SecureSessionStorageImpl(context, scope, ioDispatcher)
     }
 }

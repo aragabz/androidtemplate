@@ -2,7 +2,6 @@ package com.aragabz.androidtemplate.core.common.error
 
 import com.aragabz.androidtemplate.core.common.result.AppError
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -70,26 +69,6 @@ fun <T> Flow<T>.catchAsAppError(): Flow<AppResult<T>> =
     this
         .map<T, AppResult<T>> { AppResult.Success(it) }
         .catch { emit(AppResult.Error(it.toAppError())) }
-
-/**
- * Extension to convert Flow<AppResult<T>> error states to UiText.
- * Useful for ViewModels that need to display errors.
- *
- * Usage in ViewModels:
- * ```
- * val users: StateFlow<AppResult<List<User>>> = repository
- *     .observeUsers()
- *     .stateIn(viewModelScope, SharingStarted.Lazily, AppResult.Loading)
- *
- * val errorMessage: StateFlow<UiText?> = users
- *     .errorAsUiText()
- *     .stateIn(viewModelScope, SharingStarted.Lazily, null)
- * ```
- */
-fun <T> Flow<AppResult<T>>.errorAsUiText(): Flow<UiText?> =
-    this.map { result ->
-        result.errorUiText
-    }
 
 /**
  * Creates a validation error with field context.

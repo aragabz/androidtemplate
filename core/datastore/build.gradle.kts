@@ -10,7 +10,6 @@ android {
 dependencies {
     api(project(":core:common"))
 
-    implementation(libs.androidx.security.crypto)
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.coroutines.android)
 

@@ -3,7 +3,8 @@ package com.aragabz.androidtemplate.feature.todos.ui.presentation.todos
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
+import com.aragabz.androidtemplate.core.ui.text.errorUiText
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.DeleteTodoUseCase
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.GetTodosUseCase
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.ToggleTodoUseCase

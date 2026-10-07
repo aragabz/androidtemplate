@@ -1,6 +1,6 @@
 package com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo
 
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
 
 /**
  * UI state for add todo screen.

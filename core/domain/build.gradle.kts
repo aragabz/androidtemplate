@@ -1,13 +1,8 @@
 plugins {
-    id("androidtemplate.android.library")
-    id("androidtemplate.android.hilt")
-}
-
-android {
-    namespace = "com.aragabz.androidtemplate.core.domain"
+    id("androidtemplate.jvm.library")
 }
 
 dependencies {
     api(project(":core:common"))
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
 }

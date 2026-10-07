@@ -3,7 +3,8 @@ package com.aragabz.androidtemplate.feature.auth.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
+import com.aragabz.androidtemplate.core.ui.text.errorUiText
 import com.aragabz.androidtemplate.feature.auth.domain.usecase.GetAuthSessionUseCase
 import com.aragabz.androidtemplate.feature.auth.domain.usecase.SignInUseCase
 import com.aragabz.androidtemplate.feature.auth.ui.R

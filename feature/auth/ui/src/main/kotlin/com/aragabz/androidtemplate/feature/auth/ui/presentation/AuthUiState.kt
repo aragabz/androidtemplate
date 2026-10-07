@@ -1,6 +1,6 @@
 package com.aragabz.androidtemplate.feature.auth.ui.presentation
 
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
 
 /**
  * Authentication UI state.

@@ -1,19 +1,10 @@
 plugins {
-    id("com.android.test")
+    id("androidtemplate.android.test")
     alias(libs.plugins.androidx.baselineprofile)
 }
 
 android {
     namespace = "com.aragabz.androidtemplate.baselineprofile"
-    compileSdk = 37
-
-    defaultConfig {
-        minSdk = 26
-        targetSdk = 36
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
     targetProjectPath = ":app"
 
     flavorDimensions += "environment"
@@ -34,11 +25,6 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 

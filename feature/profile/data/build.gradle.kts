@@ -2,6 +2,7 @@ plugins {
     id("androidtemplate.android.library")
     id("androidtemplate.android.hilt")
     id("androidtemplate.android.room")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

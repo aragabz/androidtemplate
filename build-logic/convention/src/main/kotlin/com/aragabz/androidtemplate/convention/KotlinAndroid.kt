@@ -1,12 +1,10 @@
 package com.aragabz.androidtemplate.convention
 
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
@@ -22,16 +20,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
  */
 internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileSdk = 37
+        compileSdk = AndroidSdk.COMPILE
 
         defaultConfig.apply {
-            minSdk = 26
-            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            minSdk = AndroidSdk.MIN
+            testInstrumentationRunner = AndroidSdk.TEST_INSTRUMENTATION_RUNNER
         }
 
         compileOptions.apply {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = AndroidSdk.javaVersion
+            targetCompatibility = AndroidSdk.javaVersion
             // Enable desugaring to support Java 8+ APIs on API 26+
             isCoreLibraryDesugaringEnabled = true
         }
@@ -63,9 +61,13 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
 
     // Configure Kotlin compiler options
     // AGP 9.0+ automatically applies Kotlin based on the version in gradle/libs.versions.toml
+    configureKotlinAndroidJvmTarget()
+}
+
+internal fun Project.configureKotlinAndroidJvmTarget() {
     extensions.configure<KotlinAndroidProjectExtension> {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(AndroidSdk.jvmTarget)
         }
     }
 }
@@ -75,13 +77,13 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
  */
 internal fun Project.configureKotlinJvm() {
     extensions.configure<JavaPluginExtension> {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = AndroidSdk.javaVersion
+        targetCompatibility = AndroidSdk.javaVersion
     }
 
     extensions.configure<KotlinJvmProjectExtension> {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(AndroidSdk.jvmTarget)
         }
     }
 }

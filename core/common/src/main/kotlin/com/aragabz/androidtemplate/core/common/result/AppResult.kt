@@ -1,8 +1,5 @@
 package com.aragabz.androidtemplate.core.common.result
 
-import com.aragabz.androidtemplate.core.common.error.toUiText
-import com.aragabz.androidtemplate.core.common.ui.UiText
-
 /**
  * A generic class that holds a value with its loading status.
  * @param T the type of data being held
@@ -42,12 +39,6 @@ sealed class AppResult<out T> {
      * Returns true if this is a Loading result.
      */
     val isLoading: Boolean get() = this is Loading
-
-    /**
-     * Returns the error as [UiText] if this is an Error result, null otherwise.
-     */
-    val errorUiText: UiText?
-        get() = (this as? Error)?.exception?.toUiText()
 }
 
 /**

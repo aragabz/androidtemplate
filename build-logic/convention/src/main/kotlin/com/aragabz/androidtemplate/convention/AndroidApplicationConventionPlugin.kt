@@ -14,11 +14,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("androidtemplate.android.lint")
                 apply("androidtemplate.detekt")
                 apply("androidtemplate.ktlint")
+                apply("com.autonomousapps.dependency-analysis")
             }
 
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 36
+                defaultConfig.targetSdk = AndroidSdk.TARGET
                 testOptions.animationsDisabled = true
             }
             extensions.configure<ApplicationAndroidComponentsExtension> {

@@ -17,16 +17,16 @@ jobs:
       contents: read
       security-events: write # for uploading sarif
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Architecture Validation
         run: ./gradlew assertModuleGraph
@@ -41,15 +41,35 @@ jobs:
       - name: Detekt
         run: ./gradlew detekt
 
+      # Unit tests for the custom lint checks in :lint
+      - name: Lint Check Tests
+        run: ./gradlew :lint:test
+
       # :app has product flavors, so its unit tests are not part of testDebugUnitTest
       - name: Unit Tests
         run: ./gradlew testDebugUnitTest :app:testDevDebugUnitTest
+
+      # Fails when :app line coverage drops below COVERAGE_MIN_LINE (gradle.properties)
+      - name: Coverage
+        run: ./gradlew :app:verifyDebugCoverage
+
+      # Only :core:ui has committed Roborazzi reference images (src/test/snapshots)
+      - name: Screenshot Tests
+        run: ./gradlew :core:ui:verifyRoborazziDebug
 
       - name: Compile Instrumented Tests
         run: ./gradlew compileDebugAndroidTestKotlin :app:compileDevDebugAndroidTestKotlin
 
       - name: Build
         run: ./gradlew assembleDebug
+
+      # Runs R8; without the RELEASE_* signing properties the APK is left unsigned
+      - name: Release Build
+        run: ./gradlew :app:assembleProdRelease
+
+      # Reports dependency advice (non-failing, see dependencyAnalysis in build.gradle.kts)
+      - name: Dependency Health
+        run: ./gradlew buildHealth
 
       - name: Collect SARIF reports
         if: always()
@@ -62,21 +82,37 @@ jobs:
 
       - name: Upload SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: build/sarif-reports
           category: static-analysis
 
       - name: Upload Lint Reports (XML/HTML)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-reports
           path: "**/build/reports/lint-results-*.xml"
 
       - name: Upload Detekt Reports (XML/HTML)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: detekt-reports
           path: "**/build/reports/detekt/*.xml"
+
+      - name: Upload Screenshot Diffs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: roborazzi-diffs
+          path: "**/build/outputs/roborazzi"
+          if-no-files-found: ignore
+
+      - name: Upload Dependency Health Report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-health-report
+          path: build/reports/dependency-analysis/build-health-report.txt
+          if-no-files-found: ignore

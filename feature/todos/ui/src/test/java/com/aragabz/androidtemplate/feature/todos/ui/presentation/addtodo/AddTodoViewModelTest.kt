@@ -1,7 +1,7 @@
 package com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo
 
-import com.aragabz.androidtemplate.core.common.ui.UiText
 import com.aragabz.androidtemplate.core.testing.MainDispatcherRule
+import com.aragabz.androidtemplate.core.ui.text.UiText
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.AddTodoUseCase
 import com.aragabz.androidtemplate.feature.todos.ui.R
 import com.aragabz.androidtemplate.feature.todos.ui.presentation.FakeTodosRepository

@@ -4,7 +4,60 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      # Kotlin, its compiler plugins and KSP must move in lockstep.
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "com.google.devtools.ksp*"
+      # AGP and lint share one version line (lint = AGP + 23.0.0).
+      android-gradle-plugin:
+        patterns:
+          - "com.android.tools.build*"
+          - "com.android.tools.lint*"
+          - "com.android.application"
+          - "com.android.library"
+      compose:
+        patterns:
+          - "androidx.compose*"
+      androidx:
+        patterns:
+          - "androidx.*"
+        exclude-patterns:
+          - "androidx.compose*"
+          - "androidx.test*"
+          - "androidx.benchmark*"
+      hilt:
+        patterns:
+          - "com.google.dagger*"
+      kotlinx:
+        patterns:
+          - "org.jetbrains.kotlinx*"
+      network:
+        patterns:
+          - "com.squareup.*"
+          - "com.jakewharton.retrofit*"
+      testing:
+        patterns:
+          - "junit*"
+          - "androidx.test*"
+          - "androidx.benchmark*"
+          - "app.cash.turbine*"
+          - "io.mockk*"
+          - "org.robolectric*"
+          - "io.github.takahirom.roborazzi*"
+      build-tooling:
+        patterns:
+          - "io.gitlab.arturbosch.detekt*"
+          - "org.jlleitschuh.gradle.ktlint*"
+          - "com.autonomousapps*"
+          - "dev.iurysouza.modulegraph*"
+          - "com.jraska.module.graph.assertion*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

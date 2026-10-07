@@ -5,9 +5,11 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-    plugins {
-        kotlin("jvm") version "2.3.21"
-    }
+}
+plugins {
+    // Settings plugin (version catalogs aren't available here): every project contributes its dependencies,
+    // so `./gradlew createModuleGraph` can write the "## Module Graph" section of README.md.
+    id("dev.iurysouza.modulegraph.settings") version "0.15.0"
 }
 /* plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"

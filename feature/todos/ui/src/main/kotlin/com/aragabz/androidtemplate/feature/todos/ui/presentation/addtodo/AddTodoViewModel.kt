@@ -3,7 +3,8 @@ package com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
+import com.aragabz.androidtemplate.core.ui.text.errorUiText
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.AddTodoUseCase
 import com.aragabz.androidtemplate.feature.todos.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,9 +1,12 @@
 [*.{kt,kts}]
+# ktlint reads its configuration from this file only (the Gradle plugin ignores other config files).
+ktlint_code_style = ktlint_official
 max_line_length = 120
 indent_size = 4
 insert_final_newline = true
 ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^
 
 # ktlint rules
 ktlint_standard_no-wildcard-imports = disabled

@@ -54,21 +54,18 @@ mkdir -p "$UI_SRC/presentation/navigation" "$UI_TEST/presentation"
 mkdir -p "$UI_RES/values" "$UI_RES/values-es"
 
 # --- 2. build.gradle.kts for each module ------------------------------------
-# JUnit, coroutines-test, Turbine and :core:testing reach every module's unit tests through the convention plugins.
+# JUnit, coroutines-test and Turbine reach every module's unit tests through the convention plugins (plus :core:testing in Android modules).
+# The domain module is pure Kotlin/JVM: no Android, R, Context or Compose.
 cat <<EOF > "$BASE_PATH/domain/build.gradle.kts"
 plugins {
-    id("androidtemplate.android.library")
-}
-
-android {
-    namespace = "$PACKAGE_BASE.domain"
+    id("androidtemplate.jvm.library")
 }
 
 dependencies {
     api(project(":core:common"))
     api(project(":core:domain"))
 
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
 }
 EOF
 
@@ -501,5 +498,5 @@ Manual wiring still required (all in :app):
      or show ${FEATURE_NAME}Screen() from a new MainTab in navigation/MainScreen.kt.
 
 Then build once to export the new schema to app/schemas, and run
-  ./gradlew :feature:$MODULE_NAME:data:testDebugUnitTest :feature:$MODULE_NAME:ui:testDebugUnitTest assembleDebug
+  ./gradlew :feature:$MODULE_NAME:domain:test :feature:$MODULE_NAME:data:testDebugUnitTest :feature:$MODULE_NAME:ui:testDebugUnitTest assembleDebug
 EOM

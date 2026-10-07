@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.ui.text.UiText
+import com.aragabz.androidtemplate.core.ui.text.errorUiText
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.DeleteTodoUseCase
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.GetTodoByIdUseCase

@@ -1,6 +1,8 @@
 package com.aragabz.androidtemplate.di
 
 import com.aragabz.androidtemplate.core.datastore.SecureSessionStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -19,6 +21,8 @@ class NetworkConfigModuleTest {
 
     private class FakeSecureSessionStorage : SecureSessionStorage {
         var token: String? = null
+
+        override val authToken: Flow<String?> get() = flowOf(token)
 
         override fun getAuthToken(): String? = token
 
