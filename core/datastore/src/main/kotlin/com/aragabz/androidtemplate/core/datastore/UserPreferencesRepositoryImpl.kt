@@ -41,10 +41,7 @@ class UserPreferencesRepositoryImpl
                 UserPreferences(
                     userId = preferences[PreferencesKeys.USER_ID],
                     authToken = authToken ?: preferences[PreferencesKeys.AUTH_TOKEN],
-                    theme =
-                        preferences[PreferencesKeys.THEME]?.let {
-                            AppTheme.valueOf(it)
-                        } ?: AppTheme.SYSTEM,
+                    theme = AppTheme.fromStoredValue(preferences[PreferencesKeys.THEME]),
                     language = preferences[PreferencesKeys.LANGUAGE] ?: "en",
                 )
             }

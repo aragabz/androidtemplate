@@ -3,6 +3,7 @@ package com.aragabz.androidtemplate.core.common.error
 import com.aragabz.androidtemplate.core.common.result.AppError
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.common.ui.UiText
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -34,16 +35,24 @@ suspend fun <T> withErrorHandling(
     dispatcher: CoroutineDispatcher? = null,
     block: suspend () -> T,
 ): AppResult<T> =
+    runSuspendCatching {
+        if (dispatcher != null) withContext(dispatcher) { block() } else block()
+    }.fold(
+        onSuccess = { AppResult.Success(it) },
+        onFailure = { AppResult.Error(it.toAppError()) },
+    )
+
+/**
+ * Like [runCatching], but for suspending code: rethrows [CancellationException] so coroutine cancellation
+ * keeps propagating instead of being reported as a failure. Only [Exception]s are captured.
+ */
+inline fun <T> runSuspendCatching(block: () -> T): Result<T> =
     try {
-        if (dispatcher != null) {
-            withContext(dispatcher) {
-                AppResult.Success(block())
-            }
-        } else {
-            AppResult.Success(block())
-        }
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
-        AppResult.Error(e.toAppError())
+        Result.failure(e)
     }
 
 /**

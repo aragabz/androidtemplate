@@ -1,5 +1,6 @@
 package com.aragabz.androidtemplate.feature.todos.data.repository
 
+import com.aragabz.androidtemplate.core.common.error.runSuspendCatching
 import com.aragabz.androidtemplate.core.common.network.NetworkMonitor
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.datastore.CachePolicyStore
@@ -68,15 +69,15 @@ class TodosRepositoryImpl
                             inMemoryCache[userId] = mapped
                             cachePolicyStore.touch(cacheKey(userId))
                             AppResult.Success(mapped)
-                        }.catch { emit(AppResult.Error(it as Exception)) },
+                        }.catch { emit(AppResult.Error(it)) },
                 )
             }.catch {
-                val userId = runCatching { getActiveUserId() }.getOrDefault("default")
+                val userId = runSuspendCatching { getActiveUserId() }.getOrDefault(DEFAULT_USER_ID)
                 val fallback = inMemoryCache[userId]
                 if (fallback != null) {
                     emit(AppResult.Success(fallback))
                 } else {
-                    emit(AppResult.Error(it as Exception))
+                    emit(AppResult.Error(it))
                 }
             }
 
@@ -89,7 +90,7 @@ class TodosRepositoryImpl
                 } else {
                     emit(AppResult.Error(Exception("Todo not found")))
                 }
-            }.catch { emit(AppResult.Error(it as Exception)) }
+            }.catch { emit(AppResult.Error(it)) }
 
         override fun addTodo(
             title: String,
@@ -112,7 +113,7 @@ class TodosRepositoryImpl
                 todoDao.upsert(newTodo)
                 cachePolicyStore.touch(cacheKey(userId))
                 emit(AppResult.Success(newTodo.toExternalModel()))
-            }.catch { emit(AppResult.Error(it as Exception)) }
+            }.catch { emit(AppResult.Error(it)) }
 
         override fun toggleTodo(id: String): Flow<AppResult<Todo>> =
             flow {
@@ -131,7 +132,7 @@ class TodosRepositoryImpl
                 } else {
                     emit(AppResult.Error(Exception("Todo not found")))
                 }
-            }.catch { emit(AppResult.Error(it as Exception)) }
+            }.catch { emit(AppResult.Error(it)) }
 
         override fun deleteTodo(id: String): Flow<AppResult<Unit>> =
             flow {
@@ -140,17 +141,19 @@ class TodosRepositoryImpl
                 todoDao.deleteById(id)
                 cachePolicyStore.touch(cacheKey(userId))
                 emit(AppResult.Success(Unit))
-            }.catch { emit(AppResult.Error(it as Exception)) }
+            }.catch { emit(AppResult.Error(it)) }
 
         private suspend fun getActiveUserId(): String =
-            preferencesRepository.userPreferences.first().userId ?: "default"
+            preferencesRepository.userPreferences.first().userId ?: DEFAULT_USER_ID
 
+        // Seed ids are scoped to the user so seeding one account never upserts over another account's rows,
+        // while staying deterministic so re-seeding the same user is idempotent.
         private suspend fun addDefaultTodos(userId: String) {
             val baseTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7) // 7 days ago
             val defaults =
                 listOf(
                     TodoEntity(
-                        id = "1",
+                        id = seedTodoId(userId, 1),
                         userId = userId,
                         title = "Welcome to Android Template!",
                         description = "This is your first todo item in this account.",
@@ -159,7 +162,7 @@ class TodosRepositoryImpl
                         updatedAt = null,
                     ),
                     TodoEntity(
-                        id = "2",
+                        id = seedTodoId(userId, 2),
                         userId = userId,
                         title = "Add a new account",
                         description = "Go to settings and create a new account to test switching.",
@@ -178,8 +181,14 @@ class TodosRepositoryImpl
 
         private fun cacheKey(userId: String) = "todos_$userId"
 
+        private fun seedTodoId(
+            userId: String,
+            index: Int,
+        ) = "seed_${userId}_$index"
+
         private companion object {
             const val CACHE_RETENTION_HOURS = 24L
+            const val DEFAULT_USER_ID = "default"
         }
     }
 

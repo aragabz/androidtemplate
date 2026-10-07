@@ -1,5 +1,6 @@
 package com.aragabz.androidtemplate.feature.settings.data.repository
 
+import com.aragabz.androidtemplate.core.common.error.runSuspendCatching
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
 import com.aragabz.androidtemplate.core.datastore.model.AppTheme
@@ -34,7 +35,7 @@ class SettingsRepositoryImpl
         override fun updateTheme(theme: ThemePreference): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-                runCatching {
+                runSuspendCatching {
                     userPreferencesRepository.updateTheme(
                         when (theme) {
                             ThemePreference.SYSTEM -> AppTheme.SYSTEM
@@ -52,7 +53,7 @@ class SettingsRepositoryImpl
         override fun updateLanguage(language: String): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-                runCatching {
+                runSuspendCatching {
                     userPreferencesRepository.updateLanguage(language)
                 }.onSuccess {
                     emit(AppResult.Success(Unit))

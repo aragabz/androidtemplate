@@ -1,10 +1,13 @@
 package com.aragabz.androidtemplate.feature.auth.data.repository
 
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
 import com.aragabz.androidtemplate.core.datastore.model.UserPreferences
 import com.aragabz.androidtemplate.core.testing.FakeUserPreferencesRepository
 import com.aragabz.androidtemplate.feature.auth.data.api.AuthApi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -118,13 +121,42 @@ class AuthRepositoryImplTest {
             assertTrue(result is AppResult.Error)
         }
 
+    @Test
+    fun `signIn propagates cancellation instead of emitting Error`() =
+        runTest {
+            val cancelling =
+                object : UserPreferencesRepository by userPreferencesRepository {
+                    override suspend fun saveUserId(userId: String): Unit = throw CancellationException("cancelled")
+                }
+            val emitted = mutableListOf<AppResult<Unit>>()
+
+            val thrown = runCatching { AuthRepositoryImpl(authApi, cancelling).signIn("u", "t").toList(emitted) }
+
+            assertTrue(thrown.exceptionOrNull() is CancellationException)
+            assertTrue(emitted.none { it is AppResult.Error })
+        }
+
+    @Test
+    fun `signOut propagates cancellation of the server call instead of clearing the session`() =
+        runTest {
+            userPreferencesRepository.preferences.value = UserPreferences(userId = "user-001", authToken = "token")
+            authApi.throwable = CancellationException("cancelled")
+
+            val thrown = runCatching { repository.signOut().toList() }
+
+            assertTrue(thrown.exceptionOrNull() is CancellationException)
+            assertEquals("user-001", userPreferencesRepository.preferences.value.userId)
+        }
+
     // Test fakes
     private class FakeAuthApi : AuthApi {
         var shouldThrow = false
+        var throwable: Throwable? = null
         var signOutCalled = false
 
         override suspend fun signOut() {
             signOutCalled = true
+            throwable?.let { throw it }
             if (shouldThrow) throw IOException("Network error")
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.aragabz.androidtemplate.core.common.error.runSuspendCatching
 import com.aragabz.androidtemplate.core.datastore.CachePolicyStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -31,17 +32,20 @@ class SyncWorker
         override suspend fun doWork(): Result {
             Timber.d("SyncWorker: Starting background synchronization...")
 
-            return try {
+            return runSuspendCatching {
                 runScheduledCacheCleanup()
                 // TODO: Implement actual synchronization logic here
                 // This could involve calling use cases from :core:domain or specific repositories
-
-                Timber.d("SyncWorker: Synchronization completed successfully.")
-                Result.success()
-            } catch (e: Exception) {
-                Timber.e(e, "SyncWorker: Synchronization failed.")
-                Result.retry()
-            }
+            }.fold(
+                onSuccess = {
+                    Timber.d("SyncWorker: Synchronization completed successfully.")
+                    Result.success()
+                },
+                onFailure = { e ->
+                    Timber.e(e, "SyncWorker: Synchronization failed.")
+                    Result.retry()
+                },
+            )
         }
 
         private suspend fun runScheduledCacheCleanup() {

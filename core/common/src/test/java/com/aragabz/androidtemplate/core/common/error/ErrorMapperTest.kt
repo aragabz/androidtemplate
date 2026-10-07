@@ -57,14 +57,24 @@ class ErrorMapperTest {
     }
 
     @Test
-    fun `toAppError maps IllegalArgumentException to ValidationError`() {
+    fun `toAppError maps IllegalArgumentException to UnknownError`() {
         val throwable = IllegalArgumentException("invalid input")
 
         val mapped = throwable.toAppError()
 
-        assertTrue(mapped is AppError.ValidationError)
-        assertEquals(ErrorCategory.VALIDATION, mapped.category)
-        assertEquals("invalid input", mapped.message)
+        assertTrue(mapped is AppError.UnknownError)
+        assertEquals(ErrorCategory.UNKNOWN, mapped.category)
+        assertEquals(throwable, mapped.cause)
+    }
+
+    @Test
+    fun `toAppError maps IllegalStateException to UnknownError`() {
+        val throwable = IllegalStateException("bad state")
+
+        val mapped = throwable.toAppError()
+
+        assertTrue(mapped is AppError.UnknownError)
+        assertEquals(ErrorCategory.UNKNOWN, mapped.category)
     }
 
     @Test

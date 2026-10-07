@@ -25,4 +25,10 @@ enum class AppTheme {
     SYSTEM,
     LIGHT,
     DARK,
+    ;
+
+    companion object {
+        /** Parses a persisted name, falling back to [SYSTEM] for missing or unknown (e.g. renamed) values. */
+        fun fromStoredValue(value: String?): AppTheme = entries.firstOrNull { it.name == value } ?: SYSTEM
+    }
 }

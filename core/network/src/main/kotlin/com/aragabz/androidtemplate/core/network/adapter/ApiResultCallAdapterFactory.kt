@@ -34,7 +34,9 @@ class ApiResultCallAdapterFactory(
 
         return if (isAppResult) {
             val bodyType = getParameterUpperBound(0, upperBound)
-            ApiResultCallAdapter<Any>(bodyType, sessionManager)
+            // Retrofit hands a body-less success (204/205) over as null; for Unit endpoints that is still a success.
+            val emptyBody: Any? = if (bodyType == Unit::class.java) Unit else null
+            ApiResultCallAdapter(bodyType, sessionManager, emptyBody)
         } else {
             null
         }
@@ -44,15 +46,17 @@ class ApiResultCallAdapterFactory(
 private class ApiResultCallAdapter<T>(
     private val successType: Type,
     private val sessionManager: SessionManager,
+    private val emptyBody: T?,
 ) : CallAdapter<T, Call<AppResult<T>>> {
     override fun responseType(): Type = successType
 
-    override fun adapt(call: Call<T>): Call<AppResult<T>> = AppResultCall(call, sessionManager)
+    override fun adapt(call: Call<T>): Call<AppResult<T>> = AppResultCall(call, sessionManager, emptyBody)
 }
 
 private class AppResultCall<T>(
     private val delegate: Call<T>,
     private val sessionManager: SessionManager,
+    private val emptyBody: T?,
 ) : Call<AppResult<T>> {
     override fun enqueue(callback: Callback<AppResult<T>>) {
         delegate.enqueue(
@@ -63,7 +67,7 @@ private class AppResultCall<T>(
                 ) {
                     val result: AppResult<T> =
                         if (response.isSuccessful) {
-                            val body = response.body()
+                            val body = response.body() ?: emptyBody
                             if (body != null) {
                                 AppResult.Success(body)
                             } else {
@@ -119,7 +123,7 @@ private class AppResultCall<T>(
 
     override fun timeout(): Timeout = delegate.timeout()
 
-    override fun clone(): Call<AppResult<T>> = AppResultCall(delegate.clone(), sessionManager)
+    override fun clone(): Call<AppResult<T>> = AppResultCall(delegate.clone(), sessionManager, emptyBody)
 
     companion object {
         private const val HTTP_UNAUTHORIZED = 401

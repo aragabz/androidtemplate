@@ -1,5 +1,6 @@
 package com.aragabz.androidtemplate.feature.auth.data.repository
 
+import com.aragabz.androidtemplate.core.common.error.runSuspendCatching
 import com.aragabz.androidtemplate.core.common.error.withErrorHandling
 import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
@@ -33,7 +34,7 @@ class AuthRepositoryImpl
         ): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-                runCatching {
+                runSuspendCatching {
                     userPreferencesRepository.saveUserId(userId)
                     userPreferencesRepository.saveAuthToken(token)
                 }.onSuccess {
@@ -54,7 +55,7 @@ class AuthRepositoryImpl
 
                 // Clear local session regardless of server response
                 // This ensures users can always log out even if offline or server unavailable
-                runCatching {
+                runSuspendCatching {
                     userPreferencesRepository.clearSession()
                 }.onSuccess {
                     emit(AppResult.Success(Unit))

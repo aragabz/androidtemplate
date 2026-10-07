@@ -23,9 +23,8 @@ fun Throwable.toAppError(): AppError =
         is IOException -> AppError.NetworkError(this)
         is SQLiteException -> AppError.DatabaseError(this)
         is SerializationException -> AppError.ParsingError(this)
-        is IllegalArgumentException, is IllegalStateException ->
-            AppError.ValidationError(message ?: "Validation failed")
-
+        // IllegalArgumentException/IllegalStateException (require/check) are programming errors, not user input
+        // problems; create AppError.ValidationError explicitly for real validation failures.
         else -> AppError.UnknownError(this)
     }
 

@@ -1,5 +1,13 @@
 package com.aragabz.androidtemplate.core.common.network
 
+import app.cash.turbine.test
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.Collections
@@ -147,5 +155,57 @@ class ConnectivityManagerNetworkMonitorTest {
 
         latch.await()
         // Successfully completing without exceptions verifies thread safety
+    }
+
+    @Test
+    fun `concurrent collectors share one connectivity callback`() =
+        runTest {
+            var registrations = 0
+            var unregistrations = 0
+            val upstream =
+                callbackFlow {
+                    registrations++
+                    send(true)
+                    awaitClose { unregistrations++ }
+                }
+            val monitor = ConnectivityManagerNetworkMonitor(upstream, backgroundScope)
+
+            val first = launch { monitor.isOnline.collect {} }
+            val second = launch { monitor.isOnline.collect {} }
+            runCurrent()
+
+            assertEquals(1, registrations)
+
+            first.cancel()
+            second.cancel()
+            advanceTimeBy(STOP_TIMEOUT_MILLIS + 1)
+            runCurrent()
+
+            assertEquals(1, unregistrations)
+        }
+
+    @Test
+    fun `isOnline drops repeated values and replays the latest to late collectors`() =
+        runTest {
+            val upstream =
+                callbackFlow {
+                    send(false)
+                    send(true)
+                    send(true)
+                    send(false)
+                    awaitClose()
+                }
+            val monitor = ConnectivityManagerNetworkMonitor(upstream, backgroundScope)
+
+            monitor.isOnline.test {
+                assertEquals(false, awaitItem())
+                assertEquals(true, awaitItem())
+                assertEquals(false, awaitItem())
+                assertEquals(false, monitor.isOnline.first())
+            }
+        }
+
+    private companion object {
+        const val STOP_TIMEOUT_MILLIS = 5_000L
     }
 }
