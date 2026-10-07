@@ -3,74 +3,66 @@ package com.aragabz.androidtemplate.feature.profile.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.feature.auth.domain.usecase.SignOutUseCase
+import com.aragabz.androidtemplate.core.common.ui.UiText
 import com.aragabz.androidtemplate.feature.profile.domain.usecase.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+/**
+ * Profile state is one collection of the profile stream; [ProfileEvent.OnRefresh] restarts it.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ProfileViewModel
     @Inject
     constructor(
-        private val getProfileUseCase: GetProfileUseCase,
-        private val signOutUseCase: SignOutUseCase,
+        getProfileUseCase: GetProfileUseCase,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(ProfileUiState())
-        val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+        private val refreshRequests = MutableStateFlow(0)
+        private val error = MutableStateFlow<UiText?>(null)
 
-        init {
-            refreshProfile()
-        }
+        private val profileState =
+            refreshRequests
+                .flatMapLatest { getProfileUseCase() }
+                .runningFold(ProfileUiState(isLoading = true)) { state, result ->
+                    when (result) {
+                        is AppResult.Loading -> state.copy(isLoading = true)
+                        is AppResult.Success -> state.copy(isLoading = false, profile = result.data)
+                        is AppResult.Error -> {
+                            error.value = result.errorUiText
+                            state.copy(isLoading = false)
+                        }
+                    }
+                }
+
+        val uiState: StateFlow<ProfileUiState> =
+            combine(profileState, error) { state, error -> state.copy(error = error) }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                    initialValue = ProfileUiState(isLoading = true),
+                )
 
         fun onEvent(event: ProfileEvent) {
             when (event) {
-                ProfileEvent.OnRefresh -> refreshProfile()
-                ProfileEvent.OnSignOut -> signOut()
-                ProfileEvent.OnDismissError -> _uiState.update { it.copy(error = null) }
+                ProfileEvent.OnRefresh -> {
+                    error.value = null
+                    refreshRequests.update { it + 1 }
+                }
+                ProfileEvent.OnDismissError -> error.value = null
             }
         }
 
-        private fun refreshProfile() {
-            viewModelScope.launch {
-                getProfileUseCase().collect { result ->
-                    when (result) {
-                        is AppResult.Loading -> _uiState.update { it.copy(isLoading = true) }
-                        is AppResult.Success -> _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                profile = result.data,
-                                error = null,
-                            )
-                        }
-                        is AppResult.Error -> _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                error = result.errorUiText,
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        private fun signOut() {
-            viewModelScope.launch {
-                signOutUseCase().collect { result ->
-                    when (result) {
-                        is AppResult.Loading -> _uiState.update { it.copy(isLoading = true) }
-                        is AppResult.Success -> _uiState.update {
-                            it.copy(isLoading = false, profile = null, error = null)
-                        }
-                        is AppResult.Error -> _uiState.update {
-                            it.copy(isLoading = false, error = result.errorUiText)
-                        }
-                    }
-                }
-            }
+        private companion object {
+            const val STOP_TIMEOUT_MILLIS = 5_000L
         }
     }

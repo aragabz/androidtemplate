@@ -10,13 +10,12 @@ data class UserPreferences(
     val authToken: String? = null,
     val theme: AppTheme = AppTheme.SYSTEM,
     val language: String = "en",
-    val biometricAuthEnabled: Boolean = false,
 ) {
     /**
      * Custom toString() that excludes authToken to prevent accidental logging of sensitive data.
      */
     override fun toString(): String =
-        "UserPreferences(userId=$userId, authToken=***REDACTED***, theme=$theme, language=$language, biometricAuthEnabled=$biometricAuthEnabled)"
+        "UserPreferences(userId=$userId, authToken=***REDACTED***, theme=$theme, language=$language)"
 }
 
 /**

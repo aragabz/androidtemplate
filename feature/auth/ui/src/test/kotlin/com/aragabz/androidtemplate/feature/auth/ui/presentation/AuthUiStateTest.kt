@@ -8,24 +8,23 @@ import org.junit.Test
  * Tests for AuthUiState, verifying that password is excluded from toString().
  */
 class AuthUiStateTest {
-
     @Test
     fun `toString does not expose password`() {
         val state = AuthUiState(
             email = "user@example.com",
             password = "MySecretPassword123!",
-            isSignUpMode = false
+            isSignUpMode = false,
         )
 
         val stringRepresentation = state.toString()
 
         assertFalse(
             "password should not appear in toString()",
-            stringRepresentation.contains("MySecretPassword123!")
+            stringRepresentation.contains("MySecretPassword123!"),
         )
         assertTrue(
             "toString() should contain REDACTED marker",
-            stringRepresentation.contains("***REDACTED***")
+            stringRepresentation.contains("***REDACTED***"),
         )
     }
 
@@ -36,7 +35,7 @@ class AuthUiStateTest {
             password = "secret123",
             isSignUpMode = true,
             isAuthenticated = false,
-            isLoading = true
+            isLoading = true,
         )
 
         val stringRepresentation = state.toString()
@@ -53,7 +52,7 @@ class AuthUiStateTest {
         val state = AuthUiState(
             email = "user@example.com",
             password = "",
-            isSignUpMode = false
+            isSignUpMode = false,
         )
 
         val stringRepresentation = state.toString()
@@ -67,7 +66,7 @@ class AuthUiStateTest {
         val state = AuthUiState(
             email = "log_user@example.com",
             password = "SuperSecretPassword!",
-            isLoading = true
+            isLoading = true,
         )
 
         val logMessage = "UI State: $state"
@@ -81,9 +80,9 @@ class AuthUiStateTest {
     fun `data class copy does not affect toString override`() {
         val original = AuthUiState(
             email = "user@example.com",
-            password = "password123"
+            password = "password123",
         )
-        
+
         val copied = original.copy(isLoading = true)
 
         assertFalse(copied.toString().contains("password123"))

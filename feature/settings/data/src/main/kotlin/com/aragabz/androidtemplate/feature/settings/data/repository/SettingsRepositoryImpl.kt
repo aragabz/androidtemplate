@@ -6,11 +6,11 @@ import com.aragabz.androidtemplate.core.datastore.model.AppTheme
 import com.aragabz.androidtemplate.feature.settings.domain.model.SettingsPreferences
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 import com.aragabz.androidtemplate.feature.settings.domain.repository.SettingsRepository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class SettingsRepositoryImpl

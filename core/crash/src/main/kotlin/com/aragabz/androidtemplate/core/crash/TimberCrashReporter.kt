@@ -15,23 +15,26 @@ import javax.inject.Singleton
 class TimberCrashReporter
     @Inject
     constructor() : CrashReporter {
+        // Tagged so CrashReportingTree never forwards the reporter's own output back to it.
+        private val log: Timber.Tree get() = Timber.tag(TAG)
+
         override fun logException(throwable: Throwable) {
-            Timber.e(throwable)
+            log.e(throwable)
         }
 
         override fun logMessage(message: String) {
-            Timber.d("CrashReport: $message")
+            log.d("CrashReport: $message")
         }
 
         override fun setCustomKey(
             key: String,
             value: Any,
         ) {
-            Timber.d("CrashReport Key: $key = $value")
+            log.d("CrashReport Key: $key = $value")
         }
 
         override fun setUserId(userId: String) {
-            Timber.d("CrashReport UserID: $userId")
+            log.d("CrashReport UserID: $userId")
         }
 
         override fun logStructuredError(
@@ -57,9 +60,9 @@ class TimberCrashReporter
                 }
 
             if (throwable != null) {
-                Timber.e(throwable, msg)
+                log.e(throwable, msg)
             } else {
-                Timber.e(msg)
+                log.e(msg)
             }
         }
 
@@ -76,11 +79,15 @@ class TimberCrashReporter
             val message =
                 "CrashEvent[${event.source}] severity=${event.severity} message=${event.message} metadata=$metadata"
             when (event.severity) {
-                ErrorSeverity.INFO -> Timber.i(message)
-                ErrorSeverity.WARNING -> Timber.w(message)
+                ErrorSeverity.INFO -> log.i(message)
+                ErrorSeverity.WARNING -> log.w(message)
                 ErrorSeverity.ERROR,
                 ErrorSeverity.CRITICAL,
-                -> Timber.e(message)
+                -> log.e(message)
             }
+        }
+
+        companion object {
+            const val TAG = "CrashReporter"
         }
     }

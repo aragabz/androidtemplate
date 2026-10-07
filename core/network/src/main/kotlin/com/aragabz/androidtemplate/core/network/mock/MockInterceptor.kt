@@ -1,8 +1,6 @@
 package com.aragabz.androidtemplate.core.network.mock
 
 import com.aragabz.androidtemplate.core.network.BuildConfig
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
@@ -12,16 +10,14 @@ import javax.inject.Inject
 
 /**
  * Mock interceptor for development and testing.
- * Intercepts API calls and returns mock responses when enabled in BuildConfig.
- *
- * Uses proper coroutine delays instead of Thread.sleep() and integrates with DebugMockRegistry.
+ * In debug builds it answers the endpoints listed in DebugMockRegistry with canned responses.
+ * Turn it off to hit the real backend with `-PmockApi=false` (or `mockApi=false` in gradle.properties).
  */
 class MockInterceptor
     @Inject
     constructor() : Interceptor {
         companion object {
             private const val HTTP_OK = 200
-            private const val HTTP_NOT_FOUND = 404
             private const val DELAY_LOGIN = 500L
             private const val DELAY_REGISTER = 800L
             private const val DELAY_GET_PROFILE = 400L
@@ -29,17 +25,15 @@ class MockInterceptor
             private const val DEFAULT_DELAY = 300L
         }
 
+        // Flat endpoint table: each branch is one mocked route.
+        @Suppress("CyclomaticComplexMethod")
         override fun intercept(chain: Interceptor.Chain): Response {
-            if (!BuildConfig.DEBUG || !BuildConfig.ENABLE_MOCK_INTERCEPTOR) {
-                return chain.proceed(chain.request())
-            }
-
             val request = chain.request()
             val path = request.url.encodedPath
             val method = request.method
 
-            // Check if this path should be mocked
-            if (!DebugMockRegistry.isMocked(path)) {
+            val mockingEnabled = BuildConfig.DEBUG && BuildConfig.ENABLE_MOCK_INTERCEPTOR
+            if (!mockingEnabled || !DebugMockRegistry.isMocked(path)) {
                 return chain.proceed(request)
             }
 
@@ -68,8 +62,8 @@ class MockInterceptor
         }
 
         private fun mockLoginResponse(request: okhttp3.Request): Response {
-            // Use proper coroutine delay instead of Thread.sleep()
-            runBlocking { delay(DELAY_LOGIN) }
+            // Interceptors run on OkHttp's blocking worker threads, so sleeping here simulates latency.
+            Thread.sleep(DELAY_LOGIN)
 
             val json =
                 """
@@ -85,7 +79,7 @@ class MockInterceptor
         }
 
         private fun mockRegisterResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DELAY_REGISTER) }
+            Thread.sleep(DELAY_REGISTER)
 
             val json =
                 """
@@ -101,7 +95,7 @@ class MockInterceptor
         }
 
         private fun mockGetProfileResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DELAY_GET_PROFILE) }
+            Thread.sleep(DELAY_GET_PROFILE)
 
             val json =
                 """
@@ -119,7 +113,7 @@ class MockInterceptor
         }
 
         private fun mockUpdateProfileResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DELAY_UPDATE_PROFILE) }
+            Thread.sleep(DELAY_UPDATE_PROFILE)
 
             // In a real scenario, you'd parse the request body and return it
             val json =
@@ -138,7 +132,7 @@ class MockInterceptor
         }
 
         private fun mockGetTodosResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DEFAULT_DELAY) }
+            Thread.sleep(DEFAULT_DELAY)
 
             val json =
                 """
@@ -164,7 +158,7 @@ class MockInterceptor
         }
 
         private fun mockGetUsersResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DEFAULT_DELAY) }
+            Thread.sleep(DEFAULT_DELAY)
 
             val json =
                 """
@@ -186,7 +180,7 @@ class MockInterceptor
         }
 
         private fun mockGetUserByIdResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DEFAULT_DELAY) }
+            Thread.sleep(DEFAULT_DELAY)
 
             // Extract user ID from path (e.g., /users/user-001)
             val userId = request.url.pathSegments.last()
@@ -204,7 +198,7 @@ class MockInterceptor
         }
 
         private fun mockLogoutResponse(request: okhttp3.Request): Response {
-            runBlocking { delay(DEFAULT_DELAY) }
+            Thread.sleep(DEFAULT_DELAY)
 
             // Logout typically returns empty response with 200 OK
             return buildJsonResponse(request, "{}", HTTP_OK)

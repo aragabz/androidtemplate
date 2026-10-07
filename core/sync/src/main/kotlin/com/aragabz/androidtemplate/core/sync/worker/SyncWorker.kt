@@ -1,14 +1,14 @@
 package com.aragabz.androidtemplate.core.sync.worker
 
 import android.content.Context
-import com.aragabz.androidtemplate.core.datastore.CachePolicyStore
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.aragabz.androidtemplate.core.datastore.CachePolicyStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.util.concurrent.TimeUnit
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 /**
  * Main worker responsible for background synchronization.

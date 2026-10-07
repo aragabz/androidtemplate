@@ -2,54 +2,97 @@ package com.aragabz.androidtemplate
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
 import com.aragabz.androidtemplate.core.network.session.SessionManager
+import com.aragabz.androidtemplate.feature.auth.domain.usecase.GetAuthSessionUseCase
 import com.aragabz.androidtemplate.feature.auth.domain.usecase.SignOutUseCase
+import com.aragabz.androidtemplate.feature.auth.ui.presentation.navigation.AuthRoute
+import com.aragabz.androidtemplate.navigation.MainRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
- * Main view model for app-level state.
- * Handles 401 unauthorized events from SessionManager with proper lifecycle scoping.
+ * App-level state: start destination, theme, language changes and sign-out.
+ * Sign-out (from the profile tab or a 401 response) clears the session, then asks the UI to show sign-in.
  */
 @HiltViewModel
 class MainViewModel
     @Inject
     constructor(
-        private val sessionManager: SessionManager,
+        sessionManager: SessionManager,
+        getAuthSessionUseCase: GetAuthSessionUseCase,
+        userPreferencesRepository: UserPreferencesRepository,
         private val signOutUseCase: SignOutUseCase,
     ) : ViewModel() {
-        private val _navigateToLogin = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+        // Read once: the start destination must not change while the graph is shown.
+        private val startDestination: Flow<Any> =
+            flow {
+                val isAuthenticated = getAuthSessionUseCase().first().isAuthenticated
+                emit(if (isAuthenticated) MainRoute else AuthRoute)
+            }
+
+        private val isSignInRequired = MutableStateFlow(false)
+
+        val uiState: StateFlow<MainUiState> =
+            combine(
+                startDestination,
+                userPreferencesRepository.userPreferences.map { it.theme },
+                isSignInRequired,
+            ) { startDestination, theme, isSignInRequired ->
+                MainUiState.Ready(
+                    startDestination = startDestination,
+                    theme = theme,
+                    isSignInRequired = isSignInRequired,
+                )
+            }.stateIn(viewModelScope, SharingStarted.Eagerly, MainUiState.Loading)
 
         /**
-         * SharedFlow that emits when the app should navigate to login screen.
-         * Collect this in your UI with lifecycle awareness.
+         * Languages picked in settings. The stored value is skipped, so a user who never picked a language keeps
+         * the system one; Android/AppCompat persist each applied choice.
          */
-        val navigateToLogin: SharedFlow<Unit> = _navigateToLogin.asSharedFlow()
+        val languageChanges: Flow<String> =
+            userPreferencesRepository.userPreferences
+                .map { it.language }
+                .distinctUntilChanged()
+                .drop(1)
 
         init {
-            // Observe 401 unauthorized events (viewModelScope = lifecycle-scoped)
             viewModelScope.launch {
-                sessionManager.onUnauthorized.collect {
-                    handleUnauthorized()
-                }
+                sessionManager.onUnauthorized.collect { signOut() }
             }
         }
 
         /**
-         * Handles 401 unauthorized responses by:
-         * 1. Signing out the user (clears local session)
-         * 2. Notifying UI to navigate to login screen
+         * Clears the session, then navigates to sign-in even if clearing failed, so the user is never stuck.
          */
-        private fun handleUnauthorized() {
+        fun signOut() {
             viewModelScope.launch {
-                // Clear local session
-                signOutUseCase()
-                // Notify UI to navigate to login
-                _navigateToLogin.tryEmit(Unit)
+                val result = signOutUseCase().first { it !is AppResult.Loading }
+                if (result is AppResult.Error) {
+                    Timber.w(result.exception, "Sign-out failed to clear the local session")
+                }
+                isSignInRequired.value = true
             }
+        }
+
+        /**
+         * Called by the UI once it has shown the sign-in screen requested by [MainUiState.Ready.isSignInRequired].
+         */
+        fun onSignInShown() {
+            isSignInRequired.value = false
         }
     }

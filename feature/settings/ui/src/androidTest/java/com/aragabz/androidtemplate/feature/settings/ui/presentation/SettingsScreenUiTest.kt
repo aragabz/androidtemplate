@@ -25,7 +25,7 @@ class SettingsScreenUiTest {
                     uiState =
                         SettingsUiState(
                             selectedTheme = ThemePreference.DARK,
-                            selectedLanguage = AppLanguage.ARABIC,
+                            selectedLanguage = AppLanguage.SPANISH,
                         ),
                 )
             }
@@ -33,6 +33,6 @@ class SettingsScreenUiTest {
 
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Dark").assertIsDisplayed()
-        composeTestRule.onNodeWithText("العربية").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Español").assertIsDisplayed()
     }
 }

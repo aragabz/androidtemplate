@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,33 +27,52 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 import com.aragabz.androidtemplate.feature.settings.ui.R
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsEvent
+import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsUiState
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsViewModel
 
 /**
  * Theme settings section - pick between System / Light / Dark.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeSectionScreen(
-    navController: NavController,
+    onBack: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    ThemeSectionContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBack = onBack,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ThemeSectionContent(
+    uiState: SettingsUiState,
+    onEvent: (SettingsEvent) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val spacing = LocalSpacing.current
+
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.settings_theme)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.settings_back),
@@ -62,53 +82,35 @@ fun ThemeSectionScreen(
             )
         },
     ) { paddingValues ->
-        ThemeSectionContent(
-            selectedTheme = uiState.selectedTheme,
-            isLoading = uiState.isLoading,
-            onThemeSelected = { theme ->
-                viewModel.onEvent(SettingsEvent.OnThemeSelected(theme))
-            },
-            modifier = Modifier.padding(paddingValues),
-        )
-    }
-}
-
-@Composable
-internal fun ThemeSectionContent(
-    selectedTheme: ThemePreference,
-    isLoading: Boolean,
-    onThemeSelected: (ThemePreference) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val spacing = LocalSpacing.current
-
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(spacing.medium),
-    ) {
-        Text(
-            text = stringResource(id = R.string.settings_theme_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.padding(spacing.medium))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        Column(
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(spacing.medium),
         ) {
-            Column {
-                ThemePreference.entries.forEachIndexed { index, theme ->
-                    ThemeRow(
-                        theme = theme,
-                        isSelected = selectedTheme == theme,
-                        enabled = !isLoading,
-                        onClick = { onThemeSelected(theme) },
-                    )
+            Text(
+                text = stringResource(id = R.string.settings_theme_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(modifier = Modifier.height(spacing.medium))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            ) {
+                Column {
+                    ThemePreference.entries.forEach { theme ->
+                        ThemeRow(
+                            theme = theme,
+                            isSelected = uiState.selectedTheme == theme,
+                            enabled = !uiState.isLoading,
+                            onClick = { onEvent(SettingsEvent.OnThemeSelected(theme)) },
+                        )
+                    }
                 }
             }
         }
@@ -155,3 +157,15 @@ private fun ThemePreference.displayName(): String =
         ThemePreference.LIGHT -> stringResource(id = R.string.settings_theme_light)
         ThemePreference.DARK -> stringResource(id = R.string.settings_theme_dark)
     }
+
+@PreviewLightDark
+@Composable
+private fun ThemeSectionContentPreview() {
+    AppTheme {
+        ThemeSectionContent(
+            uiState = SettingsUiState(selectedTheme = ThemePreference.DARK),
+            onEvent = {},
+            onBack = {},
+        )
+    }
+}

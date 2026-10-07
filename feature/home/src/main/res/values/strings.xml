@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_tab_home">Home</string>
-    <string name="home_tab_todos">Todos</string>
-    <string name="home_tab_auth">Auth</string>
-    <string name="home_tab_profile">Profile</string>
-    <string name="home_tab_settings">Settings</string>
     <string name="home_view_mode_list">List View</string>
     <string name="home_view_mode_dashboard">Dashboard View</string>
     <string name="home_dashboard_title">Home Dashboard</string>
@@ -17,6 +12,10 @@
     <string name="home_component_examples">Component Examples</string>
     <string name="home_component_example_template">Example of %1$s component</string>
     <string name="home_click">Click</string>
+    <string name="home_button_primary">Button Primary</string>
+    <string name="home_button_secondary">Button Secondary</string>
+    <string name="home_button_ghost">Button Ghost</string>
+    <string name="home_button_destructive">Button Destructive</string>
     <string name="home_error_message">Something went wrong on this screen.</string>
     <string name="home_empty_screen_message">This is an empty screen</string>
     <string name="home_empty_screen_subtitle">You can navigate back from here</string>

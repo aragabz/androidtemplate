@@ -5,9 +5,9 @@ import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.domain.usecase.NoParamFlowUseCase
 import com.aragabz.androidtemplate.feature.profile.domain.model.UserProfile
 import com.aragabz.androidtemplate.feature.profile.domain.repository.ProfileRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class GetProfileUseCase
     @Inject

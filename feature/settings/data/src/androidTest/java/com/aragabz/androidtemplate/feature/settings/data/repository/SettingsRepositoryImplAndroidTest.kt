@@ -21,26 +21,28 @@ class SettingsRepositoryImplAndroidTest {
     private lateinit var repository: SettingsRepositoryImpl
 
     @Before
-    fun setUp() = runBlocking {
-        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
-        preferencesRepository = UserPreferencesRepositoryImpl(context, SecureSessionStorageImpl(context))
-        preferencesRepository.clearSession()
-        preferencesRepository.updateLanguage("en")
-        repository = SettingsRepositoryImpl(preferencesRepository)
-    }
+    fun setUp() =
+        runBlocking {
+            val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+            preferencesRepository = UserPreferencesRepositoryImpl(context, SecureSessionStorageImpl(context))
+            preferencesRepository.clearSession()
+            preferencesRepository.updateLanguage("en")
+            repository = SettingsRepositoryImpl(preferencesRepository)
+        }
 
     @Test
-    fun updatesThemeAndLanguage_fromBackingDataStore() = runBlocking {
-        val themeResults = repository.updateTheme(ThemePreference.DARK).toList()
-        val languageResults = repository.updateLanguage("ar").toList()
+    fun updatesThemeAndLanguage_fromBackingDataStore() =
+        runBlocking {
+            val themeResults = repository.updateTheme(ThemePreference.DARK).toList()
+            val languageResults = repository.updateLanguage("ar").toList()
 
-        assertTrue(themeResults.first() is AppResult.Loading)
-        assertTrue(themeResults.last() is AppResult.Success)
-        assertTrue(languageResults.first() is AppResult.Loading)
-        assertTrue(languageResults.last() is AppResult.Success)
+            assertTrue(themeResults.first() is AppResult.Loading)
+            assertTrue(themeResults.last() is AppResult.Success)
+            assertTrue(languageResults.first() is AppResult.Loading)
+            assertTrue(languageResults.last() is AppResult.Success)
 
-        val settings = repository.observeSettings().first()
-        assertEquals(ThemePreference.DARK, settings.theme)
-        assertEquals("ar", settings.language)
-    }
+            val settings = repository.observeSettings().first()
+            assertEquals(ThemePreference.DARK, settings.theme)
+            assertEquals("ar", settings.language)
+        }
 }

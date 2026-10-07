@@ -1,38 +1,8 @@
-# Keep application entry points and generated code used by the template.
--keep class com.aragabz.androidtemplate.** { *; }
+# App-specific R8 rules.
+# Hilt, Room, Retrofit, OkHttp, WorkManager and kotlinx.serialization ship their own consumer rules,
+# so only add rules here for code that is reached by reflection and not covered by those libraries.
 
-# Kotlin and Compose metadata are consumed at runtime by tooling and reflection-based APIs.
--keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
-
-# Hilt-generated classes and annotations.
--keep class dagger.hilt.** { *; }
--dontwarn dagger.hilt.**
-
-# Room entities, DAOs, and generated implementations.
--keep class androidx.room.** { *; }
--dontwarn androidx.room.**
-
-# Retrofit service interfaces and Kotlin serialization support.
--keep class retrofit2.** { *; }
--dontwarn retrofit2.**
--keepclassmembers interface * {
-    @retrofit2.http.* <methods>;
-}
-
-# OkHttp and logging interceptor are safe to shrink, but suppress missing debug-only warnings.
--dontwarn okhttp3.**
-
-# WorkManager and its annotations.
--keep class androidx.work.** { *; }
--dontwarn androidx.work.**
-
-# Timber tree discovery and custom logging implementations.
--keep class timber.log.** { *; }
-
-# Baseline profile and startup tooling.
--keep class androidx.baselineprofile.** { *; }
-
-# Optional annotation-only dependencies used by transitive security libraries.
+# Annotation-only dependencies referenced by transitive security libraries (Tink).
 -dontwarn com.google.errorprone.annotations.**
 -dontwarn com.google.j2objc.annotations.**
 -dontwarn org.checkerframework.checker.nullness.qual.**

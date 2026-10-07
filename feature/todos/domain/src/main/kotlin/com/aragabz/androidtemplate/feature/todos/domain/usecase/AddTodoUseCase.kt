@@ -18,7 +18,10 @@ class AddTodoUseCase
         private val repository: TodosRepository,
         @IoDispatcher dispatcher: CoroutineDispatcher,
     ) : FlowUseCase<AddTodoUseCase.Params, AppResult<Todo>>(dispatcher) {
-        data class Params(val title: String, val description: String?)
+        data class Params(
+            val title: String,
+            val description: String?,
+        )
 
         override fun execute(parameters: Params): Flow<AppResult<Todo>> =
             repository.addTodo(parameters.title, parameters.description)

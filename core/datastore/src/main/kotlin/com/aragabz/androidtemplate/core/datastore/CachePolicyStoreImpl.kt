@@ -17,26 +17,21 @@ class CachePolicyStoreImpl
     constructor(
         @ApplicationContext private val context: Context,
     ) : CachePolicyStore {
-        override suspend fun touchTodosCache(
-            userId: String,
-            count: Int,
-        ) {
+        override suspend fun touch(key: String) {
             val nowMillis = System.currentTimeMillis()
             context.cachePolicyDataStore.edit { prefs ->
-                prefs[userScopedKey(userId)] = nowMillis
-                prefs[userScopedCountKey(userId)] = count.toLong()
+                prefs[lastUpdatedKey(key)] = nowMillis
             }
         }
 
-        override suspend fun readTodosCacheLastUpdated(userId: String): Long? {
+        override suspend fun readLastUpdated(key: String): Long? {
             val prefs = context.cachePolicyDataStore.data.first()
-            return prefs[userScopedKey(userId)]
+            return prefs[lastUpdatedKey(key)]
         }
 
-        override suspend fun clearTodosCacheMetadata(userId: String) {
+        override suspend fun clear(key: String) {
             context.cachePolicyDataStore.edit { prefs ->
-                prefs.remove(userScopedKey(userId))
-                prefs.remove(userScopedCountKey(userId))
+                prefs.remove(lastUpdatedKey(key))
             }
         }
 
@@ -51,9 +46,7 @@ class CachePolicyStoreImpl
             return prefs[lastCleanupRunKey]
         }
 
-        private fun userScopedKey(userId: String) = longPreferencesKey("todos_cache_last_updated_$userId")
-
-        private fun userScopedCountKey(userId: String) = longPreferencesKey("todos_cache_count_$userId")
+        private fun lastUpdatedKey(key: String) = longPreferencesKey("cache_last_updated_$key")
 
         private companion object {
             val lastCleanupRunKey = longPreferencesKey("cache_cleanup_last_run")

@@ -40,7 +40,8 @@ interface SyncManager {
  * This prevents sync from draining battery on mobile data or when battery is low.
  */
 val SyncConstraints =
-    Constraints.Builder()
+    Constraints
+        .Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
         .setRequiresBatteryNotLow(true)
         .setRequiresStorageNotLow(true)
@@ -53,7 +54,8 @@ val SyncConstraints =
  * but still respects battery and storage constraints.
  */
 val SyncConstraintsRelaxed =
-    Constraints.Builder()
+    Constraints
+        .Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .setRequiresBatteryNotLow(true)
         .setRequiresStorageNotLow(true)

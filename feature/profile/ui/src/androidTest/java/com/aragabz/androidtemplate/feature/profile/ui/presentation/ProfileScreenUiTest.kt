@@ -23,6 +23,7 @@ class ProfileScreenUiTest {
                 ProfileScreenContent(
                     uiState = ProfileUiState(profile = UserProfile("ragab", "Ragab", "ragab@example.com")),
                     onEvent = {},
+                    onSignOut = {},
                 )
             }
         }

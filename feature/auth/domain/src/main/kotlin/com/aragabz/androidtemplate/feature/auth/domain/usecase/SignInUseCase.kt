@@ -14,6 +14,7 @@ class SignInUseCase
         private val repository: AuthRepository,
         @IoDispatcher dispatcher: CoroutineDispatcher,
     ) : FlowUseCase<SignInUseCase.Params, AppResult<Unit>>(dispatcher) {
+        /** The sample has no account backend, so the email is stored as the session user id. */
         data class Params(
             val email: String,
             val token: String,

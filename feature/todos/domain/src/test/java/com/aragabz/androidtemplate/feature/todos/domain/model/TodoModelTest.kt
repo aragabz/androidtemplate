@@ -8,7 +8,7 @@ class TodoModelTest {
     fun `todo model preserves constructor values`() {
         val createdTime = System.currentTimeMillis()
         val updatedTime = createdTime + 3600_000 // 1 hour later
-        
+
         val todo =
             Todo(
                 id = "todo-1",

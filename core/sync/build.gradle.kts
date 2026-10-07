@@ -1,7 +1,6 @@
 plugins {
     id("androidtemplate.android.library")
     id("androidtemplate.android.hilt")
-    id("androidtemplate.kotlin.explicit.api")
 }
 
 android {
@@ -21,7 +20,4 @@ dependencies {
     // Hilt Worker
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
 }

@@ -29,7 +29,7 @@ class StartupBenchmarks {
 
     @Test
     fun scrollBenchmark() = benchmarkRule.measureRepeated(
-        packageName = "com.aragabz.androidtemplate",
+        packageName = targetAppId,
         metrics = listOf(androidx.benchmark.macro.FrameTimingMetric()),
         compilationMode = CompilationMode.Partial(
             baselineProfileMode = BaselineProfileMode.Require
@@ -50,7 +50,7 @@ class StartupBenchmarks {
     }
 
     private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
-        packageName = "com.aragabz.androidtemplate",
+        packageName = targetAppId,
         metrics = listOf(androidx.benchmark.macro.StartupTimingMetric()),
         compilationMode = compilationMode,
         startupMode = StartupMode.COLD,

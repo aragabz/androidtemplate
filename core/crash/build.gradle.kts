@@ -1,7 +1,6 @@
 plugins {
     id("androidtemplate.android.library")
     id("androidtemplate.android.hilt")
-    id("androidtemplate.kotlin.explicit.api")
 }
 
 android {
@@ -10,7 +9,6 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(libs.timber)
-
-    testImplementation(libs.junit)
+    // CrashReportingTree is a Timber.Tree, so Timber is part of this module's API.
+    api(libs.timber)
 }

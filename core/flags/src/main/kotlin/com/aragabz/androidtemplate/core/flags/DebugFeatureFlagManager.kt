@@ -3,7 +3,6 @@ package com.aragabz.androidtemplate.core.flags
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,11 +19,7 @@ class DebugFeatureFlagManager
     constructor(
         private val store: FeatureFlagStore,
     ) : FeatureFlagManager {
-        override fun isEnabled(feature: Feature): Boolean =
-            runBlocking {
-                // Check for persisted override, fall back to default
-                store.getOverride(feature).first() ?: feature.defaultValue
-            }
+        override suspend fun isEnabled(feature: Feature): Boolean = observeFeature(feature).first()
 
         override fun observeFeature(feature: Feature): Flow<Boolean> =
             store.getOverride(feature).map { override ->

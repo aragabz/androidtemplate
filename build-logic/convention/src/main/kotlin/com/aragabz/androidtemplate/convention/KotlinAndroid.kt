@@ -41,16 +41,24 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
         }
 
         lint.apply {
-            abortOnError = false
+            abortOnError = true
             xmlReport = true
             sarifReport = true
             checkDependencies = true
         }
     }
 
-    // Add desugaring dependency when enabled
     dependencies {
+        // Add desugaring dependency when enabled
         add("coreLibraryDesugaring", libs.findLibrary("android.desugarJdkLibs").get())
+        // The runner declared by testInstrumentationRunner; without it instrumentation crashes and reports 0 tests.
+        add("androidTestImplementation", libs.findLibrary("androidx.test.runner").get())
+        // compose-ui-test pulls Espresso 3.5, which crashes on API 35+; pin the catalog version.
+        add("androidTestImplementation", libs.findLibrary("androidx.espresso.core").get())
+        // Shared test helpers (MainDispatcherRule, fakes) plus JUnit, coroutines-test and Turbine via its api.
+        if (path != ":core:testing") {
+            add("testImplementation", project(":core:testing"))
+        }
     }
 
     // Configure Kotlin compiler options

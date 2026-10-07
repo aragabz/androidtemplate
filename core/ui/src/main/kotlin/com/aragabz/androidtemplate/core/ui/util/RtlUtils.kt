@@ -11,10 +11,9 @@ import androidx.compose.ui.unit.LayoutDirection
  * Useful for icons that should point in the opposite direction (e.g., back arrows).
  */
 @Composable
-fun Modifier.mirrorRtl(): Modifier {
-    return if (LocalLayoutDirection.current == LayoutDirection.Rtl) {
+fun Modifier.mirrorRtl(): Modifier =
+    if (LocalLayoutDirection.current == LayoutDirection.Rtl) {
         this.scale(scaleX = -1f, scaleY = 1f)
     } else {
         this
     }
-}

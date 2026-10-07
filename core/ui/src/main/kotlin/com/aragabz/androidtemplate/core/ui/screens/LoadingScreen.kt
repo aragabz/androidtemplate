@@ -43,7 +43,8 @@ fun LoadingScreen(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(modifier = Modifier.size(36.dp))
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(spacing.small))
+            androidx.compose.foundation.layout
+                .Spacer(modifier = Modifier.height(spacing.small))
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,

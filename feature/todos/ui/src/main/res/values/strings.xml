@@ -4,6 +4,7 @@
     <string name="todo_back">Back</string>
     <string name="todo_title_label">Title</string>
     <string name="todo_title_placeholder">Enter todo title</string>
+    <string name="todo_title_required">Title is required</string>
     <string name="todo_description_label">Description</string>
     <string name="todo_description_placeholder">Enter description (optional)</string>
     <string name="todo_create">Create Todo</string>

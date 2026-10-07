@@ -20,7 +20,6 @@ interface AuthDataModule {
     companion object {
         @Provides
         @Singleton
-        fun provideAuthApi(retrofit: Retrofit): AuthApi =
-            retrofit.create(AuthApi::class.java)
+        fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
     }
 }

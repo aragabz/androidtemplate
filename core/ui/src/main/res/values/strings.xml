@@ -10,6 +10,10 @@
     <string name="error_icon_content_description">Error</string>
     <string name="error_title">Something went wrong</string>
     <string name="error_action_retry">Try Again</string>
+
+    <!-- Empty and Success Screens -->
+    <string name="empty_icon_content_description">Empty content</string>
+    <string name="success_icon_content_description">Success</string>
     
     <!-- Splash Screen -->
     <string name="splash_app_name">Android Template</string>

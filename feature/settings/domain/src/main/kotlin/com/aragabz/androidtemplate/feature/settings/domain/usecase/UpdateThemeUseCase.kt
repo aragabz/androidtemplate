@@ -5,9 +5,9 @@ import com.aragabz.androidtemplate.core.common.result.AppResult
 import com.aragabz.androidtemplate.core.domain.usecase.FlowUseCase
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 import com.aragabz.androidtemplate.feature.settings.domain.repository.SettingsRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class UpdateThemeUseCase
     @Inject

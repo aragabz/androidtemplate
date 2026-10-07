@@ -4,6 +4,7 @@
     <string name="todo_back">Atras</string>
     <string name="todo_title_label">Titulo</string>
     <string name="todo_title_placeholder">Escribe el titulo de la tarea</string>
+    <string name="todo_title_required">El título es obligatorio</string>
     <string name="todo_description_label">Descripcion</string>
     <string name="todo_description_placeholder">Escribe una descripcion (opcional)</string>
     <string name="todo_create">Crear tarea</string>

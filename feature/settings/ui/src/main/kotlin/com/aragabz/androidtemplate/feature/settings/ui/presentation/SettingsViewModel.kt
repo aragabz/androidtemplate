@@ -3,77 +3,68 @@ package com.aragabz.androidtemplate.feature.settings.ui.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.common.ui.UiText
 import com.aragabz.androidtemplate.feature.settings.domain.model.AppLanguage
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.ObserveSettingsUseCase
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.UpdateLanguageUseCase
 import com.aragabz.androidtemplate.feature.settings.domain.usecase.UpdateThemeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Settings state derives from the stored preferences, so each settings screen can own its instance
+ * and still show the same values.
+ */
 @HiltViewModel
 class SettingsViewModel
     @Inject
     constructor(
-        private val observeSettingsUseCase: ObserveSettingsUseCase,
+        observeSettingsUseCase: ObserveSettingsUseCase,
         private val updateThemeUseCase: UpdateThemeUseCase,
         private val updateLanguageUseCase: UpdateLanguageUseCase,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(SettingsUiState())
-        val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+        private val isLoading = MutableStateFlow(false)
+        private val error = MutableStateFlow<UiText?>(null)
 
-        init {
-            observeSettings()
-        }
+        val uiState: StateFlow<SettingsUiState> =
+            combine(observeSettingsUseCase(), isLoading, error) { settings, isLoading, error ->
+                SettingsUiState(
+                    selectedTheme = settings.theme,
+                    selectedLanguage = AppLanguage.fromCode(settings.language),
+                    isLoading = isLoading,
+                    error = error,
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                initialValue = SettingsUiState(),
+            )
 
         fun onEvent(event: SettingsEvent) {
             when (event) {
-                is SettingsEvent.OnThemeSelected -> updateTheme(event.theme)
-                is SettingsEvent.OnLanguageSelected -> updateLanguage(event.language)
-                SettingsEvent.OnDismissError -> _uiState.update { it.copy(error = null) }
+                is SettingsEvent.OnThemeSelected -> update { updateThemeUseCase(event.theme) }
+                is SettingsEvent.OnLanguageSelected -> update { updateLanguageUseCase(event.language.code) }
+                SettingsEvent.OnDismissError -> error.value = null
             }
         }
 
-        private fun observeSettings() {
+        private fun update(mutation: () -> Flow<AppResult<Unit>>) {
             viewModelScope.launch {
-                observeSettingsUseCase().collect { settings ->
-                    _uiState.update {
-                        it.copy(
-                            selectedTheme = settings.theme,
-                            selectedLanguage = AppLanguage.fromCode(settings.language),
-                        )
-                    }
+                mutation().collect { result ->
+                    isLoading.value = result is AppResult.Loading
+                    if (result is AppResult.Error) error.value = result.errorUiText
                 }
             }
         }
 
-        private fun updateTheme(theme: com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference) {
-            viewModelScope.launch {
-                updateThemeUseCase(theme).collect { result ->
-                    handleMutationResult(result)
-                }
-            }
-        }
-
-        private fun updateLanguage(language: AppLanguage) {
-            viewModelScope.launch {
-                updateLanguageUseCase(language.code).collect { result ->
-                    handleMutationResult(result)
-                }
-            }
-        }
-
-        private fun handleMutationResult(result: AppResult<Unit>) {
-            when (result) {
-                is AppResult.Loading -> _uiState.update { it.copy(isLoading = true) }
-                is AppResult.Success -> _uiState.update { it.copy(isLoading = false, error = null) }
-                is AppResult.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.errorUiText)
-                }
-            }
+        private companion object {
+            const val STOP_TIMEOUT_MILLIS = 5_000L
         }
     }

@@ -9,7 +9,7 @@ interface FeatureFlagManager {
     /**
      * Check if a feature is enabled.
      */
-    fun isEnabled(feature: Feature): Boolean
+    suspend fun isEnabled(feature: Feature): Boolean
 
     /**
      * Get a flow of the current enabled state for a feature.
@@ -38,12 +38,11 @@ interface FeatureFlagManager {
 }
 
 /**
- * List of features that can be toggled.
+ * A toggleable feature. Each feature module declares its own flags, e.g.
+ * `enum class TodosFlag(override val key: String, override val defaultValue: Boolean) : Feature`.
+ * Keys must be unique across the app; they are the persisted override keys.
  */
-enum class Feature(
-    val key: String,
-    val defaultValue: Boolean,
-) {
-    NEW_TODO_DESIGN("new_todo_design", false),
-    EXPERIMENTAL_SYNC("experimental_sync", true),
+interface Feature {
+    val key: String
+    val defaultValue: Boolean
 }

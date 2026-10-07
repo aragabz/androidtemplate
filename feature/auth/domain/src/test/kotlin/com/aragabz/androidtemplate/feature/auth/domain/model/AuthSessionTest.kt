@@ -9,23 +9,22 @@ import org.junit.Test
  * Tests for AuthSession, verifying that token is excluded from toString().
  */
 class AuthSessionTest {
-
     @Test
     fun `toString does not expose token`() {
         val session = AuthSession(
             userId = "user123",
-            token = "secret_jwt_token_12345"
+            token = "secret_jwt_token_12345",
         )
 
         val stringRepresentation = session.toString()
 
         assertFalse(
             "token should not appear in toString()",
-            stringRepresentation.contains("secret_jwt_token_12345")
+            stringRepresentation.contains("secret_jwt_token_12345"),
         )
         assertTrue(
             "toString() should contain REDACTED marker",
-            stringRepresentation.contains("***REDACTED***")
+            stringRepresentation.contains("***REDACTED***"),
         )
     }
 
@@ -33,7 +32,7 @@ class AuthSessionTest {
     fun `toString includes non-sensitive fields`() {
         val session = AuthSession(
             userId = "user456",
-            token = "another_secret_token"
+            token = "another_secret_token",
         )
 
         val stringRepresentation = session.toString()
@@ -57,7 +56,7 @@ class AuthSessionTest {
     fun `isAuthenticated is true when both userId and token are present`() {
         val session = AuthSession(
             userId = "user123",
-            token = "token123"
+            token = "token123",
         )
 
         assertTrue(session.isAuthenticated)
@@ -67,7 +66,7 @@ class AuthSessionTest {
     fun `isAuthenticated is false when userId is null`() {
         val session = AuthSession(
             userId = null,
-            token = "token123"
+            token = "token123",
         )
 
         assertFalse(session.isAuthenticated)
@@ -77,7 +76,7 @@ class AuthSessionTest {
     fun `isAuthenticated is false when token is null`() {
         val session = AuthSession(
             userId = "user123",
-            token = null
+            token = null,
         )
 
         assertFalse(session.isAuthenticated)
@@ -87,7 +86,7 @@ class AuthSessionTest {
     fun `isAuthenticated is false when userId is blank`() {
         val session = AuthSession(
             userId = "  ",
-            token = "token123"
+            token = "token123",
         )
 
         assertFalse(session.isAuthenticated)
@@ -111,7 +110,7 @@ class AuthSessionTest {
 
         assertEquals("user456", copied.userId)
         assertEquals("token123", copied.token)
-        
+
         // toString should still redact token
         assertFalse(copied.toString().contains("token123"))
         assertTrue(copied.toString().contains("***REDACTED***"))
@@ -121,7 +120,7 @@ class AuthSessionTest {
     fun `logging AuthSession does not expose token`() {
         val session = AuthSession(
             userId = "log_user",
-            token = "super_secret_token"
+            token = "super_secret_token",
         )
 
         val logMessage = "Auth session: $session"

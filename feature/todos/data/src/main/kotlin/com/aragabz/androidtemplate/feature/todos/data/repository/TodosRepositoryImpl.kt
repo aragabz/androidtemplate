@@ -9,16 +9,16 @@ import com.aragabz.androidtemplate.feature.todos.data.local.dao.TodoDao
 import com.aragabz.androidtemplate.feature.todos.data.local.entity.TodoEntity
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
 import com.aragabz.androidtemplate.feature.todos.domain.repository.TodosRepository
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Offline-first implementation backed by Room with in-memory fallback for transient failures.
@@ -53,7 +53,7 @@ class TodosRepositoryImpl
                 } else if (currentTodos.isNotEmpty()) {
                     val mapped = currentTodos.map { it.toExternalModel() }
                     inMemoryCache[userId] = mapped
-                    cachePolicyStore.touchTodosCache(userId, mapped.size)
+                    cachePolicyStore.touch(cacheKey(userId))
                 }
 
                 if (!isOnline && isCacheExpired(userId)) {
@@ -61,14 +61,14 @@ class TodosRepositoryImpl
                 }
 
                 emitAll(
-                    todoDao.getTodosByUserId(userId)
+                    todoDao
+                        .getTodosByUserId(userId)
                         .map { entities ->
                             val mapped = entities.map { it.toExternalModel() }
                             inMemoryCache[userId] = mapped
-                            cachePolicyStore.touchTodosCache(userId, mapped.size)
+                            cachePolicyStore.touch(cacheKey(userId))
                             AppResult.Success(mapped)
-                        }
-                        .catch { emit(AppResult.Error(it as Exception)) },
+                        }.catch { emit(AppResult.Error(it as Exception)) },
                 )
             }.catch {
                 val userId = runCatching { getActiveUserId() }.getOrDefault("default")
@@ -110,7 +110,7 @@ class TodosRepositoryImpl
                         updatedAt = null,
                     )
                 todoDao.upsert(newTodo)
-                cachePolicyStore.touchTodosCache(userId, (inMemoryCache[userId]?.size ?: 0) + 1)
+                cachePolicyStore.touch(cacheKey(userId))
                 emit(AppResult.Success(newTodo.toExternalModel()))
             }.catch { emit(AppResult.Error(it as Exception)) }
 
@@ -126,7 +126,7 @@ class TodosRepositoryImpl
                             updatedAt = now,
                         )
                     todoDao.upsert(updated)
-                    cachePolicyStore.touchTodosCache(updated.userId, inMemoryCache[updated.userId]?.size ?: 1)
+                    cachePolicyStore.touch(cacheKey(updated.userId))
                     emit(AppResult.Success(updated.toExternalModel()))
                 } else {
                     emit(AppResult.Error(Exception("Todo not found")))
@@ -138,8 +138,7 @@ class TodosRepositoryImpl
                 emit(AppResult.Loading)
                 val userId = getActiveUserId()
                 todoDao.deleteById(id)
-                val currentCount = (inMemoryCache[userId]?.size ?: 1) - 1
-                cachePolicyStore.touchTodosCache(userId, currentCount.coerceAtLeast(0))
+                cachePolicyStore.touch(cacheKey(userId))
                 emit(AppResult.Success(Unit))
             }.catch { emit(AppResult.Error(it as Exception)) }
 
@@ -173,9 +172,11 @@ class TodosRepositoryImpl
         }
 
         private suspend fun isCacheExpired(userId: String): Boolean {
-            val lastUpdated = cachePolicyStore.readTodosCacheLastUpdated(userId) ?: return true
+            val lastUpdated = cachePolicyStore.readLastUpdated(cacheKey(userId)) ?: return true
             return (System.currentTimeMillis() - lastUpdated) > TimeUnit.HOURS.toMillis(CACHE_RETENTION_HOURS)
         }
+
+        private fun cacheKey(userId: String) = "todos_$userId"
 
         private companion object {
             const val CACHE_RETENTION_HOURS = 24L

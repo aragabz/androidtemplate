@@ -1,6 +1,5 @@
 package com.aragabz.androidtemplate.feature.todos.ui.presentation.todos
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -24,14 +23,9 @@ class TodosScreenContentTest {
             AppTheme {
                 TodosScreenContent(
                     uiState = TodosUiState(),
-                    errorMessage = null,
+                    onEvent = {},
                     onAddTodo = {},
                     onTodoClick = {},
-                    onToggleTodo = {},
-                    onDeleteTodo = {},
-                    onRefresh = {},
-                    onDismissError = {},
-                    snackbarHostState = SnackbarHostState(),
                 )
             }
         }
@@ -59,14 +53,9 @@ class TodosScreenContentTest {
                                     ),
                                 ),
                         ),
-                    errorMessage = null,
+                    onEvent = {},
                     onAddTodo = {},
                     onTodoClick = {},
-                    onToggleTodo = {},
-                    onDeleteTodo = {},
-                    onRefresh = {},
-                    onDismissError = {},
-                    snackbarHostState = SnackbarHostState(),
                 )
             }
         }

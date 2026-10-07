@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Plantilla Android</string>
+    <string name="main_tab_home">Inicio</string>
+    <string name="main_tab_todos">Tareas</string>
+    <string name="main_tab_profile">Perfil</string>
+    <string name="main_tab_settings">Ajustes</string>
 </resources>

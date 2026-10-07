@@ -3,37 +3,30 @@ package com.aragabz.androidtemplate.feature.todos.ui.presentation.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo.AddTodoScreen
 import com.aragabz.androidtemplate.feature.todos.ui.presentation.details.TodoDetailsScreen
-import com.aragabz.androidtemplate.feature.todos.ui.presentation.todos.TodosScreen
+import kotlinx.serialization.Serializable
+
+/** Add todo screen. */
+@Serializable
+data object AddTodoRoute
+
+/** Todo details screen for the todo with [id]. */
+@Serializable
+data class TodoDetailsRoute(
+    val id: String,
+)
 
 /**
- * Navigation extension for todos feature.
+ * Registers the todos feature's screens. The todos list itself is hosted by the app's bottom-nav shell.
  */
 fun NavGraphBuilder.todosScreen(navController: NavController) {
-    // Todos list screen (home)
-    composable<Route.Todos> {
-        TodosScreen(navController = navController)
+    composable<AddTodoRoute> {
+        AddTodoScreen(onBack = { navController.popBackStack() })
     }
 
-    // Add todo screen
-    composable<Route.AddTodo> {
-        AddTodoScreen(navController = navController)
-    }
-
-    // Todo details screen
-    composable<Route.TodoDetails> {
-        TodoDetailsScreen(navController = navController)
-    }
-}
-
-/**
- * Navigate to todos screen.
- */
-fun NavController.navigateToTodos() {
-    navigate(Route.Todos) {
-        popUpTo(0) { inclusive = true }
+    composable<TodoDetailsRoute> {
+        TodoDetailsScreen(onBack = { navController.popBackStack() })
     }
 }
 
@@ -41,12 +34,12 @@ fun NavController.navigateToTodos() {
  * Navigate to add todo screen.
  */
 fun NavController.navigateToAddTodo() {
-    navigate(Route.AddTodo)
+    navigate(AddTodoRoute)
 }
 
 /**
  * Navigate to todo details screen.
  */
 fun NavController.navigateToTodoDetails(todoId: String) {
-    navigate(Route.TodoDetails(todoId))
+    navigate(TodoDetailsRoute(todoId))
 }

@@ -13,10 +13,13 @@ import java.util.Locale
 /**
  * Common configurations for screenshot tests.
  */
-enum class DefaultTestDevices(val size: DpSize, val deviceName: String) {
+enum class DefaultTestDevices(
+    val size: DpSize,
+    val deviceName: String,
+) {
     Phone(DpSize(360.dp, 640.dp), "Phone"),
     Tablet(DpSize(1280.dp, 800.dp), "Tablet"),
-    Foldable(DpSize(600.dp, 900.dp), "Foldable")
+    Foldable(DpSize(600.dp, 900.dp), "Foldable"),
 }
 
 /**
@@ -28,10 +31,10 @@ fun captureAppScreenshot(
     device: DefaultTestDevices = DefaultTestDevices.Phone,
     locale: Locale = Locale.ENGLISH,
     darkTheme: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     setLocale(locale)
-    
+
     composeTestRule.setContent {
         AppTheme(darkTheme = darkTheme) {
             content()
@@ -47,7 +50,7 @@ fun captureAppScreenshot(
     }
 
     composeTestRule.onRoot().captureRoboImage(
-        filePath = "src/test/snapshots/${name}${suffix}.png"
+        filePath = "src/test/snapshots/${name}$suffix.png",
     )
 }
 
@@ -60,6 +63,6 @@ private fun setLocale(locale: Locale) {
     config.setLocale(locale)
     RuntimeEnvironment.getApplication().resources.updateConfiguration(
         config,
-        RuntimeEnvironment.getApplication().resources.displayMetrics
+        RuntimeEnvironment.getApplication().resources.displayMetrics,
     )
 }

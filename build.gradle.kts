@@ -30,13 +30,13 @@ moduleGraphConfig {
 }
 
 moduleGraphAssert {
-    // Basic architecture rules: features should not depend on other features
-    // and should only depend on core modules.
+    // Features depend only on core modules; within a feature, ui and data depend on domain.
     allowed = arrayOf(
         ":feature:.* -> :core:.*",
+        ":feature:(\\w+):(ui|data) -> :feature:\\1:domain",
         ":app -> :feature:.*",
         ":app -> :core:.*",
-        ":core:.* -> :core:.*"
+        ":core:.* -> :core:.*",
     )
     maxHeight = 4
 }
@@ -44,29 +44,4 @@ moduleGraphAssert {
 // Apply dependency-analysis to all subprojects
 subprojects {
     apply(plugin = "com.autonomousapps.dependency-analysis")
-}
-
-tasks.register("detektAll") {
-    description = "Run detekt on all modules"
-    group = "verification"
-    
-    dependsOn(subprojects.map { "${it.path}:detekt" })
-}
-
-tasks.register("ktlintCheck") {
-    description = "Run ktlint check on all modules"
-    group = "verification"
-    
-    dependsOn(subprojects.mapNotNull { subproject ->
-        subproject.tasks.findByName("ktlintCheck")?.path
-    })
-}
-
-tasks.register("ktlintFormat") {
-    description = "Run ktlint format on all modules"
-    group = "formatting"
-    
-    dependsOn(subprojects.mapNotNull { subproject ->
-        subproject.tasks.findByName("ktlintFormat")?.path
-    })
 }

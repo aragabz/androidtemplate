@@ -4,11 +4,14 @@ import com.aragabz.androidtemplate.core.common.ui.UiText
 
 /**
  * UI state for add todo screen.
+ *
+ * @property isSaved true once the todo is saved; the screen then navigates back.
  */
 data class AddTodoUiState(
     val title: String = "",
     val description: String = "",
-    val titleError: String? = null,
+    val titleError: UiText? = null,
     val isLoading: Boolean = false,
     val error: UiText? = null,
+    val isSaved: Boolean = false,
 )

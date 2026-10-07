@@ -24,40 +24,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.core.ui.text.asString
 import com.aragabz.androidtemplate.feature.todos.ui.R
 
 /**
- * Add todo screen - create new todo.
+ * Add todo screen: collects [AddTodoViewModel] state and leaves once the todo is saved.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTodoScreen(
-    navController: NavController,
+    onBack: () -> Unit,
     viewModel: AddTodoViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val spacing = LocalSpacing.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val currentOnBack by rememberUpdatedState(onBack)
 
-    // Handle navigation events
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvents.collect { event ->
-            when (event) {
-                AddTodoNavigationEvent.NavigateBack -> navController.popBackStack()
-            }
-        }
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) currentOnBack()
     }
 
-    // Show error snackbar
-    val context = androidx.compose.ui.platform.LocalContext.current
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
             snackbarHostState.showSnackbar(error.asString(context))
@@ -65,12 +62,32 @@ fun AddTodoScreen(
         }
     }
 
+    AddTodoScreenContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBack = onBack,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AddTodoScreenContent(
+    uiState: AddTodoUiState,
+    onEvent: (AddTodoEvent) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {},
+) {
+    val spacing = LocalSpacing.current
+
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.todo_add_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.todo_back),
@@ -79,7 +96,7 @@ fun AddTodoScreen(
                 },
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = snackbarHost,
     ) { paddingValues ->
         Column(
             modifier =
@@ -92,11 +109,11 @@ fun AddTodoScreen(
         ) {
             OutlinedTextField(
                 value = uiState.title,
-                onValueChange = { viewModel.onEvent(AddTodoEvent.OnTitleChanged(it)) },
+                onValueChange = { onEvent(AddTodoEvent.OnTitleChanged(it)) },
                 label = { Text(stringResource(id = R.string.todo_title_label)) },
                 placeholder = { Text(stringResource(id = R.string.todo_title_placeholder)) },
                 isError = uiState.titleError != null,
-                supportingText = uiState.titleError?.let { { Text(it) } },
+                supportingText = uiState.titleError?.let { { Text(it.asString()) } },
                 enabled = !uiState.isLoading,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
@@ -106,7 +123,7 @@ fun AddTodoScreen(
 
             OutlinedTextField(
                 value = uiState.description,
-                onValueChange = { viewModel.onEvent(AddTodoEvent.OnDescriptionChanged(it)) },
+                onValueChange = { onEvent(AddTodoEvent.OnDescriptionChanged(it)) },
                 label = { Text(stringResource(id = R.string.todo_description_label)) },
                 placeholder = { Text(stringResource(id = R.string.todo_description_placeholder)) },
                 enabled = !uiState.isLoading,
@@ -119,12 +136,24 @@ fun AddTodoScreen(
 
             AppButton(
                 text = stringResource(id = R.string.todo_create),
-                onClick = { viewModel.onEvent(AddTodoEvent.OnSaveClicked) },
+                onClick = { onEvent(AddTodoEvent.OnSaveClicked) },
                 enabled = !uiState.isLoading,
                 isLoading = uiState.isLoading,
                 variant = AppButtonVariant.PRIMARY,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AddTodoScreenContentPreview() {
+    AppTheme {
+        AddTodoScreenContent(
+            uiState = AddTodoUiState(title = "Write the release notes"),
+            onEvent = {},
+            onBack = {},
+        )
     }
 }

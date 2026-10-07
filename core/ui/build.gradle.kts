@@ -1,7 +1,6 @@
 plugins {
     id("androidtemplate.android.library.compose")
     id("androidtemplate.android.screenshot.test")
-    id("androidtemplate.kotlin.explicit.api")
 }
 
 android {
@@ -17,6 +16,4 @@ dependencies {
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.coil)
-
-    testImplementation(libs.junit)
 }

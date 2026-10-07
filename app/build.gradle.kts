@@ -13,10 +13,14 @@ plugins {
     alias(libs.plugins.androidx.baselineprofile)
 }
 
-val releaseStoreFilePath = providers.gradleProperty("RELEASE_STORE_FILE").orNull
-val releaseStorePassword = providers.gradleProperty("RELEASE_STORE_PASSWORD").orNull
-val releaseKeyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS").orNull
-val releaseKeyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD").orNull
+// Release signing secrets come from Gradle properties or, as Fastlane passes them, environment variables.
+fun releaseSecret(name: String): String? =
+    providers.gradleProperty(name).orElse(providers.environmentVariable(name)).orNull
+
+val releaseStoreFilePath = releaseSecret("RELEASE_STORE_FILE")
+val releaseStorePassword = releaseSecret("RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = releaseSecret("RELEASE_KEY_ALIAS")
+val releaseKeyPassword = releaseSecret("RELEASE_KEY_PASSWORD")
 val minimumLineCoverage = providers.gradleProperty("COVERAGE_MIN_LINE").orElse("0.00").map(String::toDouble)
 val hasReleaseSigningConfig =
     !releaseStoreFilePath.isNullOrBlank() &&
@@ -31,14 +35,6 @@ android {
         applicationId = "com.aragabz.androidtemplate"
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_ENV", "\"${providers.gradleProperty("DEFAULT_API_ENV").orElse("dev").get()}\"")
-        buildConfigField(
-            "boolean",
-            "ANALYTICS_ENABLED",
-            providers.gradleProperty("ENABLE_ANALYTICS_IN_DEBUG").orElse("false").get(),
-        )
     }
 
     flavorDimensions += "environment"
@@ -47,20 +43,18 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            buildConfigField("String", "API_ENV", "\"dev\"")
-            buildConfigField("boolean", "ANALYTICS_ENABLED", "false")
+            // Replace the placeholder API with each environment's backend.
+            buildConfigField("String", "BASE_URL", "\"https://jsonplaceholder.typicode.com/\"")
         }
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
-            buildConfigField("String", "API_ENV", "\"staging\"")
-            buildConfigField("boolean", "ANALYTICS_ENABLED", "true")
+            buildConfigField("String", "BASE_URL", "\"https://jsonplaceholder.typicode.com/\"")
         }
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_ENV", "\"prod\"")
-            buildConfigField("boolean", "ANALYTICS_ENABLED", "true")
+            buildConfigField("String", "BASE_URL", "\"https://jsonplaceholder.typicode.com/\"")
         }
     }
 
@@ -84,13 +78,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // CI and local builds without release secrets can still validate packaging.
-            signingConfig =
-                if (hasReleaseSigningConfig) {
-                    signingConfigs.getByName("release")
-                } else {
-                    signingConfigs.getByName("debug")
-                }
+            // Without release secrets the build is left unsigned, so packaging can still be validated
+            // but a debug-signed artifact can never be shipped by mistake.
+            signingConfig = if (hasReleaseSigningConfig) signingConfigs.getByName("release") else null
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -105,6 +95,11 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
     }
+
+    // Declares the app's languages (from its translated resources) for the per-app language setting.
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {
@@ -117,10 +112,13 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
     implementation(project(":core:sync"))
+    implementation(project(":core:crash"))
+    implementation(project(":core:flags"))
     implementation(libs.androidx.hilt.work)
+    // The manifest edits androidx.startup's provider to disable WorkManager's default initializer.
+    implementation(libs.androidx.startup.runtime)
     ksp(libs.androidx.hilt.compiler)
     implementation(project(":core:ui")) // Exposes designsystem transitively
-    implementation(project(":core:navigation"))
 
     // Feature modules
     implementation(project(":feature:home"))
@@ -135,10 +133,13 @@ dependencies {
     implementation(project(":feature:settings:data"))
 
     // Navigation
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Logging
     implementation(libs.timber)
@@ -153,7 +154,6 @@ dependencies {
     debugImplementation(libs.okhttp.mockwebserver)
 
     // Testing
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)

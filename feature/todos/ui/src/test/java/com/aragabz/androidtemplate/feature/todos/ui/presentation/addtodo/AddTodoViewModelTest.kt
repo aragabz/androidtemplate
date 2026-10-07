@@ -1,91 +1,71 @@
 package com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo
 
-import app.cash.turbine.test
-import com.aragabz.androidtemplate.core.common.result.AppResult
-import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
-import com.aragabz.androidtemplate.feature.todos.domain.repository.TodosRepository
+import com.aragabz.androidtemplate.core.common.ui.UiText
+import com.aragabz.androidtemplate.core.testing.MainDispatcherRule
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.AddTodoUseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import com.aragabz.androidtemplate.feature.todos.ui.R
+import com.aragabz.androidtemplate.feature.todos.ui.presentation.FakeTodosRepository
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AddTodoViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private val repository = FakeTodosRepository()
+    private val viewModel =
+        AddTodoViewModel(addTodoUseCase = AddTodoUseCase(repository, mainDispatcherRule.dispatcher))
+
     @Test
     fun `save with blank title sets validation error`() =
         runTest {
-            val viewModel = AddTodoViewModel(addTodoUseCase = addTodoUseCaseWith(flowOf(AppResult.Loading)))
-
             viewModel.onEvent(AddTodoEvent.OnSaveClicked)
 
-            assertEquals("Title is required", viewModel.uiState.value.titleError)
+            assertEquals(UiText.StringResource(R.string.todo_title_required), viewModel.uiState.value.titleError)
             assertFalse(viewModel.uiState.value.isLoading)
+            assertTrue(repository.todos.value.isEmpty())
         }
 
     @Test
-    fun `save with valid title emits navigation event on success`() =
+    fun `save with valid title stores the trimmed todo and marks the state saved`() =
         runTest {
-            val todo =
-                Todo(
-                    id = "id-1",
-                    title = "Ship hardening",
-                    description = null,
-                    isCompleted = false,
-                    createdAt = System.currentTimeMillis(),
-                    updatedAt = null,
-                )
-            val viewModel =
-                AddTodoViewModel(
-                    addTodoUseCase =
-                        addTodoUseCaseWith(
-                            flowOf(
-                                AppResult.Loading,
-                                AppResult.Success(todo),
-                            ),
-                        ),
-                )
-
             viewModel.onEvent(AddTodoEvent.OnTitleChanged(" Ship hardening "))
             viewModel.onEvent(AddTodoEvent.OnSaveClicked)
             advanceUntilIdle()
 
+            assertEquals(
+                "Ship hardening",
+                repository.todos.value
+                    .single()
+                    .title,
+            )
+            assertTrue(viewModel.uiState.value.isSaved)
             assertFalse(viewModel.uiState.value.isLoading)
-            assertTrue(viewModel.uiState.value.error == null)
-
-            viewModel.navigationEvents.test {
-                assertEquals(AddTodoNavigationEvent.NavigateBack, awaitItem())
-                cancelAndIgnoreRemainingEvents()
-            }
+            assertNull(viewModel.uiState.value.error)
         }
 
-    private fun addTodoUseCaseWith(results: Flow<AppResult<Todo>>): AddTodoUseCase {
-        val repository =
-            object : TodosRepository {
-                override fun getTodos(): Flow<AppResult<List<Todo>>> =
-                    throw UnsupportedOperationException("Not used in this test")
+    @Test
+    fun `save failure shows an error until it is dismissed`() =
+        runTest {
+            repository.failure = IOException("disk full")
 
-                override fun getTodoById(id: String): Flow<AppResult<Todo>> =
-                    throw UnsupportedOperationException("Not used in this test")
+            viewModel.onEvent(AddTodoEvent.OnTitleChanged("Ship hardening"))
+            viewModel.onEvent(AddTodoEvent.OnSaveClicked)
+            advanceUntilIdle()
 
-                override fun addTodo(title: String, description: String?): Flow<AppResult<Todo>> = results
+            assertFalse(viewModel.uiState.value.isSaved)
+            assertNotNull(viewModel.uiState.value.error)
 
-                override fun toggleTodo(id: String): Flow<AppResult<Todo>> =
-                    throw UnsupportedOperationException("Not used in this test")
+            viewModel.onEvent(AddTodoEvent.OnDismissError)
 
-                override fun deleteTodo(id: String): Flow<AppResult<Unit>> =
-                    throw UnsupportedOperationException("Not used in this test")
-            }
-
-        return AddTodoUseCase(repository = repository, dispatcher = mainDispatcherRule.dispatcher)
-    }
+            assertNull(viewModel.uiState.value.error)
+        }
 }

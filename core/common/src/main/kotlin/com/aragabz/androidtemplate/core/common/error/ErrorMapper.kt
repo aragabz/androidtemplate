@@ -136,7 +136,7 @@ fun Throwable.toErrorRecord(): ErrorRecord =
         is AppError.AuthError,
         is AppError.ParsingError,
         is AppError.UnknownError,
-            ->
+        ->
             ErrorRecord(
                 category = normalized.category,
                 severity = normalized.severity,

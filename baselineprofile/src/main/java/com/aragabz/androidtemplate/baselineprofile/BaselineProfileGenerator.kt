@@ -18,7 +18,7 @@ class BaselineProfileGenerator {
 
     @Test
     fun generate() = baselineProfileRule.collect(
-        packageName = "com.aragabz.androidtemplate",
+        packageName = targetAppId,
         // Check out docs for more attribution options:
         // https://developer.android.com/topic/performance/baselineprofiles/test-baseline-profiles#attribution
         includeInStartupProfile = true

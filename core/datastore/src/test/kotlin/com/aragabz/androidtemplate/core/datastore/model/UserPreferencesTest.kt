@@ -90,7 +90,10 @@ class UserPreferencesTest {
 
     @Test
     fun `toString with long authToken does not expose it`() {
-        val longToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        val longToken =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+                "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ." +
+                "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
         val preferences = UserPreferences(
             userId = "jwt_user",

@@ -34,11 +34,6 @@ interface UserPreferencesRepository {
     suspend fun updateLanguage(language: String)
 
     /**
-     * Enable or disable biometric authentication.
-     */
-    suspend fun updateBiometricAuthEnabled(enabled: Boolean)
-
-    /**
      * Clear all session data (logout).
      */
     suspend fun clearSession()

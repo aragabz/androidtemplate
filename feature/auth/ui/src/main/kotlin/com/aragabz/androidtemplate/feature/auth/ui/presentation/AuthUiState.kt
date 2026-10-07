@@ -13,21 +13,15 @@ data class AuthUiState(
     val isSignUpMode: Boolean = false,
     val isAuthenticated: Boolean = false,
     val isLoading: Boolean = false,
-    val currentUserEmail: String? = null,
     val error: UiText? = null,
     val emailError: UiText? = null,
     val passwordError: UiText? = null,
-    val biometricAuthEnabled: Boolean = false,
-    val biometricAuthAvailable: Boolean = false,
-    val showBiometricPrompt: Boolean = false,
 ) {
     /**
      * Custom toString() that excludes password to prevent accidental logging of sensitive data.
      */
-    override fun toString(): String {
-        return "AuthUiState(email=$email, ****** isSignUpMode=$isSignUpMode, " +
-                "isAuthenticated=$isAuthenticated, isLoading=$isLoading, currentUserEmail=$currentUserEmail, " +
-                "error=$error, emailError=$emailError, passwordError=$passwordError, " +
-                "biometricAuthEnabled=$biometricAuthEnabled, biometricAuthAvailable=$biometricAuthAvailable)"
-    }
+    override fun toString(): String =
+        "AuthUiState(email=$email, password=***REDACTED***, isSignUpMode=$isSignUpMode, " +
+            "isAuthenticated=$isAuthenticated, isLoading=$isLoading, " +
+            "error=$error, emailError=$emailError, passwordError=$passwordError)"
 }

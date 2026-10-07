@@ -29,7 +29,7 @@ class DirectColorUsageDetector : Detector(), SourceCodeScanner {
                 ISSUE,
                 node,
                 context.getLocation(node),
-                "Use the design system theme colors instead of direct Color allocation."
+                "Use MaterialTheme.colorScheme or LocalSemanticColors.current instead of a raw Color."
             )
         }
     }
@@ -39,7 +39,9 @@ class DirectColorUsageDetector : Detector(), SourceCodeScanner {
         val ISSUE: Issue = Issue.create(
             id = "DirectColorUsage",
             briefDescription = "Direct Color usage",
-            explanation = "Directly using Color constants or constructors bypasses the design system. Use AppTheme.colors instead.",
+            explanation = "Directly using Color constants or constructors bypasses the design system. " +
+                "Inside AppTheme, use MaterialTheme.colorScheme for Material roles or LocalSemanticColors.current " +
+                "for success/warning/info; new palette values belong in core/designsystem theme/Color.kt.",
             category = Category.CORRECTNESS,
             priority = 6,
             severity = Severity.ERROR,

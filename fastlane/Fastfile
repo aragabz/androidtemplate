@@ -44,12 +44,12 @@ platform :android do
   lane :quality do
     gradle(task: "ktlintCheck")
     gradle(task: "detekt")
-    gradle(task: "lintDebug")
+    gradle(task: ":app:lintDevDebug")
   end
 
   desc "Generate debug unit test coverage reports"
   lane :coverage do
-    gradle(task: ":app:testDebugUnitTest :app:createDebugUnitTestCoverageReport")
+    gradle(task: ":app:testDevDebugUnitTest :app:createDevDebugUnitTestCoverageReport")
   end
 
   desc "Validate release packaging and baseline profile setup"
@@ -61,7 +61,7 @@ platform :android do
   desc "Build a release candidate with quality and readiness checks"
   lane :release_candidate do
     gradle(task: "clean")
-    gradle(task: "ktlintCheck detektAll testDebugUnitTest")
+    gradle(task: "ktlintCheck detekt testDebugUnitTest :app:testDevDebugUnitTest")
     gradle(task: ":app:verifyDebugCoverage")
     release_readiness
   end
@@ -79,8 +79,8 @@ platform :android do
     gradle(task: "ktlintCheck")
     gradle(task: "detekt")
     gradle(task: "test")
-    gradle(task: "lintDebug")
-    gradle(task: ":app:createDebugUnitTestCoverageReport")
+    gradle(task: ":app:lintDevDebug")
+    gradle(task: ":app:createDevDebugUnitTestCoverageReport")
     gradle(task: ":app:assembleRelease")
   end
 

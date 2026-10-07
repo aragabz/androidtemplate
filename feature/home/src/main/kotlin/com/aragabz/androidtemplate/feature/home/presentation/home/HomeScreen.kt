@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
@@ -28,33 +28,55 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.aragabz.androidtemplate.feature.home.R
 import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
-import com.aragabz.androidtemplate.core.navigation.Route
+import com.aragabz.androidtemplate.feature.home.R
+
+private val DashboardBadgeSize = 100.dp
 
 /**
- * Beautiful empty home dashboard screen placeholder for Vaulty.
+ * Placeholder home dashboard tab, with links to demo screens.
  */
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    onOpenEmptyDemo: () -> Unit,
+    onOpenErrorDemo: () -> Unit,
+) {
+    var isListView by rememberSaveable { mutableStateOf(false) }
+
+    HomeScreenContent(
+        isListView = isListView,
+        onListViewChange = { isListView = it },
+        onOpenEmptyDemo = onOpenEmptyDemo,
+        onOpenErrorDemo = onOpenErrorDemo,
+    )
+}
+
+@Composable
+internal fun HomeScreenContent(
+    isListView: Boolean,
+    onListViewChange: (Boolean) -> Unit,
+    onOpenEmptyDemo: () -> Unit,
+    onOpenErrorDemo: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val spacing = LocalSpacing.current
-    var isListView by remember { mutableStateOf(false) }
 
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .padding(spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,22 +84,28 @@ fun HomeScreen(navController: NavHostController) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = if (isListView) stringResource(id = R.string.home_view_mode_list) else stringResource(id = R.string.home_view_mode_dashboard),
-                style = MaterialTheme.typography.titleMedium
+                text = if (isListView) {
+                    stringResource(
+                        id = R.string.home_view_mode_list,
+                    )
+                } else {
+                    stringResource(id = R.string.home_view_mode_dashboard)
+                },
+                style = MaterialTheme.typography.titleMedium,
             )
             Switch(
                 checked = isListView,
-                onCheckedChange = { isListView = it }
+                onCheckedChange = onListViewChange,
             )
         }
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
         if (isListView) {
-            ComponentsList(navController)
+            ComponentsList(onOpenEmptyDemo = onOpenEmptyDemo, onOpenErrorDemo = onOpenErrorDemo)
         } else {
             DashboardView()
         }
@@ -95,7 +123,7 @@ private fun DashboardView() {
         Box(
             modifier =
                 Modifier
-                    .size(100.dp)
+                    .size(DashboardBadgeSize)
                     .background(
                         brush =
                             Brush.radialGradient(
@@ -105,14 +133,14 @@ private fun DashboardView() {
                                         MaterialTheme.colorScheme.surface,
                                     ),
                             ),
-                        shape = RoundedCornerShape(50.dp),
+                        shape = CircleShape,
                     ),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.Shield,
                 contentDescription = null,
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(spacing.extraExtraLarge),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -147,7 +175,7 @@ private fun DashboardView() {
                 CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                 ),
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
         ) {
             Column(
                 modifier = Modifier.padding(spacing.medium),
@@ -171,38 +199,49 @@ private fun DashboardView() {
     }
 }
 
+/** The design system's button variants, each shown with its label. */
+private val buttonExamples =
+    listOf(
+        R.string.home_button_primary to AppButtonVariant.PRIMARY,
+        R.string.home_button_secondary to AppButtonVariant.SECONDARY,
+        R.string.home_button_ghost to AppButtonVariant.GHOST,
+        R.string.home_button_destructive to AppButtonVariant.DESTRUCTIVE,
+    )
+
 @Composable
-private fun ComponentsList(navController: NavHostController) {
+private fun ComponentsList(
+    onOpenEmptyDemo: () -> Unit,
+    onOpenErrorDemo: () -> Unit,
+) {
     val spacing = LocalSpacing.current
-    val items = listOf("Button Primary", "Button Secondary", "Button Ghost", "Button Destructive")
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(spacing.medium)
+        verticalArrangement = Arrangement.spacedBy(spacing.medium),
     ) {
         item {
             Text(
                 text = stringResource(id = R.string.home_navigation_examples),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = spacing.small)
+                modifier = Modifier.padding(vertical = spacing.small),
             )
         }
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.medium)
+                horizontalArrangement = Arrangement.spacedBy(spacing.medium),
             ) {
                 AppButton(
                     text = stringResource(id = R.string.home_empty_screen),
-                    onClick = { navController.navigate(Route.Empty) },
-                    modifier = Modifier.weight(1f)
+                    onClick = onOpenEmptyDemo,
+                    modifier = Modifier.weight(1f),
                 )
                 AppButton(
                     text = stringResource(id = R.string.home_error_screen),
-                    onClick = { navController.navigate(Route.Error) },
+                    onClick = onOpenErrorDemo,
                     variant = AppButtonVariant.DESTRUCTIVE,
                     modifier = Modifier.weight(1f),
-                    leadingIcon = Icons.Default.Warning
+                    leadingIcon = Icons.Default.Warning,
                 )
             }
         }
@@ -212,29 +251,36 @@ private fun ComponentsList(navController: NavHostController) {
             Text(
                 text = stringResource(id = R.string.home_component_examples),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = spacing.small)
+                modifier = Modifier.padding(bottom = spacing.small),
             )
         }
 
-        items(items) { item ->
+        items(buttonExamples) { (labelRes, variant) ->
+            val label = stringResource(id = labelRes)
             ListItem(
-                headlineContent = { Text(item) },
-                supportingContent = { Text(stringResource(id = R.string.home_component_example_template, item)) },
+                headlineContent = { Text(label) },
+                supportingContent = { Text(stringResource(id = R.string.home_component_example_template, label)) },
                 trailingContent = {
-                    val variant = when (item) {
-                        "Button Primary" -> AppButtonVariant.PRIMARY
-                        "Button Secondary" -> AppButtonVariant.SECONDARY
-                        "Button Ghost" -> AppButtonVariant.GHOST
-                        "Button Destructive" -> AppButtonVariant.DESTRUCTIVE
-                        else -> AppButtonVariant.PRIMARY
-                    }
                     AppButton(
                         text = stringResource(id = R.string.home_click),
                         onClick = { },
-                        variant = variant
+                        variant = variant,
                     )
-                }
+                },
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HomeScreenContentPreview() {
+    AppTheme {
+        HomeScreenContent(
+            isListView = false,
+            onListViewChange = {},
+            onOpenEmptyDemo = {},
+            onOpenErrorDemo = {},
+        )
     }
 }

@@ -7,7 +7,8 @@ import androidx.work.Configuration
 import com.aragabz.androidtemplate.core.analytics.AnalyticsEvent
 import com.aragabz.androidtemplate.core.analytics.AnalyticsTracker
 import com.aragabz.androidtemplate.core.analytics.PerformanceMonitor
-import com.aragabz.androidtemplate.core.network.BuildConfig
+import com.aragabz.androidtemplate.core.crash.CrashReporter
+import com.aragabz.androidtemplate.core.crash.CrashReportingTree
 import com.aragabz.androidtemplate.core.sync.Sync
 import com.aragabz.androidtemplate.core.sync.manager.SyncManager
 import dagger.hilt.android.HiltAndroidApp
@@ -33,6 +34,9 @@ class MainApplication :
     @Inject
     lateinit var performanceMonitor: PerformanceMonitor
 
+    @Inject
+    lateinit var crashReporter: CrashReporter
+
     override fun getWorkManagerConfiguration(): Configuration =
         Configuration
             .Builder()
@@ -41,17 +45,15 @@ class MainApplication :
 
     override fun onCreate() {
         super.onCreate()
+        // Debug logs go to logcat; release warnings and errors go to the crash reporter.
+        Timber.plant(if (BuildConfig.DEBUG) Timber.DebugTree() else CrashReportingTree(crashReporter))
+
         val startupStart = SystemClock.elapsedRealtime()
 
         performanceMonitor.startTrace("app_startup")
 
         // Initialize background synchronization
         Sync.initialize(syncManager)
-
-        // Initialize Timber for logging
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
 
         val startupDuration = SystemClock.elapsedRealtime() - startupStart
         performanceMonitor.recordMetric("app_startup_duration", startupDuration)

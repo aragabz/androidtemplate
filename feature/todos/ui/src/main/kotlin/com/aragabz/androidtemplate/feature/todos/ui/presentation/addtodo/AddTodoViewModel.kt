@@ -3,19 +3,19 @@ package com.aragabz.androidtemplate.feature.todos.ui.presentation.addtodo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aragabz.androidtemplate.core.common.result.AppResult
+import com.aragabz.androidtemplate.core.common.ui.UiText
 import com.aragabz.androidtemplate.feature.todos.domain.usecase.AddTodoUseCase
+import com.aragabz.androidtemplate.feature.todos.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * ViewModel for add todo screen.
+ * ViewModel for add todo screen. A form's state has no outside source, so it is held in a [MutableStateFlow].
  */
 @HiltViewModel
 class AddTodoViewModel
@@ -26,15 +26,12 @@ class AddTodoViewModel
         private val _uiState = MutableStateFlow(AddTodoUiState())
         val uiState: StateFlow<AddTodoUiState> = _uiState.asStateFlow()
 
-        private val _navigationEvents = Channel<AddTodoNavigationEvent>()
-        val navigationEvents = _navigationEvents.receiveAsFlow()
-
         fun onEvent(event: AddTodoEvent) {
             when (event) {
                 is AddTodoEvent.OnTitleChanged -> updateTitle(event.title)
-                is AddTodoEvent.OnDescriptionChanged -> updateDescription(event.description)
+                is AddTodoEvent.OnDescriptionChanged -> _uiState.update { it.copy(description = event.description) }
                 AddTodoEvent.OnSaveClicked -> saveTodo()
-                AddTodoEvent.OnDismissError -> dismissError()
+                AddTodoEvent.OnDismissError -> _uiState.update { it.copy(error = null) }
             }
         }
 
@@ -47,16 +44,11 @@ class AddTodoViewModel
             }
         }
 
-        private fun updateDescription(description: String) {
-            _uiState.update { it.copy(description = description) }
-        }
-
         private fun saveTodo() {
             val currentState = _uiState.value
 
-            // Validate
             if (currentState.title.isBlank()) {
-                _uiState.update { it.copy(titleError = "Title is required") }
+                _uiState.update { it.copy(titleError = UiText.StringResource(R.string.todo_title_required)) }
                 return
             }
 
@@ -70,34 +62,13 @@ class AddTodoViewModel
                     ),
                 ).collect { result ->
                     when (result) {
-                        is AppResult.Success -> {
-                            _uiState.update { it.copy(isLoading = false) }
-                            _navigationEvents.send(AddTodoNavigationEvent.NavigateBack)
+                        is AppResult.Success -> _uiState.update { it.copy(isLoading = false, isSaved = true) }
+                        is AppResult.Error -> _uiState.update {
+                            it.copy(isLoading = false, error = result.errorUiText)
                         }
-                        is AppResult.Error -> {
-                            _uiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    error = result.errorUiText,
-                                )
-                            }
-                        }
-                        is AppResult.Loading -> {
-                            // Keep isLoading = true
-                        }
+                        is AppResult.Loading -> Unit
                     }
                 }
             }
         }
-
-        private fun dismissError() {
-            _uiState.update { it.copy(error = null) }
-        }
     }
-
-/**
- * Navigation events for add todo screen.
- */
-sealed interface AddTodoNavigationEvent {
-    data object NavigateBack : AddTodoNavigationEvent
-}

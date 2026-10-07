@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -31,25 +30,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 import com.aragabz.androidtemplate.feature.settings.domain.model.ThemePreference
 import com.aragabz.androidtemplate.feature.settings.ui.R
-import com.aragabz.androidtemplate.feature.settings.ui.presentation.navigation.navigateToLanguageSettings
-import com.aragabz.androidtemplate.feature.settings.ui.presentation.navigation.navigateToThemeSettings
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Settings tab: lists the settings sections and opens the one picked.
+ */
 @Composable
 fun SettingsScreen(
-    navController: NavController,
+    onThemeClick: () -> Unit,
+    onLanguageClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.error) {
@@ -61,13 +63,12 @@ fun SettingsScreen(
 
     SettingsScreenContent(
         uiState = uiState,
-        onThemeClick = { navController.navigateToThemeSettings() },
-        onLanguageClick = { navController.navigateToLanguageSettings() },
+        onThemeClick = onThemeClick,
+        onLanguageClick = onLanguageClick,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreenContent(
     uiState: SettingsUiState,
@@ -182,3 +183,11 @@ private fun ThemePreference.displayName(): String =
         ThemePreference.LIGHT -> stringResource(id = R.string.settings_theme_light)
         ThemePreference.DARK -> stringResource(id = R.string.settings_theme_dark)
     }
+
+@PreviewLightDark
+@Composable
+private fun SettingsScreenContentPreview() {
+    AppTheme {
+        SettingsScreenContent(uiState = SettingsUiState(selectedTheme = ThemePreference.DARK))
+    }
+}

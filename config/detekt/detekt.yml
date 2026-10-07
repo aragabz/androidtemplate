@@ -8,6 +8,9 @@ config:
 
 complexity:
   active: true
+  CyclomaticComplexMethod:
+    active: true
+    ignoreSimpleWhenEntries: true
   LongMethod:
     active: true
     threshold: 120

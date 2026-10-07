@@ -6,11 +6,11 @@ import com.aragabz.androidtemplate.core.datastore.UserPreferencesRepository
 import com.aragabz.androidtemplate.feature.auth.data.api.AuthApi
 import com.aragabz.androidtemplate.feature.auth.domain.model.AuthSession
 import com.aragabz.androidtemplate.feature.auth.domain.repository.AuthRepository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl
@@ -46,12 +46,12 @@ class AuthRepositoryImpl
         override fun signOut(): Flow<AppResult<Unit>> =
             flow {
                 emit(AppResult.Loading)
-                
+
                 // Attempt to notify server about logout (best-effort)
                 withErrorHandling {
                     authApi.signOut()
                 }
-                
+
                 // Clear local session regardless of server response
                 // This ensures users can always log out even if offline or server unavailable
                 runCatching {

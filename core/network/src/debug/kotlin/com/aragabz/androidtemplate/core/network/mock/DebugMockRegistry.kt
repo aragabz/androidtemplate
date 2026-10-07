@@ -21,6 +21,7 @@ object DebugMockRegistry {
             // Auth endpoints
             "/login",
             "/register",
+            "/logout",
             // User endpoints
             "/user/profile",
             // Todos endpoint
@@ -41,22 +42,4 @@ object DebugMockRegistry {
      * Returns all registered mock paths for debugging/logging.
      */
     fun getAllMockedPaths(): Set<String> = mockedPaths
-
-    /**
-     * Enables mocking for a specific path at runtime (for testing).
-     * Note: This is not thread-safe and should only be used in tests.
-     */
-    private val runtimeMockedPaths = mutableSetOf<String>()
-
-    fun enableMockingFor(path: String) {
-        runtimeMockedPaths.add(path)
-    }
-
-    fun disableMockingFor(path: String) {
-        runtimeMockedPaths.remove(path)
-    }
-
-    fun clearRuntimeMocks() {
-        runtimeMockedPaths.clear()
-    }
 }

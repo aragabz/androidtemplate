@@ -3,26 +3,25 @@ package com.aragabz.androidtemplate.feature.home.presentation.navigation
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.core.ui.screens.EmptyScreen
 import com.aragabz.androidtemplate.core.ui.screens.ErrorScreen
 import com.aragabz.androidtemplate.feature.home.R
-import com.aragabz.androidtemplate.feature.home.presentation.main.MainScreen
+import kotlinx.serialization.Serializable
 
-fun NavGraphBuilder.homeGraph(navController: NavHostController) {
-    composable<Route.Auth> {
-        com.aragabz.androidtemplate.feature.auth.ui.presentation.AuthScreen(
-            navController = navController
-        )
-    }
+/** Demo of the shared empty state, opened from the home tab. */
+@Serializable
+data object HomeEmptyDemoRoute
 
-    composable<Route.Main> {
-        MainScreen(navController = navController)
-    }
+/** Demo of the shared error state, opened from the home tab. */
+@Serializable
+data object HomeErrorDemoRoute
 
-    composable<Route.Empty> {
+/**
+ * Registers the home feature's demo screens. The home tab itself is hosted by the app's bottom-nav shell.
+ */
+fun NavGraphBuilder.homeGraph(navController: NavController) {
+    composable<HomeEmptyDemoRoute> {
         EmptyScreen(
             message = stringResource(R.string.home_empty_screen_message),
             subtitle = stringResource(R.string.home_empty_screen_subtitle),
@@ -31,10 +30,24 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         )
     }
 
-    composable<Route.Error> {
+    composable<HomeErrorDemoRoute> {
         ErrorScreen(
             message = stringResource(R.string.home_error_message),
             onRetry = { navController.popBackStack() },
         )
     }
+}
+
+/**
+ * Navigate to the empty state demo.
+ */
+fun NavController.navigateToEmptyDemo() {
+    navigate(HomeEmptyDemoRoute)
+}
+
+/**
+ * Navigate to the error state demo.
+ */
+fun NavController.navigateToErrorDemo() {
+    navigate(HomeErrorDemoRoute)
 }

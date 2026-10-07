@@ -26,12 +26,10 @@ val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> 
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionWrapper(
-    content: @Composable SharedTransitionScope.() -> Unit
-) {
+fun SharedTransitionWrapper(content: @Composable SharedTransitionScope.() -> Unit) {
     SharedTransitionLayout {
         CompositionLocalProvider(
-            LocalSharedTransitionScope provides this
+            LocalSharedTransitionScope provides this,
         ) {
             content()
         }
@@ -44,9 +42,7 @@ fun SharedTransitionWrapper(
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Modifier.sharedElement(
-    key: Any,
-): Modifier {
+fun Modifier.sharedElement(key: Any): Modifier {
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
 
@@ -54,7 +50,7 @@ fun Modifier.sharedElement(
         with(sharedTransitionScope) {
             this@sharedElement.sharedElement(
                 rememberSharedContentState(key = key),
-                animatedVisibilityScope = animatedVisibilityScope
+                animatedVisibilityScope = animatedVisibilityScope,
             )
         }
     } else {
@@ -68,9 +64,7 @@ fun Modifier.sharedElement(
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Modifier.sharedBounds(
-    key: Any,
-): Modifier {
+fun Modifier.sharedBounds(key: Any): Modifier {
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
 
@@ -78,7 +72,7 @@ fun Modifier.sharedBounds(
         with(sharedTransitionScope) {
             this@sharedBounds.sharedBounds(
                 rememberSharedContentState(key = key),
-                animatedVisibilityScope = animatedVisibilityScope
+                animatedVisibilityScope = animatedVisibilityScope,
             )
         }
     } else {

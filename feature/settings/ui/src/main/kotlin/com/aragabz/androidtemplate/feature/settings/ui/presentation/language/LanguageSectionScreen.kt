@@ -28,39 +28,58 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 import com.aragabz.androidtemplate.feature.settings.domain.model.AppLanguage
 import com.aragabz.androidtemplate.feature.settings.ui.R
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsEvent
+import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsUiState
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.SettingsViewModel
 
 /**
  * Language settings section - current language is shown, selection happens in a bottom modal.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSectionScreen(
-    navController: NavController,
+    onBack: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showLanguageSheet by remember { mutableStateOf(false) }
+
+    LanguageSectionContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBack = onBack,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun LanguageSectionContent(
+    uiState: SettingsUiState,
+    onEvent: (SettingsEvent) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val spacing = LocalSpacing.current
+    var showLanguageSheet by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.settings_language)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.settings_back),
@@ -70,12 +89,53 @@ fun LanguageSectionScreen(
             )
         },
     ) { paddingValues ->
-        LanguageSectionContent(
-            selectedLanguage = uiState.selectedLanguage,
-            isLoading = uiState.isLoading,
-            onChangeLanguageClick = { showLanguageSheet = true },
-            modifier = Modifier.padding(paddingValues),
-        )
+        Column(
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(spacing.medium),
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_language_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(modifier = Modifier.height(spacing.medium))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            ) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = !uiState.isLoading, onClick = { showLanguageSheet = true })
+                            .padding(spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(id = R.string.settings_language_current),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = uiState.selectedLanguage.displayName,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
     }
 
     if (showLanguageSheet) {
@@ -83,68 +143,11 @@ fun LanguageSectionScreen(
             selectedLanguage = uiState.selectedLanguage,
             isLoading = uiState.isLoading,
             onLanguageSelected = { language ->
-                viewModel.onEvent(SettingsEvent.OnLanguageSelected(language))
+                onEvent(SettingsEvent.OnLanguageSelected(language))
                 showLanguageSheet = false
             },
             onDismiss = { showLanguageSheet = false },
         )
-    }
-}
-
-@Composable
-internal fun LanguageSectionContent(
-    selectedLanguage: AppLanguage,
-    isLoading: Boolean,
-    onChangeLanguageClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val spacing = LocalSpacing.current
-
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(spacing.medium),
-    ) {
-        Text(
-            text = stringResource(id = R.string.settings_language_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.height(spacing.medium))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable(enabled = !isLoading, onClick = onChangeLanguageClick)
-                        .padding(horizontal = spacing.medium, vertical = spacing.medium),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(id = R.string.settings_language_current),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = selectedLanguage.displayName,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-                Icon(
-                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
     }
 }
 
@@ -218,5 +221,17 @@ private fun LanguageRow(
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LanguageSectionContentPreview() {
+    AppTheme {
+        LanguageSectionContent(
+            uiState = SettingsUiState(selectedLanguage = AppLanguage.SPANISH),
+            onEvent = {},
+            onBack = {},
+        )
     }
 }

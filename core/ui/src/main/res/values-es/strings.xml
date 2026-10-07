@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="network_offline_label">Sin conexion</string>
-    <string name="network_offline_message">No tienes conexion</string>
+    <string name="network_offline_label">Sin conexión</string>
+    <string name="network_offline_message">No tienes conexión</string>
     
     <!-- Loading Screen -->
     <string name="loading_default_message">Cargando…</string>
@@ -10,6 +10,10 @@
     <string name="error_icon_content_description">Error</string>
     <string name="error_title">Algo salió mal</string>
     <string name="error_action_retry">Intentar de nuevo</string>
+
+    <!-- Empty and Success Screens -->
+    <string name="empty_icon_content_description">Sin contenido</string>
+    <string name="success_icon_content_description">Éxito</string>
     
     <!-- Splash Screen -->
     <string name="splash_app_name">Plantilla de Android</string>

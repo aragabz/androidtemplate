@@ -16,8 +16,8 @@ import com.aragabz.androidtemplate.feature.todos.data.local.dao.TodoDao
 import com.aragabz.androidtemplate.feature.todos.data.local.entity.TodoEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -33,10 +33,12 @@ class TodosRepositoryImplAndroidTest {
     @Before
     fun setUp() {
         database =
-            Room.inMemoryDatabaseBuilder(
-                ApplicationProvider.getApplicationContext(),
-                TestTodosDatabase::class.java,
-            ).allowMainThreadQueries().build()
+            Room
+                .inMemoryDatabaseBuilder(
+                    ApplicationProvider.getApplicationContext(),
+                    TestTodosDatabase::class.java,
+                ).allowMainThreadQueries()
+                .build()
 
         repository =
             TodosRepositoryImpl(
@@ -54,13 +56,22 @@ class TodosRepositoryImplAndroidTest {
     }
 
     @Test
-    fun getTodos_seedsDefaultTodosForActiveUser() = runBlocking {
-        val result = repository.getTodos().first { it is AppResult.Success }
+    fun getTodos_seedsDefaultTodosForActiveUser() =
+        runBlocking {
+            val result = repository.getTodos().first { it is AppResult.Success }
 
-        val todos = (result as AppResult.Success).data
-        assertEquals(2, todos.size)
-        assertEquals("user-1", database.todoDao().getTodosByUserId("user-1").first().first().userId)
-    }
+            val todos = (result as AppResult.Success).data
+            assertEquals(2, todos.size)
+            assertEquals(
+                "user-1",
+                database
+                    .todoDao()
+                    .getTodosByUserId("user-1")
+                    .first()
+                    .first()
+                    .userId,
+            )
+        }
 }
 
 @Database(entities = [TodoEntity::class], version = 1, exportSchema = false)
@@ -68,7 +79,9 @@ abstract class TestTodosDatabase : RoomDatabase() {
     abstract fun todoDao(): TodoDao
 }
 
-private class FakeUserPreferencesRepository(userId: String) : UserPreferencesRepository {
+private class FakeUserPreferencesRepository(
+    userId: String,
+) : UserPreferencesRepository {
     private val state =
         MutableStateFlow(
             UserPreferences(
@@ -107,7 +120,10 @@ private class FakeNetworkMonitor : NetworkMonitor {
 }
 
 private class FakeSyncManager : SyncManager {
-    override fun schedulePeriodicSync(interval: Long, timeUnit: java.util.concurrent.TimeUnit) = Unit
+    override fun schedulePeriodicSync(
+        interval: Long,
+        timeUnit: java.util.concurrent.TimeUnit,
+    ) = Unit
 
     override fun triggerImmediateSync() = Unit
 
@@ -115,17 +131,17 @@ private class FakeSyncManager : SyncManager {
 }
 
 private class InMemoryCachePolicyStore : CachePolicyStore {
-    private val updatedByUser = mutableMapOf<String, Long>()
+    private val updatedByKey = mutableMapOf<String, Long>()
     private var lastCleanupRun: Long? = null
 
-    override suspend fun touchTodosCache(userId: String, count: Int) {
-        updatedByUser[userId] = System.currentTimeMillis()
+    override suspend fun touch(key: String) {
+        updatedByKey[key] = System.currentTimeMillis()
     }
 
-    override suspend fun readTodosCacheLastUpdated(userId: String): Long? = updatedByUser[userId]
+    override suspend fun readLastUpdated(key: String): Long? = updatedByKey[key]
 
-    override suspend fun clearTodosCacheMetadata(userId: String) {
-        updatedByUser.remove(userId)
+    override suspend fun clear(key: String) {
+        updatedByKey.remove(key)
     }
 
     override suspend fun markCleanupRun(nowMillis: Long) {

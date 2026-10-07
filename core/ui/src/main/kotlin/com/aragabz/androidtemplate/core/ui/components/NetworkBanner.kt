@@ -68,7 +68,8 @@ fun OfflineBanner(modifier: Modifier = Modifier) {
     ) {
         androidx.compose.foundation.layout.Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(spacing.small),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement
+                .spacedBy(spacing.small),
         ) {
             Icon(
                 imageVector = Icons.Default.CloudOff,

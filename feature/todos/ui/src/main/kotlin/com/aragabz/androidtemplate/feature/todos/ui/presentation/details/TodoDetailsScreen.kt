@@ -35,45 +35,41 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.aragabz.androidtemplate.core.common.util.DateTimeUtils
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
-import com.aragabz.androidtemplate.feature.todos.ui.R
 import com.aragabz.androidtemplate.feature.todos.domain.model.Todo
+import com.aragabz.androidtemplate.feature.todos.ui.R
 
 /**
- * Todo details screen - view and edit todo.
+ * Todo details screen: collects [TodoDetailsViewModel] state and leaves once the todo is deleted.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoDetailsScreen(
-    navController: NavController,
+    onBack: () -> Unit,
     viewModel: TodoDetailsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val spacing = LocalSpacing.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val currentOnBack by rememberUpdatedState(onBack)
 
-    // Handle navigation events
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvents.collect { event ->
-            when (event) {
-                TodoDetailsNavigationEvent.NavigateBack -> navController.popBackStack()
-            }
-        }
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) currentOnBack()
     }
 
-    // Show error snackbar
-    val context = androidx.compose.ui.platform.LocalContext.current
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
             snackbarHostState.showSnackbar(error.asString(context))
@@ -81,12 +77,32 @@ fun TodoDetailsScreen(
         }
     }
 
+    TodoDetailsScreenContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBack = onBack,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun TodoDetailsScreenContent(
+    uiState: TodoDetailsUiState,
+    onEvent: (TodoDetailsEvent) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHost: @Composable () -> Unit = {},
+) {
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.todo_details_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.todo_back),
@@ -107,7 +123,7 @@ fun TodoDetailsScreen(
                 },
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = snackbarHost,
     ) { paddingValues ->
         Box(
             modifier =
@@ -123,11 +139,9 @@ fun TodoDetailsScreen(
                 }
                 else -> {
                     uiState.todo?.let { todo ->
-                        TodoDetailsContent(
+                        TodoDetailsBody(
                             todo = todo,
-                            onToggleComplete = {
-                                viewModel.onEvent(TodoDetailsEvent.OnToggleTodo)
-                            },
+                            onToggleComplete = { onEvent(TodoDetailsEvent.OnToggleTodo) },
                             modifier = Modifier.fillMaxSize(),
                         )
                     } ?: Text(
@@ -140,7 +154,6 @@ fun TodoDetailsScreen(
         }
     }
 
-    // Delete confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -150,7 +163,7 @@ fun TodoDetailsScreen(
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
-                        viewModel.onEvent(TodoDetailsEvent.OnDeleteTodo)
+                        onEvent(TodoDetailsEvent.OnDeleteTodo)
                     },
                 ) {
                     Text(stringResource(id = R.string.todo_delete), color = MaterialTheme.colorScheme.error)
@@ -166,7 +179,7 @@ fun TodoDetailsScreen(
 }
 
 @Composable
-private fun TodoDetailsContent(
+private fun TodoDetailsBody(
     todo: Todo,
     onToggleComplete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -196,7 +209,13 @@ private fun TodoDetailsContent(
                     onCheckedChange = { onToggleComplete() },
                 )
                 Text(
-                    text = if (todo.isCompleted) stringResource(id = R.string.todo_status_completed) else stringResource(id = R.string.todo_status_not_completed),
+                    text = if (todo.isCompleted) {
+                        stringResource(
+                            id = R.string.todo_status_completed,
+                        )
+                    } else {
+                        stringResource(id = R.string.todo_status_not_completed)
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = spacing.small),
                 )
@@ -295,6 +314,27 @@ private fun MetadataRow(
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TodoDetailsScreenContentPreview() {
+    AppTheme {
+        TodoDetailsScreenContent(
+            uiState =
+                TodoDetailsUiState(
+                    todo =
+                        Todo(
+                            id = "1",
+                            title = "Write the release notes",
+                            description = "Summarize the changes since the last release.",
+                            createdAt = 0L,
+                        ),
+                ),
+            onEvent = {},
+            onBack = {},
         )
     }
 }

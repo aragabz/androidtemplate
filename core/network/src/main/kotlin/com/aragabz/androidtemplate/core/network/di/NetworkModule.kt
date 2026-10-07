@@ -6,8 +6,6 @@ import com.aragabz.androidtemplate.core.network.interceptor.AuthInterceptor
 import com.aragabz.androidtemplate.core.network.interceptor.CachePolicyInterceptor
 import com.aragabz.androidtemplate.core.network.interceptor.RetryInterceptor
 import com.aragabz.androidtemplate.core.network.mock.MockInterceptor
-import com.aragabz.androidtemplate.core.network.session.AuthTokenProvider
-import com.aragabz.androidtemplate.core.network.session.DefaultAuthTokenProvider
 import com.aragabz.androidtemplate.core.network.session.SessionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -38,10 +36,6 @@ object NetworkModule {
             coerceInputValues = true
             isLenient = true
         }
-
-    @Provides
-    @Singleton
-    fun provideAuthTokenProvider(default: DefaultAuthTokenProvider): AuthTokenProvider = default
 
     @Provides
     @Singleton
@@ -85,18 +79,15 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         json: Json,
         sessionManager: SessionManager,
+        @BaseUrl baseUrl: String,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit
             .Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .addCallAdapterFactory(ApiResultCallAdapterFactory(sessionManager))
             .build()
     }
-
-    @Provides
-    @Singleton
-    fun provideBaseUrl(): String = BuildConfig.BASE_URL
 }

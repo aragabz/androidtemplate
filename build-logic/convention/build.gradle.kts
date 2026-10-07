@@ -93,9 +93,5 @@ gradlePlugin {
             id = "androidtemplate.ktlint"
             implementationClass = "com.aragabz.androidtemplate.convention.KtlintConventionPlugin"
         }
-        register("explicitApi") {
-            id = "androidtemplate.kotlin.explicit.api"
-            implementationClass = "com.aragabz.androidtemplate.convention.ExplicitApiConventionPlugin"
-        }
     }
 }

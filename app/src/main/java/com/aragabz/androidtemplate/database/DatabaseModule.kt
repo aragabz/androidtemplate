@@ -2,7 +2,7 @@ package com.aragabz.androidtemplate.database
 
 import android.content.Context
 import androidx.room.Room
-import com.aragabz.androidtemplate.core.database.DatabaseMigrations
+import com.aragabz.androidtemplate.BuildConfig
 import com.aragabz.androidtemplate.feature.todos.data.local.dao.TodoDao
 import dagger.Module
 import dagger.Provides
@@ -18,20 +18,17 @@ object DatabaseModule {
     @Singleton
     fun provideAppDatabase(
         @ApplicationContext context: Context,
-    ): AppDatabase {
-        val migrations = DatabaseMigrations.from(DatabaseMigrations.CURRENT_VERSION - 1)
-        return Room
+    ): AppDatabase =
+        Room
             .databaseBuilder(
                 context,
                 AppDatabase::class.java,
                 AppDatabase.DATABASE_NAME,
-            ).apply {
-                migrations.forEach { addMigrations(it) }
-                // Fallback to destructive migration if no migration path exists
-                // In production, always provide explicit migrations for data safety
-                fallbackToDestructiveMigration()
+            ).addMigrations(*DatabaseMigrations.ALL)
+            .apply {
+                // Release builds must never wipe user data: a missing migration fails loudly instead.
+                if (BuildConfig.DEBUG) fallbackToDestructiveMigration(dropAllTables = true)
             }.build()
-    }
 
     @Provides
     fun provideTodoDao(db: AppDatabase): TodoDao = db.todoDao()

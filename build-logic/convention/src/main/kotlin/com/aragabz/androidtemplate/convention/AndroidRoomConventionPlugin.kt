@@ -31,6 +31,8 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", libs.findLibrary("room.runtime").get())
                 add("ksp", libs.findLibrary("room.compiler").get())
+                // Instrumented tests may declare their own in-memory @Database.
+                add("kspAndroidTest", libs.findLibrary("room.compiler").get())
             }
         }
     }

@@ -2,22 +2,29 @@ package com.aragabz.androidtemplate.feature.settings.ui.presentation.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.aragabz.androidtemplate.core.navigation.Route
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.language.LanguageSectionScreen
 import com.aragabz.androidtemplate.feature.settings.ui.presentation.theme.ThemeSectionScreen
+import kotlinx.serialization.Serializable
+
+/** Theme settings section. */
+@Serializable
+data object SettingsThemeRoute
+
+/** Language settings section. */
+@Serializable
+data object SettingsLanguageRoute
 
 /**
- * Navigation extension for the settings feature.
+ * Registers the settings feature's section screens. The settings list itself is hosted by the app's bottom-nav shell.
  */
-fun NavGraphBuilder.settingsScreen(navController: NavHostController) {
-    composable<Route.SettingsTheme> {
-        ThemeSectionScreen(navController = navController)
+fun NavGraphBuilder.settingsScreen(navController: NavController) {
+    composable<SettingsThemeRoute> {
+        ThemeSectionScreen(onBack = { navController.popBackStack() })
     }
 
-    composable<Route.SettingsLanguage> {
-        LanguageSectionScreen(navController = navController)
+    composable<SettingsLanguageRoute> {
+        LanguageSectionScreen(onBack = { navController.popBackStack() })
     }
 }
 
@@ -25,12 +32,12 @@ fun NavGraphBuilder.settingsScreen(navController: NavHostController) {
  * Navigate to theme settings section.
  */
 fun NavController.navigateToThemeSettings() {
-    navigate(Route.SettingsTheme)
+    navigate(SettingsThemeRoute)
 }
 
 /**
  * Navigate to language settings section.
  */
 fun NavController.navigateToLanguageSettings() {
-    navigate(Route.SettingsLanguage)
+    navigate(SettingsLanguageRoute)
 }

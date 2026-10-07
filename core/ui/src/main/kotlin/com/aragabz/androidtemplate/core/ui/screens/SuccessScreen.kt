@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -26,6 +27,7 @@ import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
 import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.core.ui.R
 
 /**
  * Full-screen success state with optional action.
@@ -37,7 +39,7 @@ fun SuccessScreen(
     subtitle: String? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
-    iconContentDescription: String = "Success",
+    iconContentDescription: String = stringResource(R.string.success_icon_content_description),
 ) {
     val spacing = LocalSpacing.current
 

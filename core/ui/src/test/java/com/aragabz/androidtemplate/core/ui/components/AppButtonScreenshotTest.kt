@@ -18,7 +18,6 @@ import java.util.Locale
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [33], qualifiers = "w360dp-h640dp-xhdpi")
 class AppButtonScreenshotTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -27,7 +26,7 @@ class AppButtonScreenshotTest {
         captureAppScreenshot(
             composeTestRule = composeTestRule,
             name = "AppButton_Primary",
-            darkTheme = false
+            darkTheme = false,
         ) {
             AppButton(text = "Primary Button", onClick = {})
         }
@@ -38,7 +37,7 @@ class AppButtonScreenshotTest {
         captureAppScreenshot(
             composeTestRule = composeTestRule,
             name = "AppButton_Primary",
-            darkTheme = true
+            darkTheme = true,
         ) {
             AppButton(text = "Primary Button", onClick = {})
         }
@@ -50,7 +49,7 @@ class AppButtonScreenshotTest {
             composeTestRule = composeTestRule,
             name = "AppButton_Secondary",
             variant = AppButtonVariant.SECONDARY,
-            darkTheme = false
+            darkTheme = false,
         ) {
             AppButton(text = "Secondary Button", onClick = {}, variant = AppButtonVariant.SECONDARY)
         }
@@ -62,7 +61,7 @@ class AppButtonScreenshotTest {
             composeTestRule = composeTestRule,
             name = "AppButton_Destructive",
             variant = AppButtonVariant.DESTRUCTIVE,
-            darkTheme = false
+            darkTheme = false,
         ) {
             AppButton(text = "Destructive Button", onClick = {}, variant = AppButtonVariant.DESTRUCTIVE)
         }
@@ -74,7 +73,7 @@ class AppButtonScreenshotTest {
         captureAppScreenshot(
             composeTestRule = composeTestRule,
             name = "AppButton_Primary_Tablet",
-            device = DefaultTestDevices.Tablet
+            device = DefaultTestDevices.Tablet,
         ) {
             AppButton(text = "Primary Button Tablet", onClick = {})
         }
@@ -85,7 +84,7 @@ class AppButtonScreenshotTest {
         captureAppScreenshot(
             composeTestRule = composeTestRule,
             name = "AppButton_Primary_Arabic",
-            locale = Locale("ar")
+            locale = Locale("ar"),
         ) {
             AppButton(text = "زر أساسي", onClick = {})
         }
@@ -102,7 +101,7 @@ private fun captureAppScreenshot(
     locale: Locale = Locale.ENGLISH,
     darkTheme: Boolean = false,
     variant: AppButtonVariant = AppButtonVariant.PRIMARY,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     captureAppScreenshot(
         composeTestRule = composeTestRule,
@@ -110,6 +109,6 @@ private fun captureAppScreenshot(
         device = device,
         locale = locale,
         darkTheme = darkTheme,
-        content = content
+        content = content,
     )
 }

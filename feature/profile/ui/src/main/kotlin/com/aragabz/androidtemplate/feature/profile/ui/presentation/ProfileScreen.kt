@@ -15,20 +15,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aragabz.androidtemplate.core.designsystem.components.AppButton
 import com.aragabz.androidtemplate.core.designsystem.components.AppButtonVariant
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
 import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
 import com.aragabz.androidtemplate.core.ui.screens.EmptyScreen
 import com.aragabz.androidtemplate.core.ui.screens.LoadingScreen
+import com.aragabz.androidtemplate.feature.profile.domain.model.UserProfile
 import com.aragabz.androidtemplate.feature.profile.ui.R
 
+/**
+ * Profile tab. Signing out is owned by the app shell, which clears the session and returns to sign-in.
+ */
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(
+    onSignOut: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.error) {
@@ -41,6 +51,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     ProfileScreenContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
+        onSignOut = onSignOut,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     )
 }
@@ -49,6 +60,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
 internal fun ProfileScreenContent(
     uiState: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
 ) {
@@ -91,7 +103,7 @@ internal fun ProfileScreenContent(
 
                 AppButton(
                     text = stringResource(id = R.string.profile_sign_out),
-                    onClick = { onEvent(ProfileEvent.OnSignOut) },
+                    onClick = onSignOut,
                     variant = AppButtonVariant.DESTRUCTIVE,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -99,5 +111,20 @@ internal fun ProfileScreenContent(
                 snackbarHost()
             }
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ProfileScreenContentPreview() {
+    AppTheme {
+        ProfileScreenContent(
+            uiState =
+                ProfileUiState(
+                    profile = UserProfile(userId = "1", displayName = "Ada Lovelace", email = "ada@example.com"),
+                ),
+            onEvent = {},
+            onSignOut = {},
+        )
     }
 }

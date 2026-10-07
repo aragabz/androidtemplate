@@ -14,7 +14,6 @@ data class AuthSession(
     /**
      * Custom toString() that excludes token to prevent accidental logging of sensitive data.
      */
-    override fun toString(): String {
-        return "AuthSession(userId=$userId, token=***REDACTED***, isAuthenticated=$isAuthenticated)"
-    }
+    override fun toString(): String =
+        "AuthSession(userId=$userId, token=***REDACTED***, isAuthenticated=$isAuthenticated)"
 }

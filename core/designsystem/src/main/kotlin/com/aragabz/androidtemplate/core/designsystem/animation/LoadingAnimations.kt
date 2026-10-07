@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,18 +18,17 @@ import androidx.compose.ui.graphics.Color
 /**
  * Shimmer effect modifier for loading states.
  *
- * @param colors Colors for the shimmer gradient
+ * @param colors Colors for the shimmer gradient; defaults to the theme's surface colors
  * @param durationMillis Duration of one shimmer animation cycle
  */
 fun Modifier.shimmerEffect(
-    colors: List<Color> = listOf(
-        Color(0xFFE0E0E0),
-        Color(0xFFF5F5F5),
-        Color(0xFFE0E0E0),
-    ),
+    colors: List<Color>? = null,
     durationMillis: Int = 1000,
 ): Modifier =
     composed {
+        val colorScheme = MaterialTheme.colorScheme
+        val gradientColors =
+            colors ?: listOf(colorScheme.surfaceVariant, colorScheme.surface, colorScheme.surfaceVariant)
         val transition = rememberInfiniteTransition(label = "shimmer")
         val translateAnim by transition.animateFloat(
             initialValue = 0f,
@@ -42,7 +42,7 @@ fun Modifier.shimmerEffect(
 
         background(
             brush = Brush.linearGradient(
-                colors = colors,
+                colors = gradientColors,
                 start = Offset(translateAnim - 1000f, translateAnim - 1000f),
                 end = Offset(translateAnim, translateAnim),
             ),

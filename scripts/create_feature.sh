@@ -40,21 +40,21 @@ echo "🚀 Creating feature module: $FEATURE_NAME ($MODULE_NAME) -> $BASE_PATH"
 
 # --- 1. Create directory structure -----------------------------------------
 KOTLIN_PATH="com/aragabz/androidtemplate/feature/$MODULE_NAME"
+DOMAIN_SRC="$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain"
+DATA_SRC="$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data"
+DATA_TEST="$BASE_PATH/data/src/test/kotlin/$KOTLIN_PATH/data"
+UI_SRC="$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui"
+UI_TEST="$BASE_PATH/ui/src/test/kotlin/$KOTLIN_PATH/ui"
+UI_RES="$BASE_PATH/ui/src/main/res"
 
-mkdir -p "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/model"
-mkdir -p "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/repository"
-mkdir -p "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/usecase"
-
-mkdir -p "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/local/entity"
-mkdir -p "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/local/dao"
-mkdir -p "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/repository"
-mkdir -p "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/di"
-mkdir -p "$BASE_PATH/data/src/main/resources/META-INF/services"
-
-mkdir -p "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation"
-mkdir -p "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/navigation"
+mkdir -p "$DOMAIN_SRC/model" "$DOMAIN_SRC/repository"
+mkdir -p "$DATA_SRC/local/entity" "$DATA_SRC/local/dao" "$DATA_SRC/repository" "$DATA_SRC/di"
+mkdir -p "$DATA_TEST/local/entity"
+mkdir -p "$UI_SRC/presentation/navigation" "$UI_TEST/presentation"
+mkdir -p "$UI_RES/values" "$UI_RES/values-es"
 
 # --- 2. build.gradle.kts for each module ------------------------------------
+# JUnit, coroutines-test, Turbine and :core:testing reach every module's unit tests through the convention plugins.
 cat <<EOF > "$BASE_PATH/domain/build.gradle.kts"
 plugins {
     id("androidtemplate.android.library")
@@ -69,7 +69,6 @@ dependencies {
     api(project(":core:domain"))
 
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.javax.inject)
 }
 EOF
 
@@ -86,9 +85,7 @@ android {
 
 dependencies {
     implementation(project(":feature:$MODULE_NAME:domain"))
-    implementation(project(":core:common"))
     implementation(project(":core:database"))
-    implementation(project(":core:datastore"))
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.javax.inject)
@@ -99,6 +96,7 @@ cat <<EOF > "$BASE_PATH/ui/build.gradle.kts"
 plugins {
     id("androidtemplate.android.feature")
     id("androidtemplate.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -107,11 +105,6 @@ android {
 
 dependencies {
     implementation(project(":feature:$MODULE_NAME:domain"))
-    implementation(project(":feature:$MODULE_NAME:data"))
-
-    implementation(project(":core:common"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:navigation"))
 
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -121,7 +114,7 @@ dependencies {
 EOF
 
 # --- 3. Domain layer --------------------------------------------------------
-cat <<EOF > "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/model/${FEATURE_NAME}Model.kt"
+cat <<EOF > "$DOMAIN_SRC/model/${FEATURE_NAME}Model.kt"
 package $PACKAGE_BASE.domain.model
 
 /**
@@ -134,7 +127,7 @@ data class ${FEATURE_NAME}Model(
 )
 EOF
 
-cat <<EOF > "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/repository/${FEATURE_NAME}Repository.kt"
+cat <<EOF > "$DOMAIN_SRC/repository/${FEATURE_NAME}Repository.kt"
 package $PACKAGE_BASE.domain.repository
 
 import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
@@ -145,40 +138,20 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ${FEATURE_NAME}Repository {
     /**
-     * Observe all $FEATURE_NAME records.
+     * Observe all $FEATURE_NAME records; emits again whenever they change.
      */
     fun observeAll(): Flow<List<${FEATURE_NAME}Model>>
 }
 EOF
 
-cat <<EOF > "$BASE_PATH/domain/src/main/kotlin/$KOTLIN_PATH/domain/usecase/Get${FEATURE_NAME}ListUseCase.kt"
-package $PACKAGE_BASE.domain.usecase
-
-import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
-import $PACKAGE_BASE.domain.repository.${FEATURE_NAME}Repository
-import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-
-/**
- * Use case that exposes the stream of $FEATURE_NAME records.
- */
-class Get${FEATURE_NAME}ListUseCase
-    @Inject
-    constructor(
-        private val repository: ${FEATURE_NAME}Repository,
-    ) {
-        operator fun invoke(): Flow<List<${FEATURE_NAME}Model>> = repository.observeAll()
-    }
-EOF
-
 # --- 4. Data layer ----------------------------------------------------------
-cat <<EOF > "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/local/entity/${FEATURE_NAME}Entity.kt"
+cat <<EOF > "$DATA_SRC/local/entity/${FEATURE_NAME}Entity.kt"
 package $PACKAGE_BASE.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "${MODULE_NAME}s")
+@Entity(tableName = "$MODULE_NAME")
 data class ${FEATURE_NAME}Entity(
     @PrimaryKey
     val id: String,
@@ -186,54 +159,36 @@ data class ${FEATURE_NAME}Entity(
 )
 EOF
 
-cat <<EOF > "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/local/dao/${FEATURE_NAME}Dao.kt"
+cat <<EOF > "$DATA_SRC/local/dao/${FEATURE_NAME}Dao.kt"
 package $PACKAGE_BASE.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import $PACKAGE_BASE.data.local.entity.${FEATURE_NAME}Entity
 import com.aragabz.androidtemplate.core.database.dao.BaseDao
+import $PACKAGE_BASE.data.local.entity.${FEATURE_NAME}Entity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ${FEATURE_NAME}Dao : BaseDao<${FEATURE_NAME}Entity> {
-    @Query("SELECT * FROM ${MODULE_NAME}s")
+    @Query("SELECT * FROM $MODULE_NAME")
     fun observeAll(): Flow<List<${FEATURE_NAME}Entity>>
-
-    @Query("SELECT * FROM ${MODULE_NAME}s WHERE id = :id LIMIT 1")
-    suspend fun getById(id: String): ${FEATURE_NAME}Entity?
 }
 EOF
 
-cat <<EOF > "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/local/${FEATURE_NAME}EntityContributor.kt"
-package $PACKAGE_BASE.data.local
-
-import $PACKAGE_BASE.data.local.entity.${FEATURE_NAME}Entity
-import com.aragabz.androidtemplate.core.common.util.EntityContributor
-import kotlin.reflect.KClass
-
-class ${FEATURE_NAME}EntityContributor : EntityContributor {
-    override fun getEntities(): List<KClass<*>> = listOf(${FEATURE_NAME}Entity::class)
-}
-EOF
-
-echo "$PACKAGE_BASE.data.local.${FEATURE_NAME}EntityContributor" > \
-    "$BASE_PATH/data/src/main/resources/META-INF/services/com.aragabz.androidtemplate.core.database.EntityContributor"
-
-cat <<EOF > "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/repository/${FEATURE_NAME}RepositoryImpl.kt"
+cat <<EOF > "$DATA_SRC/repository/${FEATURE_NAME}RepositoryImpl.kt"
 package $PACKAGE_BASE.data.repository
 
 import $PACKAGE_BASE.data.local.dao.${FEATURE_NAME}Dao
 import $PACKAGE_BASE.data.local.entity.${FEATURE_NAME}Entity
 import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
 import $PACKAGE_BASE.domain.repository.${FEATURE_NAME}Repository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
- * Concrete implementation backed by Room.
+ * Room-backed implementation: the DAO's stream is the single source of truth.
  */
 @Singleton
 class ${FEATURE_NAME}RepositoryImpl
@@ -241,7 +196,8 @@ class ${FEATURE_NAME}RepositoryImpl
     constructor(
         private val dao: ${FEATURE_NAME}Dao,
     ) : ${FEATURE_NAME}Repository {
-        override fun observeAll(): Flow<List<${FEATURE_NAME}Model>> = dao.observeAll().map { entities -> entities.map { it.toExternalModel() } }
+        override fun observeAll(): Flow<List<${FEATURE_NAME}Model>> =
+            dao.observeAll().map { entities -> entities.map { it.toExternalModel() } }
     }
 
 fun ${FEATURE_NAME}Entity.toExternalModel(): ${FEATURE_NAME}Model =
@@ -251,7 +207,7 @@ fun ${FEATURE_NAME}Entity.toExternalModel(): ${FEATURE_NAME}Model =
     )
 EOF
 
-cat <<EOF > "$BASE_PATH/data/src/main/kotlin/$KOTLIN_PATH/data/di/${FEATURE_NAME}DataModule.kt"
+cat <<EOF > "$DATA_SRC/di/${FEATURE_NAME}DataModule.kt"
 package $PACKAGE_BASE.data.di
 
 import $PACKAGE_BASE.data.repository.${FEATURE_NAME}RepositoryImpl
@@ -269,8 +225,40 @@ interface ${FEATURE_NAME}DataModule {
 }
 EOF
 
+cat <<EOF > "$DATA_TEST/local/entity/${FEATURE_NAME}EntityMappingTest.kt"
+package $PACKAGE_BASE.data.local.entity
+
+import $PACKAGE_BASE.data.repository.toExternalModel
+import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+class ${FEATURE_NAME}EntityMappingTest {
+    @Test
+    fun \`toExternalModel maps all fields\`() {
+        val entity = ${FEATURE_NAME}Entity(id = "1", title = "First")
+
+        assertEquals(${FEATURE_NAME}Model(id = "1", title = "First"), entity.toExternalModel())
+    }
+}
+EOF
+
 # --- 5. UI layer ------------------------------------------------------------
-cat <<EOF > "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/${FEATURE_NAME}UiState.kt"
+cat <<EOF > "$UI_RES/values/strings.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="${MODULE_NAME}_empty_message">Nothing here yet</string>
+</resources>
+EOF
+
+cat <<EOF > "$UI_RES/values-es/strings.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="${MODULE_NAME}_empty_message">Todavía no hay nada aquí</string>
+</resources>
+EOF
+
+cat <<EOF > "$UI_SRC/presentation/${FEATURE_NAME}UiState.kt"
 package $PACKAGE_BASE.ui.presentation
 
 import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
@@ -278,163 +266,197 @@ import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
 data class ${FEATURE_NAME}UiState(
     val isLoading: Boolean = false,
     val items: List<${FEATURE_NAME}Model> = emptyList(),
-    val errorMessage: String? = null,
 )
 EOF
 
-cat > "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/${FEATURE_NAME}Event.kt" <<EOF
+cat <<EOF > "$UI_SRC/presentation/${FEATURE_NAME}ViewModel.kt"
 package $PACKAGE_BASE.ui.presentation
 
-sealed interface ${FEATURE_NAME}Event {
-    data object OnRefresh : ${FEATURE_NAME}Event
-    data object OnDismissError : ${FEATURE_NAME}Event
-}
-EOF
-
-cat > "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/${FEATURE_NAME}ViewModel.kt" <<EOF
-package $PACKAGE_BASE.ui.presentation
-
-import $PACKAGE_BASE.domain.usecase.Get${FEATURE_NAME}ListUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import $PACKAGE_BASE.domain.repository.${FEATURE_NAME}Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
+/**
+ * UI state is derived from the repository stream: one collection, shared while the screen is shown
+ * (and for 5 seconds after, so a configuration change does not restart it).
+ */
 @HiltViewModel
 class ${FEATURE_NAME}ViewModel
     @Inject
     constructor(
-        private val get${FEATURE_NAME}ListUseCase: Get${FEATURE_NAME}ListUseCase,
+        repository: ${FEATURE_NAME}Repository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(${FEATURE_NAME}UiState())
-        val uiState: StateFlow<${FEATURE_NAME}UiState> = _uiState.asStateFlow()
+        val uiState: StateFlow<${FEATURE_NAME}UiState> =
+            repository
+                .observeAll()
+                .map { items -> ${FEATURE_NAME}UiState(items = items) }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                    initialValue = ${FEATURE_NAME}UiState(isLoading = true),
+                )
 
-        init {
-            refresh()
-        }
-
-        fun onEvent(event: ${FEATURE_NAME}Event) {
-            when (event) {
-                ${FEATURE_NAME}Event.OnRefresh -> refresh()
-                ${FEATURE_NAME}Event.OnDismissError -> _uiState.update { it.copy(errorMessage = null) }
-            }
-        }
-
-        private fun refresh() {
-            viewModelScope.launch {
-                get${FEATURE_NAME}ListUseCase().collect { items ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            items = items,
-                            errorMessage = null,
-                        )
-                    }
-                }
-            }
+        private companion object {
+            const val STOP_TIMEOUT_MILLIS = 5_000L
         }
     }
 EOF
 
-cat > "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/${FEATURE_NAME}Screen.kt" <<EOF
+cat <<EOF > "$UI_SRC/presentation/${FEATURE_NAME}Screen.kt"
 package $PACKAGE_BASE.ui.presentation
 
-import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aragabz.androidtemplate.core.designsystem.theme.AppTheme
+import com.aragabz.androidtemplate.core.designsystem.theme.LocalSpacing
+import com.aragabz.androidtemplate.core.ui.screens.EmptyScreen
+import com.aragabz.androidtemplate.core.ui.screens.LoadingScreen
+import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
+import $PACKAGE_BASE.ui.R
 
+/**
+ * Route: gets the ViewModel and collects its state. Keep it thin; the UI lives in the Content composable.
+ */
 @Composable
 fun ${FEATURE_NAME}Screen(viewModel: ${FEATURE_NAME}ViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    ${FEATURE_NAME}ScreenContent(
-        uiState = uiState,
-        onEvent = viewModel::onEvent,
-    )
+    ${FEATURE_NAME}ScreenContent(uiState = uiState)
 }
 
+/**
+ * Stateless UI: takes state and callbacks only, so it can be previewed and tested without a ViewModel.
+ */
 @Composable
 internal fun ${FEATURE_NAME}ScreenContent(
     uiState: ${FEATURE_NAME}UiState,
-    onEvent: (${FEATURE_NAME}Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(modifier = modifier.fillMaxSize()) {
-        when {
-            uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+    val spacing = LocalSpacing.current
+
+    when {
+        uiState.isLoading -> LoadingScreen(modifier = modifier)
+        uiState.items.isEmpty() ->
+            EmptyScreen(message = stringResource(id = R.string.${MODULE_NAME}_empty_message), modifier = modifier)
+        else ->
+            LazyColumn(
+                modifier = modifier,
+                contentPadding = PaddingValues(spacing.medium),
+                verticalArrangement = Arrangement.spacedBy(spacing.small),
+            ) {
+                items(uiState.items, key = { it.id }) { item ->
+                    Text(text = item.title, style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            uiState.items.isEmpty() -> {
-                Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-                    Text(text = "No items yet", style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-            else -> {
-                Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                    Text(
-                        text = "Feature name",
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(uiState.items, key = { it.id }) { item: ${FEATURE_NAME}Model ->
-                            Text(
-                                text = item.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(vertical = 4.dp),
-                            )
-                        }
-                    }
-                }
-            }
-        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ${FEATURE_NAME}ScreenContentPreview() {
+    AppTheme {
+        ${FEATURE_NAME}ScreenContent(
+            uiState =
+                ${FEATURE_NAME}UiState(
+                    items =
+                        listOf(
+                            ${FEATURE_NAME}Model(id = "1", title = "First item"),
+                            ${FEATURE_NAME}Model(id = "2", title = "Second item"),
+                        ),
+                ),
+        )
     }
 }
 EOF
 
-cat > "$BASE_PATH/ui/src/main/kotlin/$KOTLIN_PATH/ui/presentation/navigation/${FEATURE_NAME}Navigation.kt" <<EOF
+cat <<EOF > "$UI_SRC/presentation/navigation/${FEATURE_NAME}Navigation.kt"
 package $PACKAGE_BASE.ui.presentation.navigation
 
-import $PACKAGE_BASE.ui.presentation.${FEATURE_NAME}Screen
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import $PACKAGE_BASE.ui.presentation.${FEATURE_NAME}Screen
+import kotlinx.serialization.Serializable
+
+/** $FEATURE_NAME list screen. The feature owns its routes; core knows nothing about them. */
+@Serializable
+data object ${FEATURE_NAME}Route
 
 /**
- * Navigation extension for $FEATURE_NAME feature.
+ * Registers the $FEATURE_NAME screens.
  */
-fun NavGraphBuilder.${MODULE_NAME}Screen(navController: NavController) {
-    composable("$MODULE_NAME") {
+fun NavGraphBuilder.${MODULE_NAME}Screen() {
+    composable<${FEATURE_NAME}Route> {
         ${FEATURE_NAME}Screen()
     }
 }
 
 /**
- * Navigate to the feature; switch to a type-safe Route if the project uses one.
+ * Navigate to the feature.
  */
 fun NavController.navigateTo${FEATURE_NAME}() {
-    navigate("$MODULE_NAME")
+    navigate(${FEATURE_NAME}Route)
+}
+EOF
+
+cat <<EOF > "$UI_TEST/presentation/${FEATURE_NAME}ViewModelTest.kt"
+package $PACKAGE_BASE.ui.presentation
+
+import app.cash.turbine.test
+import com.aragabz.androidtemplate.core.testing.MainDispatcherRule
+import $PACKAGE_BASE.domain.model.${FEATURE_NAME}Model
+import $PACKAGE_BASE.domain.repository.${FEATURE_NAME}Repository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+
+class ${FEATURE_NAME}ViewModelTest {
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    private class Fake${FEATURE_NAME}Repository : ${FEATURE_NAME}Repository {
+        val items = MutableStateFlow<List<${FEATURE_NAME}Model>>(emptyList())
+
+        override fun observeAll(): Flow<List<${FEATURE_NAME}Model>> = items
+    }
+
+    private val repository = Fake${FEATURE_NAME}Repository()
+    private val viewModel = ${FEATURE_NAME}ViewModel(repository)
+
+    @Test
+    fun \`shows loading, then the stored items as they change\`() =
+        runTest {
+            viewModel.uiState.test {
+                assertTrue(awaitItem().isLoading)
+                assertEquals(${FEATURE_NAME}UiState(), awaitItem())
+
+                val item = ${FEATURE_NAME}Model(id = "1", title = "First")
+                repository.items.value = listOf(item)
+
+                assertEquals(listOf(item), awaitItem().items)
+            }
+        }
 }
 EOF
 
@@ -458,14 +480,26 @@ cat <<EOM
 ✅ $FEATURE_NAME feature scaffolded at: $BASE_PATH
 Modules: :feature:$MODULE_NAME:domain | :feature:$MODULE_NAME:data | :feature:$MODULE_NAME:ui
 
-Manual wiring still required:
-  1. AppDatabase (app module): add ${FEATURE_NAME}Entity to entities list and
-     declare:    abstract fun ${MODULE_NAME}Dao(): ${FEATURE_NAME}Dao
-  2. DatabaseModule (app module): add
+Manual wiring still required (all in :app):
+  1. database/AppDatabase.kt: add ${FEATURE_NAME}Entity::class to entities and declare
+       abstract fun ${MODULE_NAME}Dao(): ${FEATURE_NAME}Dao
+  2. database/DatabaseMigrations.kt: bump CURRENT_VERSION, add this migration and list it in ALL:
+       val MIGRATION_<old>_<new> =
+           object : Migration(<old>, <new>) {
+               override fun migrate(database: SupportSQLiteDatabase) {
+                   database.execSQL(
+                       "CREATE TABLE IF NOT EXISTS \`$MODULE_NAME\` (\`id\` TEXT NOT NULL, \`title\` TEXT NOT NULL, PRIMARY KEY(\`id\`))",
+                   )
+               }
+           }
+  3. database/DatabaseModule.kt: add
        @Provides
        fun provide${FEATURE_NAME}Dao(db: AppDatabase): ${FEATURE_NAME}Dao = db.${MODULE_NAME}Dao()
-  3. Route.kt (core:navigation): add a route for $FEATURE_NAME if you use type-safe navigation.
-  4. AppNavGraph: call ${MODULE_NAME}Screen(navController).
+  4. build.gradle.kts: add implementation(project(":feature:$MODULE_NAME:ui")) and
+     implementation(project(":feature:$MODULE_NAME:data")).
+  5. navigation/AppNavGraph.kt: call ${MODULE_NAME}Screen() and open it with navController.navigateTo${FEATURE_NAME}(),
+     or show ${FEATURE_NAME}Screen() from a new MainTab in navigation/MainScreen.kt.
 
-Run ./gradlew assembleDebug to verify the scaffold compiles.
+Then build once to export the new schema to app/schemas, and run
+  ./gradlew :feature:$MODULE_NAME:data:testDebugUnitTest :feature:$MODULE_NAME:ui:testDebugUnitTest assembleDebug
 EOM

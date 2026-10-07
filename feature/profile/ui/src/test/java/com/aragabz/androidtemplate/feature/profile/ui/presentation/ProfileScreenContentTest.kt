@@ -24,6 +24,7 @@ class ProfileScreenContentTest {
                 ProfileScreenContent(
                     uiState = ProfileUiState(profile = null),
                     onEvent = {},
+                    onSignOut = {},
                 )
             }
         }
@@ -46,6 +47,7 @@ class ProfileScreenContentTest {
                                 ),
                         ),
                     onEvent = {},
+                    onSignOut = {},
                 )
             }
         }

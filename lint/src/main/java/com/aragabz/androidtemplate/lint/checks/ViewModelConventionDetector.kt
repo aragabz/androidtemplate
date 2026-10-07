@@ -17,8 +17,10 @@ class ViewModelConventionDetector : Detector(), SourceCodeScanner {
 
     override fun createUastHandler(context: JavaContext) = object : UElementHandler() {
         override fun visitClass(node: UClass) {
+            // Anonymous objects (object : ViewModel()) have no name to check.
+            val name = node.name ?: return
             val isViewModel = context.evaluator.inheritsFrom(node, "androidx.lifecycle.ViewModel", false)
-            if (isViewModel && !node.name!!.endsWith("ViewModel")) {
+            if (isViewModel && !name.endsWith("ViewModel")) {
                 context.report(
                     ISSUE,
                     node,

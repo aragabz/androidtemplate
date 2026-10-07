@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,14 +34,19 @@ jobs:
       - name: Ktlint Check
         run: ./gradlew ktlintCheck
 
+      # :app lints all its module dependencies (checkDependencies = true)
       - name: Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew :app:lintDevDebug
 
       - name: Detekt
-        run: ./gradlew detektAll
+        run: ./gradlew detekt
 
+      # :app has product flavors, so its unit tests are not part of testDebugUnitTest
       - name: Unit Tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest :app:testDevDebugUnitTest
+
+      - name: Compile Instrumented Tests
+        run: ./gradlew compileDebugAndroidTestKotlin :app:compileDevDebugAndroidTestKotlin
 
       - name: Build
         run: ./gradlew assembleDebug
@@ -46,7 +55,10 @@ jobs:
         if: always()
         run: |
           mkdir -p build/sarif-reports
-          find . -type f -name "*.sarif" -exec cp {} build/sarif-reports/ \;
+          # Report file names repeat across modules, so prefix each with its path
+          find . -type f -name "*.sarif" -path "*/build/reports/*" | while read -r f; do
+            cp "$f" "build/sarif-reports/$(echo "${f#./}" | tr '/' '_')"
+          done
 
       - name: Upload SARIF
         if: always()

@@ -6,17 +6,19 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import org.junit.Rule
 import org.junit.Test
+import com.aragabz.androidtemplate.feature.auth.ui.R as AuthR
 
 class MainActivityUiTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun launch_showsHomeDashboard() {
-        composeTestRule.waitUntil(timeoutMillis = 3_000) {
-            composeTestRule.onAllNodesWithText("Dashboard View").fetchSemanticsNodes().isNotEmpty()
+    fun launch_signedOut_showsSignIn() {
+        val signInTitle = composeTestRule.activity.getString(AuthR.string.auth_title_sign_in)
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithText(signInTitle).fetchSemanticsNodes().isNotEmpty()
         }
 
-        composeTestRule.onNodeWithText("Dashboard View").assertIsDisplayed()
+        composeTestRule.onNodeWithText(signInTitle).assertIsDisplayed()
     }
 }

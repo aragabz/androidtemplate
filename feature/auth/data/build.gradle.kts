@@ -19,9 +19,6 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.retrofit)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.core)
 }
